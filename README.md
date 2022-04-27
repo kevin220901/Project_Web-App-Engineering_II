@@ -12,10 +12,10 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
 ## Vorgaben aus dem Referenz Dokument
 *Einträge == Beiträge*
 
-Für jedes Wiki soll es eine Userverwaltung mit folgenden Rollen geben:
-- [ ] Owner     (Read/Write/Delete/Edit/Manage Users/Grant Moderator Role)
-- [ ] Moderator     (Read/Write/Delete/Edit/Manage Users)
-- [ ] Collaborator    (Read/Write/Edit)
+- [ ] Für jedes Wiki soll es eine Userverwaltung mit folgenden Rollen geben:
+    - [ ] Owner     (Read/Write/Delete/Edit/Manage Users/Grant Moderator Role)
+    - [ ] Moderator     (Read/Write/Delete/Edit/Manage Users)
+    - [ ] Collaborator    (Read/Write/Edit)
 
 - [ ] Wikis sollen eine Upvote-Funktion haben.
 
