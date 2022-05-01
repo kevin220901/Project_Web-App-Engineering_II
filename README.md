@@ -59,6 +59,10 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
     - [ ] Man kann eine Preview von neuen Einträgen sehen
     - [ ] Text kann verschiedene Schriftfarben haben, dick, kursiv, etc, sein, Bilder können eingebunden werden, Tabellen und ähnliche Formationen sollen möglich sein
     - [ ] Einträge können gemeldet werden, je nach Grund geht die Meldung an die Moderatoren / Owner des Wikis oder direkt an die Plattform Admins
+   
+ - [ ] Pages:
+    - [ ] Main-Page ist über Plattform-Dashboard bearbeitbar
+    - [ ] Wiki-Admins können Pages über ihr Dashboard bearbeiten
 
 ### How to push :)
 - `git checkout BRANCH`
