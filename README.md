@@ -86,7 +86,7 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
 
 `Wikis Bewerten kann man nur, wenn man auch Beiträge einsehen kann!`
 
-`〰` = Je nach Wiki Einstellung
+`〰` = Je nach Wiki Einstellung (Bei Bewerten/Favorisieren/Verstecken hängt es davon ab, ob man Beiträge überhaupt sehen kann)
 
 `💥` = Nur wenn du den Beitrag selbst erstellt hast
 
@@ -115,3 +115,4 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
 | Beiträge erstellen | ✔ | 🚫 |
 | Beiträge bearbeiten | ❌ | 🚫 |
 | Beitrittsanfragen erlauben | ✔ | 🚫 |
+| Wiki ist sichtbar | ✔ | ✔ |
