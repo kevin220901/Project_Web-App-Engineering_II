@@ -73,25 +73,25 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
 
 | Funktion (Sichtbarkeit) / User | Plattform Admin | Wiki Owner | Wiki Admin | Collaborator | Normaler User | Unregistriert |
 |---|---|---|---|---|---|---|
-| User Einstellungen | ✔ | ✔ | ✔ | ✔ | ✔ | ✖ |
-| Plattform Einstellungen | ✔ | ✖ | ✖ | ✖ | ✖ | ✖ |
-| Neues Wiki | ✔ | ✔ | ✔ | ✔ | ✔ | ✖ |
-| Wiki Einstellungen | ✔ | ✔ | ✔ | ✖ | ✖ | ✖ | ✖ |
-| Wikis Favorisieren / Verstecken / Bewerten | ✔ | ✔ | ✔ | ✔ | 〰 | ✖ |
+| User Einstellungen | ✔ | ✔ | ✔ | ✔ | ✔ | ❌ |
+| Plattform Einstellungen | ✔ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Neues Wiki | ✔ | ✔ | ✔ | ✔ | ✔ | ❌ |
+| Wiki Einstellungen | ✔ | ✔ | ✔ | ❌ | ❌ | ❌ | ❌ |
+| Wikis Favorisieren / Verstecken / Bewerten | ✔ | ✔ | ✔ | ✔ | 〰 | ❌ |
 | Beiträge einsehen | ✔ | ✔ | ✔ | ✔ | 〰 | 〰 |
-| Beiträge erstellen | ✔ | ✔ | ✔ | ✔ | 〰 | ✖ |
-| Beiträge bearbeiten | ✔ | ✔ | ✔ | ✔ | 〰 | ✖ |
-| Beiträge löschen | ✔ | ✔ | ✔ | 💥 | 💥 | ✖ |
+| Beiträge erstellen | ✔ | ✔ | ✔ | ✔ | 〰 | ❌ |
+| Beiträge bearbeiten | ✔ | ✔ | ✔ | ✔ | 〰 | ❌ |
+| Beiträge löschen | ✔ | ✔ | ✔ | 💥 | 💥 | ❌ |
 
 
 `Wikis Bewerten kann man nur, wenn man auch Beiträge einsehen kann!`
 
-`〰` = Je nach Wiki Einstellung
+`〰` = Je nach Wiki Einstellung (Bei Bewerten/Favorisieren/Verstecken hängt es davon ab, ob man Beiträge überhaupt sehen kann)
 
 `💥` = Nur wenn du den Beitrag selbst erstellt hast
 
 # Wiki Arten
-(`Standard Wikis`)
+`Beispiel Wiki Einstellungen`
 ## Privates Wiki
 - Das Wiki wird nicht im allgemeinen Wiki Browser angezeigt 
 - Normale User können **keine** Beitrittsanfragen an das Wiki senden, um Collaborator zu werden
@@ -111,7 +111,8 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
 
 | Rechte / User | Normaler User | Unregistriert |
 |---|---|---|
-| Beiträge einsehen | ✔ | ✔ |
+| Beiträge einsehen | ✔ | ❌ |
 | Beiträge erstellen | ✔ | 🚫 |
-| Beiträge bearbeiten | ✔ | 🚫 |
+| Beiträge bearbeiten | ❌ | 🚫 |
 | Beitrittsanfragen erlauben | ✔ | 🚫 |
+| Wiki ist sichtbar | ✔ | ✔ |
