@@ -25,8 +25,6 @@ bin/*
 translations/*
 .env
 .env.test
-composer.json
-composer.lock
 docker-compose.override.yml
 docker-compose.yml
 phpunit.xml.dist

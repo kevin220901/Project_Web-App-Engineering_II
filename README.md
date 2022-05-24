@@ -175,7 +175,7 @@ sudo apt-get install php7.4 php7.4-cli php7.4-common php7.4-curl php7.4-gd php7.
 8. `mysql -u root -p` + Dein Password
 9. `INSTALL COMPONENT "file://component_validate_password";`
 10. `exit`
-11. `sudo phpenmod mbstring` Merk dir das Verzeichnis!
+11. `sudo phpenmod mbstring` Merk dir `/etc/apache2/conf-enabled/`
 12. `sudo service apache2 restart`
 13. `sudo -H nano /etc/apache2/apache2.conf`
     - In der geöffneten Datei jetzt `Include /etc/phpmyadmin/apache.conf` einfügen und die Datei speichern!
