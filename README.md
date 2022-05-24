@@ -116,3 +116,114 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
 | Beiträge bearbeiten | ❌ | 🚫 |
 | Beitrittsanfragen erlauben | ✔ | 🚫 |
 | Wiki ist sichtbar | ✔ | ✔ |
+
+
+
+
+# Full Setup
+## Einrichten der WSL Umgebung
+### Installation von WSL
+1. Ubuntu 20.04.4 LTS aus dem Windows Store herunterladen
+2. WSL ausführen und wenn nötig das Kombatiblitätslayer über die Windows Einstellungen aktivieren
+
+### Apache 2 installieren
+1. `sudo apt-get update`
+2. `sudo apt-get upgrade`
+3. `sudo apt-get install apache2`
+4. `sudo apache2ctl configtest`
+5. `sudo a2enmod rewrite`
+6. `sudo a2enmod headers`
+7. `sudo service apache2 start`
+    - `sudo service apache2 restart`
+
+### MySql installieren
+1. `sudo apt-get install mysql-server`
+2. `sudo service mysql start`
+3. `sudo mysql_secure_installation`
+    - `y`, `1`, `YourMYSQLPassword`, `y`, `y`, `y`, `y`, `y`
+4. `sudo mysql`
+5. `SELECT user, authentication_string, plugin, host FROM mysql.user;`
+6. `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YourMYSQLPassword';`
+7. `FLUSH PRIVILEGES`
+8. `exit`
+9. `mysql -u root -p` + Dein Password
+10. `CREATE USER 'WikiDB'@'localhost' IDENTIFIED BY 'B4db)%aHm84';`
+11. `GRANT ALL PRIVILEGES ON *.* TO 'WikiDB'@'localhost' WITH GRANT OPTION;`
+
+### PHP installieren
+1.
+```
+sudo apt-get install php7.4 php7.4-cli php7.4-common php7.4-curl php7.4-gd php7.4-mbstring php7.4-mysql php7.4-xml libapache2-mod-php
+```
+2. `php -v` (Ist das Ergebnis 7.4.3 ?)
+3. `sudo service apache2 restart`
+4. `sudo chown YOUR_WSL_USER /var/www/html`
+5. `sudo chmod 755 -R /var/www/html`
+
+### phpMyAdmin
+1. `sudo apt-get install phpmyadmin`
+    - Es wird sich ein neues "Fenster" öffnen
+2. `apache 2`, `yes` , `Neues_Password`
+    - Es sollte eine Fehlermedlung kommen
+3. `abort`
+4. Als Root in mysql gehen
+    - `mysql -u root -p` + Dein Password
+5. `UNINSTALL COMPONENT "file://component_validate_password";`
+6. `exit`
+7. `sudo apt-get install phpmyadmin`
+    - Hier das von oben wiederholen, bzw. fortsetzen
+8. `mysql -u root -p` + Dein Password
+9. `INSTALL COMPONENT "file://component_validate_password";`
+10. `exit`
+11. `sudo phpenmod mbstring` Merk dir das Verzeichnis!
+12. `sudo service apache2 restart`
+13. `sudo -H nano /etc/apache2/apache2.conf`
+    - In der geöffneten Datei jetzt `Include /etc/phpmyadmin/apache.conf` einfügen und die Datei speichern!
+14. `sudo service apache2 restart`
+15. Jetzt solltet ihr euch unter `localhost/phpmyadmin` mit diesen Nutzerdaten einloggen können:
+    - Username: `WikiDB`
+    - Passwort: `B4db)%aHm84`
+
+### Composer, Zip & Unzip
+1. `sudo php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"`
+2. `sudo php composer-setup.php`
+3. `sudo php -r "unlink('composer-setup.php');"`
+4. `sudo mv composer.phar /usr/local/bin/composer`
+5. `sudo apt-get install -y zip`
+
+# Symfony Projekt erstellen!
+1. `cd /var/www/html`
+2. `composer create-project symfony/website-skeleton WebAppProject`, `y`
+3. `cd /var/www/html/WebAppProject`
+4. `php bin/console about`
+5. `sudo nano /etc/apache2/sites-available/000-default.conf`
+6. Folgenden Code in die Datei einfügen
+```cmd
+   ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html/WebAppProject/public
+    
+    DirectoryIndex index.php
+    <Directory "/var/www/html/WebAppProject/public">
+        AllowOverride All
+        Allow from All
+        
+        <IfModule mod_rewrite.c>
+            Options -MultiViews
+            RewriteEngine On
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ index.php [QSA,L]
+        </IfModule>
+    </Directory>
+```
+7. `sudo a2dissite 000-default`
+8. `sudo a2ensite 000-default`
+9. `sudo service apache2 restart`
+10. Jetzt sollte man unter `localhost` eine Symfony Seite sehen!
+
+# Repo klonen
+Nachdem ihr das Symfony Projekt erstellt hab klont ihr das Verzeichnis irgendwo auf eure Festplatte.
+Danach kopiert ihr den gesamten Inhalt des geklonten Verzeichnis und kopiert ihn in den Ordner des Symfony Projekts
+
+(Die Datein im geklonten Verzeichnis sollen kopiert werden (also z.B. diese README.md, etc.))
+
+Danach könnt ihr normal pushen und pullen (GitHub Desktop macht das dann nochmal viel leichter)
