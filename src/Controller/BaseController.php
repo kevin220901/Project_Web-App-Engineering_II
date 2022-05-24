@@ -19,7 +19,10 @@ class BaseController extends AbstractController
             '3' => ['title' => 'Winter', 'body' => 'Der Winter war...']
         ];
         return $this->render('base.html.twig', [
-            'articles' => $articles
+            'articles' => $articles,
+            'darkMode' => true,
+            'logged_in' => false,
+            'unread_messages' => 0
         ]);
     }
 }

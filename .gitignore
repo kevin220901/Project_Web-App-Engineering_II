@@ -23,8 +23,6 @@
 .idea/*
 bin/*
 translations/*
-.env
-.env.test
 docker-compose.override.yml
 docker-compose.yml
 phpunit.xml.dist
