@@ -52,7 +52,7 @@
                 <div class="container">
                     <div class="text-center">
                         {# Das Bild liegt in "public/assets/World-Wild-Wiki_LOGO.svg" #}
-                        <img class="NormalPadding" src="{{ asset('assets/World-Wild-Wiki_LOGO.svg') }}" alt="Logo" width="30%"/>
+                        <img class="normalPadding" src="{{ asset('assets/World-Wild-Wiki_LOGO.svg') }}" alt="Logo" width="30%"/>
                     </div>
                 </div>
             </div>
@@ -68,15 +68,15 @@
                             {% else %} navbar-light
                             {% endif %}"
                 >
-                    <a class="navbar-brand IgnoreTopBottomPadding" href="#">Home </a>
+                    <a class="navLink textColor navbar-brand" href="#">Home </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav mr-auto">
-                            <li class="navbar-brand IgnoreTopBottomPadding dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle navLink" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Wiki
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -84,30 +84,36 @@
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#">Wikis erkunden</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Zufälliges Wiki</a>
+                                    <a class="dropdown-item" href="/rdmWiki">Zufälliges Wiki</a>
                                 </div>
                             </li>
                         </ul>
-                        <div class="text-end">
-                            {% if logged_in is defined %}
-                                {% if logged_in == true %}
-                                    {% if unread_messages is defined %}
-                                        {% if unread_messages > 0 %} <span class="navbar-brand"><a class="textColor" href="#"><i class="bi bi-envelope-exclamation"></i></a></span>
-                                        {% else %} <span class="navbar-brand"><a class="textColor" href="#"><i class="bi bi-envelope"></i></a></span>
-                                        {% endif %}
-                                    {% endif %}
-                                    <span class="navbar-brand"><a class="textColor" href="#"><i class="bi bi-gear"></i></a></span>
-                                {% else %}
-                                    <button type="button" class="btn btn-light text-dark me-2">Login</button>
-                                    <button type="button" class="btn btn-primary">Sign-up</button>
+                        <div class="p-2">
+                            {% if darkMode is defined %}
+                                {% if darkMode == false %} <a class="navLink textColor" href="/darkMode"><i class="bi bi-moon"></i></a>
+                                {% else %} <a class="navLink textColor" href="/lightMode"><i class="bi bi-sun"></i></a>
                                 {% endif %}
+                            {% else %} <a class="navLink textColor" href="/lightMode"><i class="bi bi-sun"></i></a>
                             {% endif %}
-
+                        </div>
+                        <div class="p-2">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-gear"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Besucher</a>
+                                    <a class="dropdown-item" href="#">Eingeloggter Nutzer</a>
+                                    <a class="dropdown-item" href="#">Wiki Admin</a>
+                                    <a class="dropdown-item" href="#">Platform Admin</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
+        {# End of banner #}
 
         {% block body %}
         {% endblock %}
