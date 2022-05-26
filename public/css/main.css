@@ -13,3 +13,11 @@
 .navLink:hover{
     color: inherit;
 }
+
+.hideCheckbox{
+    display: none;
+}
+
+.display-none{
+    display: none;
+}

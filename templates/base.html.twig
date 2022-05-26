@@ -16,8 +16,8 @@
         <link rel="stylesheet"
               href="{{ asset('css/main.css') }}">
         {# .ico Icon #}
-        <link rel="icon" type="image/x-icon" href="{{ asset('assets/wwwIcon.ico') }}">
-        <title>{% block title %}Wenn du das siehst küss ich dich :){% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{% block favicon %}{{ asset('assets/wwwIcon.ico') }}{% endblock %}">
+        <title>{% block title %}World Wild Wiki{% endblock %}</title>
         <style>
             {# Überschreibt die css Klassen direkt, für dark/light Mode #}
             .bannerColor{
@@ -143,6 +143,10 @@
 
         {# Our JavaScript #}
         <script src="{{ asset('js/main.js') }}"></script>
+
+        {# Füge <script> tags ein die von anderen Templates genutzt werden #}
+        {% block scripts %}
+        {% endblock %}
 
     </body>
 </html>

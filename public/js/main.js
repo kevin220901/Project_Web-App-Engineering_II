@@ -41,7 +41,6 @@ if(loginButton !== null){
                 $('#pill-login-button').removeClass('btn-dark');
                 $('#pill-register-button').addClass('btn-dark');
             }
-
             $('#pill-register-button').removeClass('active');
             $('#pill-login-button').addClass('active');
 
@@ -59,8 +58,6 @@ if(loginButton !== null){
                 $('#pill-register-button').removeClass('btn-dark');
                 $('#pill-login-button').addClass('btn-dark');
             }
-
-
             $('#pill-login-button').removeClass('active');
             $('#pill-register-button').addClass('active');
 

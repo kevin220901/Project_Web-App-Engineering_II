@@ -66,8 +66,20 @@ class BaseController extends AbstractController
      * @Route("/browse", name="browse")
      */
     public function renderBrowse(): Response{
+
+        $wikiTags = [
+            '0' => ['tag' => 'Filme', 'id' => 1],
+            '1' => ['tag' => 'Bücher', 'id' => 2],
+            '2' => ['tag' => 'Spiele', 'id' => 3],
+            '3' => ['tag' => 'Musik', 'id' => 4],
+            '4' => ['tag' => 'Computer', 'id' => 5],
+            '5' => ['tag' => 'Allgemein', 'id' => 6],
+            '6' => ['tag' => 'Anime', 'id' => 7],
+        ];
+
         return $this->render('/wikiPages/browse.html.twig', [
             'darkMode' => $this->getDarkMode(),
+            'wikiTags' => $wikiTags
         ]);
     }
 
