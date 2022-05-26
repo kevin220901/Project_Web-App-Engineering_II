@@ -1,0 +1,85 @@
+{# templates/wikiPages/login.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <section class="pb-4">
+        <div class="container">
+            <section class="w-100 p-4 d-flex justify-content-center pb-4">
+                <div style="width: 26rem;">
+                    {# Auswahl zwischen Login und Register#}
+                    <ul class="nav nav-pills nav-justified mb-3">
+                        <li class="nav-item">
+                            <button class="nav-link btn btn-block active" id="pill-login-button">Login</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link btn btn-block {% if darkMode is defined %}{% if darkMode == true %}btn-dark{% else %}btn-light{% endif %}{% else %}btn-light{% endif %}"
+                                    id="pill-register-button">Register</button>
+                        </li>
+                    </ul>
+
+
+                    {# Content der der beiden pills #}
+                    <div class="tab-content">
+                        {# Sign in content #}
+                        <div class="tab-pane show active" id="pills-login-content">
+                            <form>
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input type="email" id="loginName" class="form-control">
+                                    <label class="form-label" for="loginName" style="margin-left: 0px;">Email or username</label>
+                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 115.2px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                                <!-- Password input -->
+                                <div class="form-outline">
+                                    <input type="password" id="loginPassword" class="form-control">
+                                    <label class="form-label" for="loginPassword" style="margin-left: 0px;">Password</label>
+                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                                <!-- 2 column grid layout -->
+                                    <!-- Simple link -->
+                                    <a href="#"><p class="text-center">Forgot password?</p></a>
+
+
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
+                            </form>
+                        </div>
+                        {# Register content #}
+                        <div class="tab-pane fade" id="pills-register-content">
+                            <form>
+                                <!-- Username input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="registerUsername" class="form-control">
+                                    <label class="form-label" for="registerUsername" style="margin-left: 0px;">Username</label>
+                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input type="email" id="registerEmail" class="form-control">
+                                    <label class="form-label" for="registerEmail" style="margin-left: 0px;">Email</label>
+                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+                                    <input type="password" id="registerPassword" class="form-control">
+                                    <label class="form-label" for="registerPassword" style="margin-left: 0px;">Password</label>
+                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                                <!-- Repeat Password input -->
+                                <div class="form-outline mb-4">
+                                    <input type="password" id="registerRepeatPassword" class="form-control">
+                                    <label class="form-label" for="registerRepeatPassword" style="margin-left: 0px;">Repeat password</label>
+                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-primary btn-block mb-3">Register</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+{% endblock %}

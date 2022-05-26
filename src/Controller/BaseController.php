@@ -8,19 +8,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BaseController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     */
-    public function setVariables(): Response{
+
+    public function getDarkMode(): bool{
         $darkMode = false;
         if(isset($_COOKIE["darkMode"])) {
             $darkMode = $_COOKIE["darkMode"];
         }
+        return filter_var($darkMode, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+    /**
+     * @Route("/", name="home")
+     */
+    public function renderBase(): Response{
 
         return $this->render('base.html.twig', [
-            'darkMode' => $darkMode,
-            'logged_in' => false,
-            'unread_messages' => 0
+            'darkMode' => $this->getDarkMode()
         ]);
     }
 
@@ -30,30 +34,21 @@ class BaseController extends AbstractController
     public function setVariables2(): Response{
 
         return $this->render('/wikiPages/home.html.twig', [
-
+            'darkMode' => $this->getDarkMode(),
         ]);
     }
 
-
-
     /**
-     * @Route("/darkMode", name="setDarkMode")
+     * @Route("/wiki/{id}", name="wiki")
      */
-    public function setDarkMode(): Response{
-        # Setzt einen Cookie mit setcookie(name, value, expire, path, domain, secure, httponly);
-        # name ist der Name des Cookies und mit diesem interagiert man auch mit ihm, value ist der Wert, expire das Verfallsdatum, path ist auf welchen Seiten der Cookie funktionieren soll
-        setcookie("darkMode", true, time() + (86400 * 30), "/");
-        return $this->redirectToRoute('home');
+    public function renderWiki(int $id): Response{
+        return $this->render('/wikiPages/home.html.twig', [
+            'darkMode' => $this->getDarkMode(),
+            "WikiID" => $id
+        ]);
     }
 
-    /**
-     * @Route("/lightMode", name="setLightMode")
-     */
-    public function setLightMode(): Response{
-        setcookie("darkMode", false, time() + (86400 * 30), "/");
-        return $this->redirectToRoute('home');
-    }
-
+    // Generates a rdm number and gives it to the /wiki/{id} route
     /**
      * @Route("/rdmWiki", name="generateNumber")
      */
@@ -63,8 +58,16 @@ class BaseController extends AbstractController
         } catch (\Exception $e) {
             $number = 1;
         }
-        return $this->redirectToRoute('home');
+        return $this->redirectToRoute('wiki', array('id' => $number));
     }
+    /**
+     * @Route("/login", name="login")
+     */
+    public function renderLogin(): Response{
 
+        return $this->render('/wikiPages/login.html.twig', [
+            'darkMode' => $this->getDarkMode(),
+        ]);
+    }
 
 }

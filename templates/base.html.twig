@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
         {# Our CSS #}
         <link rel="stylesheet"
-              href="{{ asset('stylesheet/main.css') }}">
+              href="{{ asset('css/main.css') }}">
         {# .ico Icon #}
         <link rel="icon" type="image/x-icon" href="{{ asset('assets/wwwIcon.ico') }}">
         <title>{% block title %}Wenn du das siehst küss ich dich :){% endblock %}</title>
@@ -41,7 +41,6 @@
                     {% endif %}
                 {% endif %}
             }
-
         </style>
     </head>
     <body class="localBackground textColor">
@@ -68,7 +67,7 @@
                             {% else %} navbar-light
                             {% endif %}"
                 >
-                    <a class="navLink textColor navbar-brand" href="#">Home </a>
+                    <a class="navLink textColor navbar-brand" href="/">Home </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -90,24 +89,14 @@
                         </ul>
                         <div class="p-2">
                             {% if darkMode is defined %}
-                                {% if darkMode == false %} <a class="navLink textColor" href="/darkMode"><i class="bi bi-moon"></i></a>
-                                {% else %} <a class="navLink textColor" href="/lightMode"><i class="bi bi-sun"></i></a>
+                                {% if darkMode == false %} <button id="darkModeButton" type="button" class="btn btn-dark"><i class="bi bi-moon"></i></button>
+                                {% else %} <button id="lightModeButton" type="button" class="btn btn-light"><i class="bi bi-sun"></i></button>
                                 {% endif %}
-                            {% else %} <a class="navLink textColor" href="/lightMode"><i class="bi bi-sun"></i></a>
+                            {% else %} <button id="lightModeButton" type="button" class="btn btn-light"><i class="bi bi-sun"></i></button>
                             {% endif %}
                         </div>
                         <div class="p-2">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="bi bi-gear"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Besucher</a>
-                                    <a class="dropdown-item" href="#">Eingeloggter Nutzer</a>
-                                    <a class="dropdown-item" href="#">Wiki Admin</a>
-                                    <a class="dropdown-item" href="#">Platform Admin</a>
-                                </div>
-                            </div>
+                            <a class="btn btn-outline-secondary" href="/login">Sign in</a>
                         </div>
                     </div>
                 </nav>
@@ -116,12 +105,8 @@
         {# End of banner #}
 
         {% block body %}
+            Where will I end ?
         {% endblock %}
-
-        <h1>Hello, world!</h1>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
         {# Footer of our page #}
         <footer class="bannerColor">
@@ -147,6 +132,8 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         {# Our JavaScript #}
+        <script src="{{ asset('js/jQuery.js') }}"></script>
         <script src="{{ asset('js/main.js') }}"></script>
+
     </body>
 </html>
