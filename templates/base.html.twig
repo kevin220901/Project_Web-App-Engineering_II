@@ -19,6 +19,7 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('assets/wwwIcon.ico') }}">
         <title>{% block title %}Wenn du das siehst küss ich dich :){% endblock %}</title>
         <style>
+            {# Überschreibt die css Klassen direkt, für dark/light Mode #}
             .bannerColor{
                 {# LightMode #}
                 background-color: #eceff3;
@@ -45,7 +46,7 @@
     </head>
     <body class="localBackground textColor">
 
-        {# Header of our page #}
+        {# Header mit unserem Logo #}
         <header>
             <div class="bannerColor">
                 <div class="container">
@@ -56,7 +57,7 @@
                 </div>
             </div>
         </header>
-        {# Navbar, musst be a direct child of boy, or sticky-top doesn't work #}
+        {# Navbar, sticky-top muss ein direktes Child von body sein, damit die Navbar am oberen Bildschirm bleibt #}
         <div class="bannerColor sticky-top">
             <div class="container">
                 <nav class="navbar navbar-expand-lg
@@ -81,7 +82,7 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="#">Neues Wiki erstellen</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Wikis erkunden</a>
+                                    <a class="dropdown-item" href="/browse">Wikis erkunden</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="/rdmWiki">Zufälliges Wiki</a>
                                 </div>
@@ -102,13 +103,12 @@
                 </nav>
             </div>
         </div>
-        {# End of banner #}
 
         {% block body %}
-            Where will I end ?
+            Ich werde überschrieben, sobald ein anderes Template geladen wird :)
         {% endblock %}
 
-        {# Footer of our page #}
+        {# Footer #}
         <footer class="bannerColor">
             <div class="container">
                 <div class="py-3 my-4">
@@ -131,8 +131,17 @@
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        {# Markdown parser #}
+        {# https://github.com/markedjs/marked #}
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+        {# DOMPurify Sanitizer #}
+        {# https://github.com/cure53/DOMPurify #}
+        <script type="text/javascript" src="{{ asset('js/purify.min.js') }}"></script>
+
+
         {# Our JavaScript #}
-        <script src="{{ asset('js/jQuery.js') }}"></script>
         <script src="{{ asset('js/main.js') }}"></script>
 
     </body>

@@ -1,5 +1,8 @@
 {# templates/wikiPages/home.html.twig #}
 {% extends 'base.html.twig' %}
 {% block body %}
-    <h1>{{ WikiID }}</h1>
+    <div class="container mt-5 border rounded">
+        <div id="parseToMD" class="mt-2">{# Dieses div muss leer bleiben! Der gwünschte Inhalt muss direkt an main.js übergeben werden! #}</div>
+    </div>
+
 {% endblock %}

@@ -21,59 +21,59 @@
 
                     {# Content der der beiden pills #}
                     <div class="tab-content">
-                        {# Sign in content #}
+                        {# Login #}
                         <div class="tab-pane show active" id="pills-login-content">
                             <form>
-                                <!-- Email input -->
+                                {# Email/Username input #}
                                 <div class="form-outline mb-4">
                                     <input type="email" id="loginName" class="form-control">
-                                    <label class="form-label" for="loginName" style="margin-left: 0px;">Email or username</label>
-                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 115.2px;"></div><div class="form-notch-trailing"></div></div></div>
+                                    <label class="form-label" for="loginName" style="margin-left: 0px;">E-Mail oder Username</label>
+                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 115.2px;"></div><div class="form-notch-trailing"></div></div>
+                                </div>
 
-                                <!-- Password input -->
+                                {# Passwort Input #}
                                 <div class="form-outline">
                                     <input type="password" id="loginPassword" class="form-control">
-                                    <label class="form-label" for="loginPassword" style="margin-left: 0px;">Password</label>
-                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64px;"></div><div class="form-notch-trailing"></div></div></div>
+                                    <label class="form-label" for="loginPassword" style="margin-left: 0px;">Passwort</label>
+                                    <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64px;"></div><div class="form-notch-trailing"></div></div>
+                                </div>
 
-                                <!-- 2 column grid layout -->
-                                    <!-- Simple link -->
-                                    <a href="#"><p class="text-center">Forgot password?</p></a>
+                                {# Passwort vergessen Link#}
+                                <a href="#"><p class="text-center">Passwort vergessen?</p></a>
 
-
-                                <!-- Submit button -->
                                 <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
                             </form>
                         </div>
+
                         {# Register content #}
                         <div class="tab-pane fade" id="pills-register-content">
                             <form>
-                                <!-- Username input -->
+                                {# Username Input #}
                                 <div class="form-outline mb-4">
                                     <input type="text" id="registerUsername" class="form-control">
                                     <label class="form-label" for="registerUsername" style="margin-left: 0px;">Username</label>
                                     <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
 
-                                <!-- Email input -->
+                                {# Email Input #}
                                 <div class="form-outline mb-4">
                                     <input type="email" id="registerEmail" class="form-control">
                                     <label class="form-label" for="registerEmail" style="margin-left: 0px;">Email</label>
                                     <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
 
-                                <!-- Password input -->
+                                {# Passwort input #}
                                 <div class="form-outline mb-4">
                                     <input type="password" id="registerPassword" class="form-control">
                                     <label class="form-label" for="registerPassword" style="margin-left: 0px;">Password</label>
                                     <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
 
-                                <!-- Repeat Password input -->
+                                {# Passwort wiederholen #}
                                 <div class="form-outline mb-4">
                                     <input type="password" id="registerRepeatPassword" class="form-control">
                                     <label class="form-label" for="registerRepeatPassword" style="margin-left: 0px;">Repeat password</label>
                                     <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
 
 
-                                <!-- Submit button -->
+                                {# Submit #}
                                 <button type="submit" class="btn btn-primary btn-block mb-3">Register</button>
                             </form>
                         </div>
