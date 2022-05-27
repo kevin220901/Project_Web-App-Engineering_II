@@ -20,6 +20,20 @@ Unsere Wikis sind einzigartig. Ständig kommen neue Themen hinzu und wir freuen 
  Bei der Plattform handelt es sich um Symfony. Dies ist eine Plattform zur Erstellung von Webanwendungen. Hierbei stellt Symfony Code-Bibliotheken für häufig verwendete 
 Funktionen zur Verfügung, wodurch die Menge an zu schreibendem Originalcode deutlich reduziert wird. Hierdurch wird die benötigte Entwicklungszeit für ein Projekt geringer. Der Code wird außerdem in eine Reihe von Verzeichnissen, je nach Funktion aufgeteilt. Das Projekt World Wild Wiki kann öffentlich auf Github eingesehen werden.
 
+### Funktionen
+
+| Funktion (Sichtbarkeit) / User | Plattform Admin | Wiki Owner | Wiki Admin | Collaborator | Normaler User | Unregistriert |
+|---|---|---|---|---|---|---|
+| User Einstellungen | ✔ | ✔ | ✔ | ✔ | ✔ | ❌ |
+| Plattform Einstellungen | ✔ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Neues Wiki | ✔ | ✔ | ✔ | ✔ | ✔ | ❌ |
+| Wiki Einstellungen | ✔ | ✔ | ✔ | ❌ | ❌ | ❌ | ❌ |
+| Wikis Favorisieren / Verstecken / Bewerten | ✔ | ✔ | ✔ | ✔ | 〰 | ❌ |
+| Beiträge einsehen | ✔ | ✔ | ✔ | ✔ | 〰 | 〰 |
+| Beiträge erstellen | ✔ | ✔ | ✔ | ✔ | 〰 | ❌ |
+| Beiträge bearbeiten | ✔ | ✔ | ✔ | ✔ | 〰 | ❌ |
+| Beiträge löschen | ✔ | ✔ | ✔ | 💥 | 💥 | ❌ |
+
 <h1 align = "center">
 FEEL FREE AND ENJOY THE PLATTFORM
 </h1>
