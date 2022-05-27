@@ -8,21 +8,79 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BaseController extends AbstractController
 {
+
+    public function getDarkMode(): bool{
+        $darkMode = false;
+        if(isset($_COOKIE["darkMode"])) {
+            $darkMode = $_COOKIE["darkMode"];
+        }
+        // Da Js true als String speichert muss man den string in einen boolean umformen
+        return filter_var($darkMode, FILTER_VALIDATE_BOOLEAN);
+    }
+
     /**
-     * @Route("/home")
+     * @Route("/", name="home")
      */
-    public function setVariables(): Response{
-        $articles = [
-            '0' => ['title' => 'Frühling', 'body' => 'Der Frühling beginnt...'],
-            '1' => ['title' => 'Sommer', 'body' => 'Der Sommer ist so...'],
-            '2' => ['title' => 'Herbst', 'body' => 'Der Herbst ist immer...'],
-            '3' => ['title' => 'Winter', 'body' => 'Der Winter war...']
-        ];
-        return $this->render('base.html.twig', [
-            'articles' => $articles,
-            'darkMode' => true,
-            'logged_in' => false,
-            'unread_messages' => 0
+    public function renderBase(): Response{
+
+        return $this->render('/wikiPages/home.html.twig', [
+            'darkMode' => $this->getDarkMode()
         ]);
     }
+
+
+    /**
+     * @Route("/wiki/{id}", name="wiki")
+     */
+    public function renderWiki(int $id): Response{
+        return $this->render('/wikiPages/wikiPage.html.twig', [
+            'darkMode' => $this->getDarkMode(),
+            "WikiID" => $id
+        ]);
+    }
+
+    // Erzeugt eine rdm Nummer und gibt diese an die wiki Route
+    /**
+     * @Route("/rdmWiki", name="generateNumber")
+     */
+    public function generateNumber(): Response{
+        try {
+            $number = random_int(0, 100);
+        } catch (\Exception $e) {
+            $number = 1;
+        }
+        // geht an die Wiki Route, da die Route eine Variable {id} hat muss ein array der Variablen ebenfalls übergeben werden
+        return $this->redirectToRoute('wiki', array('id' => $number));
+    }
+
+    /**
+     * @Route("/login", name="login")
+     */
+    public function renderLogin(): Response{
+        return $this->render('/wikiPages/login.html.twig', [
+            'darkMode' => $this->getDarkMode(),
+        ]);
+    }
+
+    /**
+     * @Route("/browse", name="browse")
+     */
+    public function renderBrowse(): Response{
+
+        $wikiTags = [
+            '0' => ['tag' => 'Filme', 'id' => 1],
+            '1' => ['tag' => 'Bücher', 'id' => 2],
+            '2' => ['tag' => 'Spiele', 'id' => 3],
+            '3' => ['tag' => 'Musik', 'id' => 4],
+            '4' => ['tag' => 'Computer', 'id' => 5],
+            '5' => ['tag' => 'Allgemein', 'id' => 6],
+            '6' => ['tag' => 'Anime', 'id' => 7],
+        ];
+
+        return $this->render('/wikiPages/browse.html.twig', [
+            'darkMode' => $this->getDarkMode(),
+            'wikiTags' => $wikiTags
+        ]);
+    }
+
 }

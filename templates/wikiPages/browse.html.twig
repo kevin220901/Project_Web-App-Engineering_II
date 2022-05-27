@@ -1,0 +1,75 @@
+{# templates/wikiPages/home.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="mt-3 row w-75 mx-auto">
+            <div class="col-3">
+                <select class="custom-select">
+                    <option selected disabled>Sortieren</option>
+                    <option value="1">A-Z</option>
+                    <option value="2">Bewertung</option>
+                    <option value="3">Einträge</option>
+                    <option value="4">Favoriten</option>
+                </select>
+            </div>
+            <div class="col-6 p-0">
+                <input type="text" class="form-control" aria-label="Text input with dropdown button" placeholder="Suchen...">
+            </div>
+
+            <div class="col-2 p-0">
+                <button class="btn btn-outline-secondary w-100" type="button"><i class="bi bi-search"></i></button>
+            </div>
+        </div>
+
+        <div class="mt-2 row w-75 mx-auto">
+            <div class="col-3"></div>
+            <div class="col p-0">
+                {% for t in wikiTags %}
+                    <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
+
+                        <input class="form-check-input hideCheckbox" type="checkbox" id="inlineCheckbox{{ t.id }}INCLUDE" value="include_{{ t.id }}">
+                        <label class="form-check-label btn btn-sm btn-secondary w-100" id="inlineLabel{{ t.id }}INCLUDE" for="inlineCheckbox{{ t.id }}+ 'INCLUDE'" onclick="firstCheckboxClick({{ t.id }})">{{ t.tag }}</label>
+
+                        <input class="form-check-input hideCheckbox" type="checkbox" id="inlineCheckbox{{ t.id }}EXCLUDE" value="exclude_{{ t.id }}">
+                        <label class="form-check-label btn btn-sm btn-secondary w-100 display-none" id="inlineLabel{{ t.id }}EXCLUDE" for="inlineCheckbox{{ t.id }}EXCLUDE" onclick="secondCheckboxClick({{ t.id }})">{{ t.tag }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+        <script>
+            {# Jeder Tag ruft diese Funktion mit seiner eigenen Id auf, sobald diese gedrückt werden. Dadruch aktivieren sich die Checkboxen allerdings nicht mehr, darum setzen wir diese manuell #}
+            {# Da es nur an/aus für eine Checkbox gibt, wir aber ignore/include/exclude für die Suche haben, haben wir 2 Checkboxen die je nach momentanen Status ausgetauscht werden #}
+            {# Falls include gesetzt ist und man nochmal auf include klickt, wird include deaktiviert, versteckt und dafür exclude aktiviert und angezeigt. Analog für Exclude #}
+            function firstCheckboxClick(id) {
+                let checkbox = document.getElementById('inlineCheckbox' + id + 'INCLUDE');
+                //alert("Include Box is " + checkbox.checked);
+                if(checkbox.checked === false) {
+                    $('#inlineLabel' + id + 'INCLUDE').removeClass('btn-secondary').addClass('btn-success');
+                    $('#inlineCheckbox' + id + 'INCLUDE').prop("checked", true);
+                }
+                else{
+                    $('#inlineLabel' + id + 'INCLUDE').addClass('display-none').removeClass('btn-success').addClass('btn-secondary');
+                    $('#inlineCheckbox' + id + 'INCLUDE').prop("checked", false);
+
+                    $('#inlineLabel' + id + 'EXCLUDE').removeClass('display-none').removeClass('btn-secondary').addClass('btn-danger');
+                    $('#inlineCheckbox' + id + 'EXCLUDE').prop("checked", true);
+                }
+            }
+
+            function secondCheckboxClick(id) {
+                let checkbox = document.getElementById('inlineCheckbox' + id + 'EXCLUDE');
+                if(checkbox.checked === true) {
+                    $('#inlineLabel' + id + 'EXCLUDE').removeClass('btn-danger').addClass('display-none').addClass('btn-secondary');
+                    $('#inlineCheckbox' + id + 'EXCLUDE').prop("checked", false);
+                    //alert("Exclue Box is " + checkbox.checked);
+
+                    $('#inlineLabel' + id + 'INCLUDE').removeClass('display-none');
+                }
+            }
+        </script>
+{% endblock %}
