@@ -33,7 +33,7 @@ if(loginButton !== null){
     if(registerButton !== null){
         loginButton.onclick = function(event) {
             // Der if Block ist nur für dark/light mode und überprüft welcher btn stlye genutzt wird
-            if($('#pill-login-button').hasClass('btn-light')){
+            if(($('#pill-login-button').hasClass('btn-light'))){
                 $('#pill-login-button').removeClass('btn-light');
                 $('#pill-register-button').addClass('btn-light');
             }
@@ -111,9 +111,11 @@ let text='Marked - Markdown Parser\n' +
     'asddddadaadada\n' +
     '```\n' +
     '`Test`'
+
 let dirtyText = marked.parse(text); //parsed md zu html
 // Erlaubt nur HTML
-let cleanText = DOMPurify.sanitize(dirtyText, { USE_PROFILES: {html: true} }); //Überprüft den Code und entfernt alle Text die nicht in standart html sind <script> etc
+let cleanText = DOMPurify.sanitize(dirtyText, { USE_PROFILES: {html: true} }); //Überprüft den Code und entfernt alle Text die nicht in standard html sind <script> etc
 // Erlaubt HTML, SVG und MathML
 //let cleanText = DOMPurify.sanitize(dirtyText);
 $("#parseToMD").html(cleanText);
+
