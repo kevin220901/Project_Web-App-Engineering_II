@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -74,6 +76,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="boolean")
      */
     private $notify_on_platfrom_info;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Wiki::class, mappedBy="userID")
+     */
+    private $wikis;
+
+    public function __construct()
+    {
+        $this->wikis = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -251,6 +263,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNotifyOnPlatfromInfo(bool $notify_on_platfrom_info): self
     {
         $this->notify_on_platfrom_info = $notify_on_platfrom_info;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Wiki>
+     */
+    public function getWikis(): Collection
+    {
+        return $this->wikis;
+    }
+
+    public function addWiki(Wiki $wiki): self
+    {
+        if (!$this->wikis->contains($wiki)) {
+            $this->wikis[] = $wiki;
+            $wiki->setUserID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWiki(Wiki $wiki): self
+    {
+        if ($this->wikis->removeElement($wiki)) {
+            // set the owning side to null (unless already changed)
+            if ($wiki->getUserID() === $this) {
+                $wiki->setUserID(null);
+            }
+        }
 
         return $this;
     }

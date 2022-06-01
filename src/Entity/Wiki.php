@@ -18,24 +18,19 @@ class Wiki
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $ID;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
-    private $WikiName;
+    private $wikiname;
 
     /**
      * @ORM\Column(type="blob", nullable=true)
      */
-    private $WikiBild;
+    private $wikibild;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $Startseite_md;
+    private $startseite_md;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -87,50 +82,49 @@ class Wiki
      */
     private $wiki_banned;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="wikis")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $userID;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setID(int $ID): self
+    public function getWikiname(): ?string
     {
-        $this->ID = $ID;
+        return $this->wikiname;
+    }
+
+    public function setWikiname(string $wikiname): self
+    {
+        $this->wikiname = $wikiname;
 
         return $this;
     }
 
-    public function getWikiName(): ?string
+    public function getWikibild()
     {
-        return $this->WikiName;
+        return $this->wikibild;
     }
 
-    public function setWikiName(string $WikiName): self
+    public function setWikibild($wikibild): self
     {
-        $this->WikiName = $WikiName;
-
-        return $this;
-    }
-
-    public function getWikiBild()
-    {
-        return $this->WikiBild;
-    }
-
-    public function setWikiBild($WikiBild): self
-    {
-        $this->WikiBild = $WikiBild;
+        $this->wikibild = $wikibild;
 
         return $this;
     }
 
     public function getStartseiteMd(): ?string
     {
-        return $this->Startseite_md;
+        return $this->startseite_md;
     }
 
-    public function setStartseiteMd(?string $Startseite_md): self
+    public function setStartseiteMd(?string $startseite_md): self
     {
-        $this->Startseite_md = $Startseite_md;
+        $this->startseite_md = $startseite_md;
 
         return $this;
     }
@@ -251,6 +245,18 @@ class Wiki
     public function setWikiBanned(?bool $wiki_banned): self
     {
         $this->wiki_banned = $wiki_banned;
+
+        return $this;
+    }
+
+    public function getUserID(): ?User
+    {
+        return $this->userID;
+    }
+
+    public function setUserID(?User $userID): self
+    {
+        $this->userID = $userID;
 
         return $this;
     }
