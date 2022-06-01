@@ -54,7 +54,7 @@ class BaseController extends AbstractController
     }
 
     /**
-     * @Route("/login", name="login")
+     * @Route("/login2", name="login")
      */
     public function renderLogin(): Response{
         return $this->render('/wikiPages/login.html.twig', [
