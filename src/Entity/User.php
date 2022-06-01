@@ -6,11 +6,13 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -45,11 +47,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private $email_valid;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
     private $user_banned;
 
     /**
@@ -78,6 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $notify_on_platfrom_info;
 
     /**
+
      * @ORM\OneToMany(targetEntity=Wiki::class, mappedBy="userID")
      */
     private $wikis;
@@ -110,6 +108,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userFavoriteWikis = new ArrayCollection();
         $this->userIgnoreWikis = new ArrayCollection();
     }
+
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
 
     public function getId(): ?int
     {
@@ -207,18 +209,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isEmailValid(): ?bool
-    {
-        return $this->email_valid;
-    }
-
-    public function setEmailValid(?bool $email_valid): self
-    {
-        $this->email_valid = $email_valid;
-
-        return $this;
-    }
-
     public function isUserBanned(): ?bool
     {
         return $this->user_banned;
@@ -290,6 +280,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 
     /**
      * @return Collection<int, Wiki>
@@ -437,6 +428,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $userIgnoreWiki->setUserID(null);
             }
         }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
 
         return $this;
     }
