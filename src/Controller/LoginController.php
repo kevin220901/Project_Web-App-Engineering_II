@@ -7,12 +7,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-include("BaseController.php");
 class LoginController extends AbstractController
 {
 
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/login", name="login")
      */
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
