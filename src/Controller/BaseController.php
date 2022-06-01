@@ -54,15 +54,6 @@ class BaseController extends AbstractController
     }
 
     /**
-     * @Route("/login", name="login")
-     */
-    public function renderLogin(): Response{
-        return $this->render('/wikiPages/login.html.twig', [
-            'darkMode' => $this->getDarkMode(),
-        ]);
-    }
-
-    /**
      * @Route("/browse", name="browse")
      */
     public function renderBrowse(): Response{
@@ -74,7 +65,7 @@ class BaseController extends AbstractController
             '3' => ['tag' => 'Musik', 'id' => 4],
             '4' => ['tag' => 'Computer', 'id' => 5],
             '5' => ['tag' => 'Allgemein', 'id' => 6],
-            '6' => ['tag' => 'Anime', 'id' => 7],
+            '6' => ['tag' => urlencode("my.dnd.spellbook@gmail.com"), 'id' => 7],
         ];
 
         return $this->render('/wikiPages/browse.html.twig', [

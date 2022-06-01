@@ -1,7 +1,12 @@
-{# templates/wikiPages/login.html.twig #}
+{# templates/login/index.html.twig #}
+
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
 
     <section class="pb-4">
         <div class="container">
@@ -18,21 +23,20 @@
                         </li>
                     </ul>
 
-
                     {# Content der der beiden pills #}
                     <div class="tab-content">
                         {# Login #}
                         <div class="tab-pane show active" id="pills-login-content">
-                            <form>
+                            <form action="{{ path('login') }}" method="post">
                                 {# Email/Username input #}
                                 <div class="form-outline mb-4">
-                                    <input type="email" id="loginName" class="form-control" placeholder="Username oder E-Mail">
-                                    <label class="form-label" for="loginName">E-Mail oder Username</label>
+                                    <input type="text" id="loginName" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}">
+                                    <label class="form-label" for="loginName">Username</label>
                                 </div>
 
                                 {# Passwort Input #}
                                 <div class="form-outline">
-                                    <input type="password" id="loginPassword" class="form-control" placeholder="Dein Passwort">
+                                    <input type="password" id="loginPassword" class="form-control" placeholder="Dein Passwort" name="_password">
                                     <label class="form-label" for="loginPassword">Passwort</label>
                                 </div>
 

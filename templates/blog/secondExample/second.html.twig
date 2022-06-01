@@ -1,9 +1,0 @@
-{# templates/blog/secondExample/second.html.twig #}
-{% extends 'blog/secondExample/layout.html.twig' %}
-{% block title %}Blog Index{% endblock %}
-{% block page_contents %}
-    {% for article in articles %}
-        <h2>{{ article.title }}</h2>
-        <p>{{ article.body}}</p>
-    {% endfor %}
-{% endblock %}
