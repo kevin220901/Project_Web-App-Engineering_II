@@ -82,9 +82,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $wikis;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Beitraege::class, mappedBy="userID")
+     */
+    private $beitraege;
+
+    /**
+     * @ORM\OneToMany(targetEntity=BeitragVotes::class, mappedBy="userID")
+     */
+    private $beitragVotes;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UserFavoriteWiki::class, mappedBy="userID")
+     */
+    private $userFavoriteWikis;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UserIgnoreWiki::class, mappedBy="userID")
+     */
+    private $userIgnoreWikis;
+
     public function __construct()
     {
         $this->wikis = new ArrayCollection();
+        $this->beitraege = new ArrayCollection();
+        $this->beitragVotes = new ArrayCollection();
+        $this->userFavoriteWikis = new ArrayCollection();
+        $this->userIgnoreWikis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -291,6 +315,126 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($wiki->getUserID() === $this) {
                 $wiki->setUserID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Beitraege>
+     */
+    public function getBeitraege(): Collection
+    {
+        return $this->beitraege;
+    }
+
+    public function addBeitraege(Beitraege $beitraege): self
+    {
+        if (!$this->beitraege->contains($beitraege)) {
+            $this->beitraege[] = $beitraege;
+            $beitraege->setUserID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBeitraege(Beitraege $beitraege): self
+    {
+        if ($this->beitraege->removeElement($beitraege)) {
+            // set the owning side to null (unless already changed)
+            if ($beitraege->getUserID() === $this) {
+                $beitraege->setUserID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BeitragVotes>
+     */
+    public function getBeitragVotes(): Collection
+    {
+        return $this->beitragVotes;
+    }
+
+    public function addBeitragVote(BeitragVotes $beitragVote): self
+    {
+        if (!$this->beitragVotes->contains($beitragVote)) {
+            $this->beitragVotes[] = $beitragVote;
+            $beitragVote->setUserID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBeitragVote(BeitragVotes $beitragVote): self
+    {
+        if ($this->beitragVotes->removeElement($beitragVote)) {
+            // set the owning side to null (unless already changed)
+            if ($beitragVote->getUserID() === $this) {
+                $beitragVote->setUserID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserFavoriteWiki>
+     */
+    public function getUserFavoriteWikis(): Collection
+    {
+        return $this->userFavoriteWikis;
+    }
+
+    public function addUserFavoriteWiki(UserFavoriteWiki $userFavoriteWiki): self
+    {
+        if (!$this->userFavoriteWikis->contains($userFavoriteWiki)) {
+            $this->userFavoriteWikis[] = $userFavoriteWiki;
+            $userFavoriteWiki->setUserID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserFavoriteWiki(UserFavoriteWiki $userFavoriteWiki): self
+    {
+        if ($this->userFavoriteWikis->removeElement($userFavoriteWiki)) {
+            // set the owning side to null (unless already changed)
+            if ($userFavoriteWiki->getUserID() === $this) {
+                $userFavoriteWiki->setUserID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserIgnoreWiki>
+     */
+    public function getUserIgnoreWikis(): Collection
+    {
+        return $this->userIgnoreWikis;
+    }
+
+    public function addUserIgnoreWiki(UserIgnoreWiki $userIgnoreWiki): self
+    {
+        if (!$this->userIgnoreWikis->contains($userIgnoreWiki)) {
+            $this->userIgnoreWikis[] = $userIgnoreWiki;
+            $userIgnoreWiki->setUserID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserIgnoreWiki(UserIgnoreWiki $userIgnoreWiki): self
+    {
+        if ($this->userIgnoreWikis->removeElement($userIgnoreWiki)) {
+            // set the owning side to null (unless already changed)
+            if ($userIgnoreWiki->getUserID() === $this) {
+                $userIgnoreWiki->setUserID(null);
             }
         }
 
