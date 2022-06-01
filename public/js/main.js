@@ -33,36 +33,38 @@ if(loginButton !== null){
     if(registerButton !== null){
         loginButton.onclick = function(event) {
             // Der if Block ist nur für dark/light mode und überprüft welcher btn stlye genutzt wird
-            if(($('#pill-login-button').hasClass('btn-light'))){
-                $('#pill-login-button').removeClass('btn-light');
-                $('#pill-register-button').addClass('btn-light');
+            if(!$('#pill-login-button').hasClass('active')){
+                if(($('#pill-login-button').hasClass('btn-light'))){
+                    $('#pill-login-button').removeClass('btn-light');
+                    $('#pill-register-button').addClass('btn-light');
+                }
+                else{
+                    $('#pill-login-button').removeClass('btn-dark');
+                    $('#pill-register-button').addClass('btn-dark');
+                }
+                $('#pill-register-button').removeClass('active');
+                $('#pill-login-button').addClass('active');
+
+                $('#pills-register-content').removeClass('active show').addClass('fade');
+                $('#pills-login-content').addClass('active show');
             }
-            else{
-                $('#pill-login-button').removeClass('btn-dark');
-                $('#pill-register-button').addClass('btn-dark');
-            }
-            $('#pill-register-button').removeClass('active');
-            $('#pill-login-button').addClass('active');
-
-            $('#pills-register-content').removeClass('active show').addClass('fade');
-            $('#pills-login-content').addClass('active show');
-
-
         }
         registerButton.onclick = function(event) {
-            if($('#pill-register-button').hasClass('btn-light')){
-                $('#pill-register-button').removeClass('btn-light');
-                $('#pill-login-button').addClass('btn-light');
-            }
-            else{
-                $('#pill-register-button').removeClass('btn-dark');
-                $('#pill-login-button').addClass('btn-dark');
-            }
-            $('#pill-login-button').removeClass('active');
-            $('#pill-register-button').addClass('active');
+            if(!$('#pill-register-button').hasClass('active')){
+                if($('#pill-register-button').hasClass('btn-light')){
+                    $('#pill-register-button').removeClass('btn-light');
+                    $('#pill-login-button').addClass('btn-light');
+                }
+                else{
+                    $('#pill-register-button').removeClass('btn-dark');
+                    $('#pill-login-button').addClass('btn-dark');
+                }
+                $('#pill-login-button').removeClass('active');
+                $('#pill-register-button').addClass('active');
 
-            $('#pills-login-content').removeClass('active show').addClass('fade');
-            $('#pills-register-content').addClass('active show');
+                $('#pills-login-content').removeClass('active show').addClass('fade');
+                $('#pills-register-content').addClass('active show');
+            }
         }
     }
 }
