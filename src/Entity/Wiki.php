@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\WikiRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,24 +20,19 @@ class Wiki
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $ID;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
-    private $WikiName;
+    private $wikiname;
 
     /**
      * @ORM\Column(type="blob", nullable=true)
      */
-    private $WikiBild;
+    private $wikibild;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $Startseite_md;
+    private $startseite_md;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -87,50 +84,95 @@ class Wiki
      */
     private $wiki_banned;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="wikis")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $userID;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Beitraege::class, mappedBy="wikiID")
+     */
+    private $beitraege;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Wikiadmin::class, mappedBy="wikiID")
+     */
+    private $wikiadmins;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Collaborator::class, mappedBy="wikiID")
+     */
+    private $collaborators;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Wikivotes::class, mappedBy="wikiID")
+     */
+    private $wikivotes;
+
+    /**
+     * @ORM\OneToMany(targetEntity=BanedUsersFromWiki::class, mappedBy="wikiID")
+     */
+    private $banedUsersFromWikis;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UserFavoriteWiki::class, mappedBy="wikiID")
+     */
+    private $userFavoriteWikis;
+
+    /**
+     * @ORM\OneToMany(targetEntity=WikiTags::class, mappedBy="wikiID")
+     */
+    private $wikiTags;
+
+    public function __construct()
+    {
+        $this->beitraege = new ArrayCollection();
+        $this->wikiadmins = new ArrayCollection();
+        $this->collaborators = new ArrayCollection();
+        $this->wikivotes = new ArrayCollection();
+        $this->banedUsersFromWikis = new ArrayCollection();
+        $this->userFavoriteWikis = new ArrayCollection();
+        $this->wikiTags = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setID(int $ID): self
+    public function getWikiname(): ?string
     {
-        $this->ID = $ID;
+        return $this->wikiname;
+    }
+
+    public function setWikiname(string $wikiname): self
+    {
+        $this->wikiname = $wikiname;
 
         return $this;
     }
 
-    public function getWikiName(): ?string
+    public function getWikibild()
     {
-        return $this->WikiName;
+        return $this->wikibild;
     }
 
-    public function setWikiName(string $WikiName): self
+    public function setWikibild($wikibild): self
     {
-        $this->WikiName = $WikiName;
-
-        return $this;
-    }
-
-    public function getWikiBild()
-    {
-        return $this->WikiBild;
-    }
-
-    public function setWikiBild($WikiBild): self
-    {
-        $this->WikiBild = $WikiBild;
+        $this->wikibild = $wikibild;
 
         return $this;
     }
 
     public function getStartseiteMd(): ?string
     {
-        return $this->Startseite_md;
+        return $this->startseite_md;
     }
 
-    public function setStartseiteMd(?string $Startseite_md): self
+    public function setStartseiteMd(?string $startseite_md): self
     {
-        $this->Startseite_md = $Startseite_md;
+        $this->startseite_md = $startseite_md;
 
         return $this;
     }
@@ -251,6 +293,228 @@ class Wiki
     public function setWikiBanned(?bool $wiki_banned): self
     {
         $this->wiki_banned = $wiki_banned;
+
+        return $this;
+    }
+
+    public function getUserID(): ?User
+    {
+        return $this->userID;
+    }
+
+    public function setUserID(?User $userID): self
+    {
+        $this->userID = $userID;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Beitraege>
+     */
+    public function getBeitraege(): Collection
+    {
+        return $this->beitraege;
+    }
+
+    public function addBeitraege(Beitraege $beitraege): self
+    {
+        if (!$this->beitraege->contains($beitraege)) {
+            $this->beitraege[] = $beitraege;
+            $beitraege->setWikiID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBeitraege(Beitraege $beitraege): self
+    {
+        if ($this->beitraege->removeElement($beitraege)) {
+            // set the owning side to null (unless already changed)
+            if ($beitraege->getWikiID() === $this) {
+                $beitraege->setWikiID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Wikiadmin>
+     */
+    public function getWikiadmins(): Collection
+    {
+        return $this->wikiadmins;
+    }
+
+    public function addWikiadmin(Wikiadmin $wikiadmin): self
+    {
+        if (!$this->wikiadmins->contains($wikiadmin)) {
+            $this->wikiadmins[] = $wikiadmin;
+            $wikiadmin->setWikiID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWikiadmin(Wikiadmin $wikiadmin): self
+    {
+        if ($this->wikiadmins->removeElement($wikiadmin)) {
+            // set the owning side to null (unless already changed)
+            if ($wikiadmin->getWikiID() === $this) {
+                $wikiadmin->setWikiID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Collaborator>
+     */
+    public function getCollaborators(): Collection
+    {
+        return $this->collaborators;
+    }
+
+    public function addCollaborator(Collaborator $collaborator): self
+    {
+        if (!$this->collaborators->contains($collaborator)) {
+            $this->collaborators[] = $collaborator;
+            $collaborator->setWikiID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCollaborator(Collaborator $collaborator): self
+    {
+        if ($this->collaborators->removeElement($collaborator)) {
+            // set the owning side to null (unless already changed)
+            if ($collaborator->getWikiID() === $this) {
+                $collaborator->setWikiID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Wikivotes>
+     */
+    public function getWikivotes(): Collection
+    {
+        return $this->wikivotes;
+    }
+
+    public function addWikivote(Wikivotes $wikivote): self
+    {
+        if (!$this->wikivotes->contains($wikivote)) {
+            $this->wikivotes[] = $wikivote;
+            $wikivote->setWikiID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWikivote(Wikivotes $wikivote): self
+    {
+        if ($this->wikivotes->removeElement($wikivote)) {
+            // set the owning side to null (unless already changed)
+            if ($wikivote->getWikiID() === $this) {
+                $wikivote->setWikiID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BanedUsersFromWiki>
+     */
+    public function getBanedUsersFromWikis(): Collection
+    {
+        return $this->banedUsersFromWikis;
+    }
+
+    public function addBanedUsersFromWiki(BanedUsersFromWiki $banedUsersFromWiki): self
+    {
+        if (!$this->banedUsersFromWikis->contains($banedUsersFromWiki)) {
+            $this->banedUsersFromWikis[] = $banedUsersFromWiki;
+            $banedUsersFromWiki->setWikiID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBanedUsersFromWiki(BanedUsersFromWiki $banedUsersFromWiki): self
+    {
+        if ($this->banedUsersFromWikis->removeElement($banedUsersFromWiki)) {
+            // set the owning side to null (unless already changed)
+            if ($banedUsersFromWiki->getWikiID() === $this) {
+                $banedUsersFromWiki->setWikiID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserFavoriteWiki>
+     */
+    public function getUserFavoriteWikis(): Collection
+    {
+        return $this->userFavoriteWikis;
+    }
+
+    public function addUserFavoriteWiki(UserFavoriteWiki $userFavoriteWiki): self
+    {
+        if (!$this->userFavoriteWikis->contains($userFavoriteWiki)) {
+            $this->userFavoriteWikis[] = $userFavoriteWiki;
+            $userFavoriteWiki->setWikiID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserFavoriteWiki(UserFavoriteWiki $userFavoriteWiki): self
+    {
+        if ($this->userFavoriteWikis->removeElement($userFavoriteWiki)) {
+            // set the owning side to null (unless already changed)
+            if ($userFavoriteWiki->getWikiID() === $this) {
+                $userFavoriteWiki->setWikiID(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WikiTags>
+     */
+    public function getWikiTags(): Collection
+    {
+        return $this->wikiTags;
+    }
+
+    public function addWikiTag(WikiTags $wikiTag): self
+    {
+        if (!$this->wikiTags->contains($wikiTag)) {
+            $this->wikiTags[] = $wikiTag;
+            $wikiTag->setWikiID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWikiTag(WikiTags $wikiTag): self
+    {
+        if ($this->wikiTags->removeElement($wikiTag)) {
+            // set the owning side to null (unless already changed)
+            if ($wikiTag->getWikiID() === $this) {
+                $wikiTag->setWikiID(null);
+            }
+        }
 
         return $this;
     }
