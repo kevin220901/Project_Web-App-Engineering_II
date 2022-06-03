@@ -75,7 +75,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $notify_on_platfrom_info;
 
     /**
-
      * @ORM\OneToMany(targetEntity=Wiki::class, mappedBy="userID")
      */
     private $wikis;
@@ -108,7 +107,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userFavoriteWikis = new ArrayCollection();
         $this->userIgnoreWikis = new ArrayCollection();
     }
-
+    /**
      * @ORM\Column(type="boolean")
      */
     private $isVerified = false;
@@ -428,6 +427,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $userIgnoreWiki->setUserID(null);
             }
         }
+        return $this;
+    }
 
     public function isVerified(): bool
     {

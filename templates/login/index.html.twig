@@ -2,8 +2,10 @@
 
 {% extends 'base.html.twig' %}
 
-{% block body %}
 
+{% block title %}Login{% endblock %}
+
+{% block body %}
     {% if error %}
         <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
@@ -18,8 +20,10 @@
                             <button class="nav-link btn btn-block active" id="pill-login-button">Login</button>
                         </li>
                         <li class="nav-item">
+                            <form action="/register">
                             <button class="nav-link btn btn-block {% if darkMode is defined %}{% if darkMode == true %}btn-dark{% else %}btn-light{% endif %}{% else %}btn-light{% endif %}"
-                                    id="pill-register-button">Register</button>
+                                    id="pill-register-button" type="submit" value="geh zu /register">Registrieren</button>
+                            </form>
                         </li>
                     </ul>
 
@@ -46,8 +50,7 @@
                                 <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
                             </form>
                         </div>
-
-                        {# Register content #}
+                        {# Register Kontent #}
                         <div class="tab-pane fade" id="pills-register-content">
                             <form>
                                 {# Username Input #}
@@ -58,8 +61,8 @@
 
                                 {# Email Input #}
                                 <div class="form-outline mb-4">
-                                    <input type="email" id="registerEmail" class="form-control" placeholder="DeineMail@gmail.com">
-                                    <label class="form-label" for="registerEmail">Email</label>
+                                    <input type="email" id="registerEmail" class="form-control" placeholder="Deine E-Mail">
+                                    <label class="form-label" for="registerEmail">E-Mail</label>
                                 </div>
 
                                 {# Passwort input #}
@@ -74,9 +77,14 @@
                                     <label class="form-label" for="registerRepeatPassword">Passwort wiederholen</label>
                                 </div>
 
+                                {# Nutzungsbedingungen, die nicht existieren :) #}
+                                <div class="form-outline mb-4 text-center">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">Ich stimme den Nutzungsbedingungen zu.</label>
+                                </div>
 
                                 {# Submit #}
-                                <button type="submit" class="btn btn-primary btn-block mb-3">Register</button>
+                                <button type="submit" class="btn btn-primary btn-block mb-3">Registrieren</button>
                             </form>
                         </div>
                     </div>

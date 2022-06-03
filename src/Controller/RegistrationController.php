@@ -60,8 +60,10 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
+        $base = new BaseController();
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
+            'darkMode' => $base->getDarkMode(),
         ]);
     }
 

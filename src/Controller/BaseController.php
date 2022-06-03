@@ -65,7 +65,7 @@ class BaseController extends AbstractController
             '3' => ['tag' => 'Musik', 'id' => 4],
             '4' => ['tag' => 'Computer', 'id' => 5],
             '5' => ['tag' => 'Allgemein', 'id' => 6],
-            '6' => ['tag' => urlencode("my.dnd.spellbook@gmail.com"), 'id' => 7],
+            '6' => ['tag' => 'Sport', 'id' => 7],
         ];
 
         return $this->render('/wikiPages/browse.html.twig', [

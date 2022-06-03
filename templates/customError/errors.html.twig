@@ -1,0 +1,10 @@
+{# templates/customError/errors.html.twig #}
+{% block form_errors %}
+
+    {% if errors|length > 0 %}
+        {% for error in errors %}
+            {{ error.message }} <br>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}
