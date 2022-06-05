@@ -42,6 +42,12 @@
                     {% endif %}
                 {% endif %}
             }
+            .filter-logo{
+                {% if darkMode is defined %}
+                    {% if darkMode == true%} filter: invert(100%);
+                    {% endif %}
+                {% endif %}
+            }
         </style>
     </head>
     <body class="localBackground textColor">
@@ -52,7 +58,11 @@
                 <div class="container">
                     <div class="text-center">
                         {# Das Bild liegt in "public/assets/World-Wild-Wiki_LOGO.svg" #}
-                        <img class="normalPadding" src="{{ asset('assets/World-Wild-Wiki_LOGO.svg') }}" alt="Logo" width="30%"/>
+                        <img class="normalPadding filter-logo" src="
+                            {% block bannerImg %}
+                                {{ asset('assets/World-Wild-Wiki_LOGO.svg') }}
+                            {% endblock %}
+                        " alt="World Wide Wiki" width="30%"/>
                     </div>
                 </div>
             </div>
@@ -93,11 +103,13 @@
                                 {% if darkMode == false %} <button id="darkModeButton" type="button" class="btn btn-dark"><i class="bi bi-moon"></i></button>
                                 {% else %} <button id="lightModeButton" type="button" class="btn btn-light"><i class="bi bi-sun"></i></button>
                                 {% endif %}
-                            {% else %} <button id="lightModeButton" type="button" class="btn btn-light"><i class="bi bi-sun"></i></button>
+                            {% else %} <button id="darkModeButton" type="button" class="btn btn-dark"><i class="bi bi-moon"></i></button>
                             {% endif %}
                         </div>
                         <div class="p-2">
-                            <a class="btn btn-outline-secondary" href="/login">Sign in</a>
+                            {% block signinSection %}
+                                <a class="btn btn-outline-secondary" href="/login">Sign in</a>
+                            {% endblock %}
                         </div>
                     </div>
                 </nav>
@@ -120,7 +132,7 @@
                         <li class="nav-item"><a href="#" class="nav-link px-2 text-muted"><i class="bi-discord"></i></a></li>
                     </ul>
                     <div class="text-center">
-                        <img class="img-fluid" src="{{ asset('assets/World-Wild-Wiki_LOGO.svg') }}" alt="World Wild Wiki" width="10%"/>
+                        <img class="img-fluid filter-logo" src="{{ asset('assets/World-Wild-Wiki_LOGO.svg') }}" alt="World Wild Wiki" width="10%"/>
                     </div>
                 </div>
             </div>
