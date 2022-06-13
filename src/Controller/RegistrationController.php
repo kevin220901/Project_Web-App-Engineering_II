@@ -43,6 +43,15 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+            # Default values für jeden User
+            $user->setUserBanned(false);
+            $date = new \DateTime();
+            $user->setErstellt($date);
+            $user->setNotifyOnAcceptedRequest(true);
+            $user->setNotifyOnInvite(true);
+            $user->setNotifyOnNewPostInFavoriteWiki(true);
+            $user->setNotifyOnPlatfromInfo(true);
+
 
             $entityManager->persist($user);
             $entityManager->flush();
