@@ -90,8 +90,10 @@
                                     Wiki
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="#">Neues Wiki erstellen</a>
-                                    <div class="dropdown-divider"></div>
+                                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                        <a class="dropdown-item" href="/createWiki">Neues Wiki erstellen</a>
+                                        <div class="dropdown-divider"></div>
+                                    {% endif %}
                                     <a class="dropdown-item" href="/browse">Wikis erkunden</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="/rdmWiki">Zufälliges Wiki</a>

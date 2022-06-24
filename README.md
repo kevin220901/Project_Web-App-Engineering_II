@@ -19,8 +19,8 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
 
 - [ ] Wikis sollen eine Upvote-Funktion haben.
 
-- [ ] Registrierung nur mit gültiger E-Mail. Account wird durch Bestätigungsmail verifiziert.
-- [ ] Nicht bestätigte Accounts werden nach Ablauf einer Frist gelöscht.
+- ❌ Registrierung nur mit gültiger E-Mail. Account wird durch Bestätigungsmail verifiziert.
+- ❌ Nicht bestätigte Accounts werden nach Ablauf einer Frist gelöscht.
 
 - [ ] Admin-Seite für die gesamte Plattform
     - [ ] einzelne Wikis können deaktiviert (gesperrt werden)

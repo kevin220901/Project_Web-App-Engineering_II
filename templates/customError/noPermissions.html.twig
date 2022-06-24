@@ -1,0 +1,28 @@
+{# templates/customError/noPermissions.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-2 text-left h1">
+                ❌
+            </div>
+            <div class="col-4 text-center alert alert-danger">
+                Du hast keinen Zugriff auf diese Seite!
+            </div>
+            <div class="col-2 text-right h1">
+                ❌
+            </div>
+        </div>
+        <div class="justify-content-center row">
+            <div class="col-2"></div>
+            <div class="col-4">
+                <a class="btn btn-secondary btn-block mb-4" href="/">Zurück zum Startseite</a>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+
+
+{% endblock %}

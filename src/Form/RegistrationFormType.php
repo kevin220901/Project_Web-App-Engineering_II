@@ -11,7 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -27,6 +26,7 @@ class RegistrationFormType extends AbstractType
                         'min' => 5,
                         'minMessage' => 'Dein Username muss mindestens {{ limit }} Zeichen lang sein!',
                         'max' => 255,
+                        'maxMessage' => 'Dein Username darf nur max. {{ limit }} Zeichen lang sein!',
                     ]),
                     new NotBlank([
                         'message' => 'Bitte gib einen Username an!',

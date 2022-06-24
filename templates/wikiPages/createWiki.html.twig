@@ -1,0 +1,25 @@
+{# templates/wikiPages/createWiki.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {# <p>Email: {{ app.user.email }}</p> #}
+
+    {# Errors #}
+    {% if not CreateWikiForm.vars.valid %}
+        <div class="alert alert-danger" role="alert">
+            {{ form_errors(CreateWikiForm.wikiname) }}
+        </div>
+    {% endif %}
+
+    {{ form_widget(CreateWikiForm.wikiname, {
+        attr: {'class': 'form-control', 'placeholder': '...'}
+    }) }}
+    {{ form_label(CreateWikiForm.wikiname, 'Name des Wikis', {label_attr: {'class': 'form-label'}}) }}
+
+    {{ form_widget(CreateWikiForm.imageFile, {
+        attr: {'class': 'form-control', 'placeholder': '...'}
+    }) }}
+    {{ form_label(CreateWikiForm.imageFile, 'Name des Wikis', {label_attr: {'class': 'form-label'}}) }}
+
+{% endblock %}
