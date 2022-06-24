@@ -70,7 +70,7 @@
         {# Navbar, sticky-top muss ein direktes Child von body sein, damit die Navbar am oberen Bildschirm bleibt #}
         <div class="bannerColor sticky-top">
             <div class="container">
-                <nav class="navbar navbar-expand-lg
+                <nav class="navbar navbar-expand-lg py-0
                             {% if darkMode is defined %}
                                 {% if darkMode == true %} navbar-dark
                                 {% else %} navbar-light
@@ -108,13 +108,26 @@
                         </div>
                         <div class="p-2">
                             {% block signinSection %}
-                                <a class="btn btn-outline-secondary" href="/login">Sign in</a>
+                                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                    <a class="btn btn-outline-secondary" href="/logout">Logout</a>
+                                {% else %}
+                                    <a class="btn btn-outline-secondary" href="/login">Sign in</a>
+                                {% endif %}
                             {% endblock %}
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
+
+        {% for flashSuccess in app.flashes('success') %}
+            <div class="container mt-1">
+                <div class="alert alert-success" role="alert">
+                    {{ flashSuccess }}
+                </div>
+            </div>
+
+        {% endfor %}
 
         {% block body %}
             Ich werde überschrieben, sobald ein anderes Template geladen wird :)

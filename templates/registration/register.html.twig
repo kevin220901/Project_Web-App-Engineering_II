@@ -7,48 +7,70 @@
 {% block title %}Register{% endblock %}
 {% block body %}
 {# https://symfony.com/doc/current/form/form_customization.html#reference-forms-twig-label #}
-    <section class="pb-4">
+
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <div class="container">
-            <section class="w-100 p-4 d-flex justify-content-center pb-4">
-                <div style="width: 26rem;">
-                    {# Auswahl zwischen Login und Register#}
-                    <ul class="nav nav-pills nav-justified mb-3">
-                        <li class="nav-item">
-                            <form action="/login">
-                                <button class="nav-link btn btn-block {% if darkMode is defined %}{% if darkMode == true %}btn-dark{% else %}btn-light{% endif %}{% else %}btn-light{% endif %}" id="pill-login-button" type="submit" value="geh zu /login">Login</button>
-                            </form>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link btn btn-block active"
-                                    id="pill-register-button">Registrieren</button>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content">
-                        {# Sign-in falls die Seite nicht schnell genug lädt #}
-                        <div class="tab-pane fade" id="pills-login-content">
-                            <form>
-                                {# Email/Username input #}
-                                <div class="form-outline mb-4">
-                                    <input type="text" id="loginName" class="form-control" placeholder="Username" name="_username">
-                                    <label class="form-label" for="loginName">Username</label>
+            <section class="pb-4">
+                <div class="container">
+                    <section class="w-100 p-4 d-flex justify-content-center pb-4">
+                        <div style="width: 26rem;">
+                            <div class="tab-content">
+                                <div class="tab-pane show active">
+                                    <div class="alert alert-warning mb-4">
+                                        <span>Du bist bereits eingeloggt!</span>
+                                    </div>
+                                    <a class="btn btn-secondary btn-block mb-4" href="/">Zurück zum Startseite</a>
                                 </div>
-
-                                {# Passwort Input #}
-                                <div class="form-outline">
-                                    <input type="password" id="loginPassword" class="form-control" placeholder="Dein Passwort" name="_password">
-                                    <label class="form-label" for="loginPassword">Passwort</label>
-                                </div>
-
-                                {# Passwort vergessen Link#}
-                                <a href="#"><p class="text-center">Passwort vergessen?</p></a>
-
-                                <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
-                            </form>
+                            </div>
                         </div>
-                        {# Kontent von Register#}
-                        <div class="tab-pane show active" id="pills-register-content">
-                            {{ form_start(registrationForm) }}
+                    </section>
+                </div>
+            </section>
+        </div>
+    {% else %}
+        <section class="pb-4">
+            <div class="container">
+                <section class="w-100 p-4 d-flex justify-content-center pb-4">
+                    <div style="width: 26rem;">
+                        {# Auswahl zwischen Login und Register#}
+                        <ul class="nav nav-pills nav-justified mb-3">
+                            <li class="nav-item">
+                                <form action="/login">
+                                    <button class="nav-link btn btn-block {% if darkMode is defined %}{% if darkMode == true %}btn-dark{% else %}btn-light{% endif %}{% else %}btn-light{% endif %}" id="pill-login-button" type="submit" value="geh zu /login">Login</button>
+                                </form>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link btn btn-block active"
+                                        id="pill-register-button">Registrieren</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            {# Sign-in falls die Seite nicht schnell genug lädt #}
+                            <div class="tab-pane fade" id="pills-login-content">
+                                <form>
+                                    {# Email/Username input #}
+                                    <div class="form-outline mb-4">
+                                        <input type="text" id="loginName" class="form-control" placeholder="Username" name="_username">
+                                        <label class="form-label" for="loginName">Username</label>
+                                    </div>
+
+                                    {# Passwort Input #}
+                                    <div class="form-outline">
+                                        <input type="password" id="loginPassword" class="form-control" placeholder="Dein Passwort" name="_password">
+                                        <label class="form-label" for="loginPassword">Passwort</label>
+                                    </div>
+
+                                    {# Passwort vergessen Link#}
+                                    {# <a href="#"><p class="text-center">Passwort vergessen?</p></a> #}
+
+
+                                    <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
+                                </form>
+                            </div>
+                            {# Kontent von Register#}
+                            <div class="tab-pane show active" id="pills-register-content">
+                                {{ form_start(registrationForm) }}
 
                                 {# Errors #}
                                 {% if not registrationForm.vars.valid %}
@@ -59,6 +81,12 @@
                                         {{ form_errors(registrationForm.agreeTerms) }}
                                     </div>
                                 {% endif %}
+
+                                {% for flashError in app.flashes('verify_email_error') %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ flashError }}
+                                    </div>
+                                {% endfor %}
 
                                 {# Username Input #}
                                 <div class="form-outline mb-4">
@@ -123,11 +151,12 @@
 
                                 {# Submit #}
                                 <button type="submit" class="btn btn-primary btn-block mb-3">Registrieren</button>
-                            {{ form_end(registrationForm) }}
+                                {{ form_end(registrationForm) }}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </div>
-    </section>
+                </section>
+            </div>
+        </section>
+    {% endif %}
 {% endblock %}

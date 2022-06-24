@@ -56,6 +56,7 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            /*
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
@@ -65,7 +66,8 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
             // do anything else you need here, like send an email
-
+            */
+            $this->addFlash('success', 'Registrierung erfolgreich! Du kannst dich jetzt in deinen Account einloggen!');
             return $this->redirectToRoute('home');
         }
 
@@ -103,7 +105,7 @@ class RegistrationController extends AbstractController
         }
 
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', 'Your email address has been verified.');
+        $this->addFlash('success', 'Deine Email wurde verifiziert!');
 
         return $this->redirectToRoute('home');
     }

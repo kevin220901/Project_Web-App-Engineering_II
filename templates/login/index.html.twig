@@ -7,93 +7,114 @@
 
 {% block body %}
 
-    <section class="pb-4">
-        <div class="container">
-            <section class="w-100 p-4 d-flex justify-content-center pb-4">
-                <div style="width: 26rem;">
-                    {# Auswahl zwischen Login und Register#}
-                    <ul class="nav nav-pills nav-justified mb-3">
-                        <li class="nav-item">
-                            <button class="nav-link btn btn-block active" id="pill-login-button">Login</button>
-                        </li>
-                        <li class="nav-item">
-                            <form action="/register">
-                            <button class="nav-link btn btn-block {% if darkMode is defined %}{% if darkMode == true %}btn-dark{% else %}btn-light{% endif %}{% else %}btn-light{% endif %}"
-                                    id="pill-register-button" type="submit" value="geh zu /register">Registrieren</button>
-                            </form>
-                        </li>
-                    </ul>
-
-                    {# Content der der beiden pills #}
-                    <div class="tab-content">
-                        {# Login #}
-                        <div class="tab-pane show active" id="pills-login-content">
-
-                            {% if error %}
-                                <div class="alert alert-danger" role="alert">
-                                    {{ error.messageKey|trans(error.messageData, 'security') }}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <div class="container">
+        <section class="pb-4">
+            <div class="container">
+                <section class="w-100 p-4 d-flex justify-content-center pb-4">
+                    <div style="width: 26rem;">
+                        <div class="tab-content">
+                            <div class="tab-pane show active">
+                                <div class="alert alert-warning mb-4">
+                                    <span>Du bist bereits eingeloggt!</span>
                                 </div>
-                            {% endif %}
-
-                            <form action="{{ path('login') }}" method="post">
-                                {# Email/Username input #}
-                                <div class="form-outline mb-4">
-                                    <input type="text" id="loginName" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}">
-                                    <label class="form-label" for="loginName">Username</label>
-                                </div>
-
-                                {# Passwort Input #}
-                                <div class="form-outline">
-                                    <input type="password" id="loginPassword" class="form-control" placeholder="Dein Passwort" name="_password">
-                                    <label class="form-label" for="loginPassword">Passwort</label>
-                                </div>
-
-                                {# Passwort vergessen Link#}
-                                <a href="#"><p class="text-center">Passwort vergessen?</p></a>
-
-                                <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
-                            </form>
-                        </div>
-                        {# Register Kontent #}
-                        <div class="tab-pane fade" id="pills-register-content">
-                            <form>
-                                {# Username Input #}
-                                <div class="form-outline mb-4">
-                                    <input type="text" id="registerUsername" class="form-control" placeholder="Username">
-                                    <label class="form-label" for="registerUsername">Username</label>
-                                </div>
-
-                                {# Email Input #}
-                                <div class="form-outline mb-4">
-                                    <input type="email" id="registerEmail" class="form-control" placeholder="Deine E-Mail">
-                                    <label class="form-label" for="registerEmail">E-Mail</label>
-                                </div>
-
-                                {# Passwort input #}
-                                <div class="form-outline mb-4">
-                                    <input type="password" id="registerPassword" class="form-control" placeholder="Sicheres Passwort">
-                                    <label class="form-label" for="registerPassword">Passwort</label>
-                                </div>
-
-                                {# Passwort wiederholen #}
-                                <div class="form-outline mb-4">
-                                    <input type="password" id="registerRepeatPassword" class="form-control" placeholder="Sicheres Passwort">
-                                    <label class="form-label" for="registerRepeatPassword">Passwort wiederholen</label>
-                                </div>
-
-                                {# Nutzungsbedingungen, die nicht existieren :) #}
-                                <div class="form-outline mb-4 text-center">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                    <label class="form-check-label" for="flexCheckDefault">Ich stimme den Nutzungsbedingungen zu.</label>
-                                </div>
-
-                                {# Submit #}
-                                <button type="submit" class="btn btn-primary btn-block mb-3">Registrieren</button>
-                            </form>
+                                <a class="btn btn-secondary btn-block mb-4" href="/">Zurück zum Startseite</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </div>
-    </section>
+                </section>
+            </div>
+        </section>
+    </div>
+    {% else %}
+        <section class="pb-4">
+            <div class="container">
+                <section class="w-100 p-4 d-flex justify-content-center pb-4">
+                    <div style="width: 26rem;">
+                        {# Auswahl zwischen Login und Register#}
+                        <ul class="nav nav-pills nav-justified mb-3">
+                            <li class="nav-item">
+                                <button class="nav-link btn btn-block active" id="pill-login-button">Login</button>
+                            </li>
+                            <li class="nav-item">
+                                <form action="/register">
+                                    <button class="nav-link btn btn-block {% if darkMode is defined %}{% if darkMode == true %}btn-dark{% else %}btn-light{% endif %}{% else %}btn-light{% endif %}"
+                                            id="pill-register-button" type="submit" value="geh zu /register">Registrieren</button>
+                                </form>
+                            </li>
+                        </ul>
+
+                        {# Content der der beiden pills #}
+                        <div class="tab-content">
+                            {# Login #}
+                            <div class="tab-pane show active" id="pills-login-content">
+
+                                {% if error %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                                    </div>
+                                {% endif %}
+
+                                <form action="{{ path('login') }}" method="post">
+                                    {# Email/Username input #}
+                                    <div class="form-outline mb-4">
+                                        <input type="text" id="loginName" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}">
+                                        <label class="form-label" for="loginName">Username</label>
+                                    </div>
+
+                                    {# Passwort Input #}
+                                    <div class="form-outline">
+                                        <input type="password" id="loginPassword" class="form-control" placeholder="Dein Passwort" name="_password">
+                                        <label class="form-label" for="loginPassword">Passwort</label>
+                                    </div>
+
+                                    {# Passwort vergessen Link#}
+                                    {# <a href="#"><p class="text-center">Passwort vergessen?</p></a> #}
+
+                                    <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
+                                </form>
+                            </div>
+                            {# Register Kontent #}
+                            <div class="tab-pane fade" id="pills-register-content">
+                                <form>
+                                    {# Username Input #}
+                                    <div class="form-outline mb-4">
+                                        <input type="text" id="registerUsername" class="form-control" placeholder="Username">
+                                        <label class="form-label" for="registerUsername">Username</label>
+                                    </div>
+
+                                    {# Email Input #}
+                                    <div class="form-outline mb-4">
+                                        <input type="email" id="registerEmail" class="form-control" placeholder="Deine E-Mail">
+                                        <label class="form-label" for="registerEmail">E-Mail</label>
+                                    </div>
+
+                                    {# Passwort input #}
+                                    <div class="form-outline mb-4">
+                                        <input type="password" id="registerPassword" class="form-control" placeholder="Sicheres Passwort">
+                                        <label class="form-label" for="registerPassword">Passwort</label>
+                                    </div>
+
+                                    {# Passwort wiederholen #}
+                                    <div class="form-outline mb-4">
+                                        <input type="password" id="registerRepeatPassword" class="form-control" placeholder="Sicheres Passwort">
+                                        <label class="form-label" for="registerRepeatPassword">Passwort wiederholen</label>
+                                    </div>
+
+                                    {# Nutzungsbedingungen, die nicht existieren :) #}
+                                    <div class="form-outline mb-4 text-center">
+                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                        <label class="form-check-label" for="flexCheckDefault">Ich stimme den Nutzungsbedingungen zu.</label>
+                                    </div>
+
+                                    {# Submit #}
+                                    <button type="submit" class="btn btn-primary btn-block mb-3">Registrieren</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    {% endif %}
 {% endblock %}
