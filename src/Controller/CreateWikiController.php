@@ -27,12 +27,11 @@ class CreateWikiController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-
-
             # Default values eines wikis
             $date = new \DateTime();
             $wiki->setErstellt($date);
-            $wiki->setUserId($user->getId());
+            $wiki->setUserId($user);
+
 
             $entityManager->persist($wiki);
             $entityManager->flush();
@@ -44,7 +43,6 @@ class CreateWikiController extends AbstractController
         }
 
         $base = new BaseController();
-        $user = $this->getUser();
         if($user != null){
             return $this->render('wikiPages/createWiki.html.twig', [
                 'CreateWikiForm' => $form->createView(),

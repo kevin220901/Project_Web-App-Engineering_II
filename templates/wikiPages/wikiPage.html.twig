@@ -1,5 +1,11 @@
 {# templates/wikiPages/wikiPage.html.twig #}
 {% extends 'base.html.twig' %}
 {% block body %}
-    <h1>{{ WikiID }}</h1>
+    <h1>{{ wiki.wikiname }}</h1>
+    {% if wiki.imageName != null %}
+        <img src="{{ vich_uploader_asset(wiki) }}" alt="{{ wiki.id }}">
+    {% else %}
+        <span>Error</span>
+        <img class="filter-logo" src="{{ asset('assets/No-File.svg') }}" alt="{{ wiki.id }}">
+    {% endif %}
 {% endblock %}

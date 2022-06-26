@@ -6,11 +6,13 @@ use App\Repository\WikiRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=WikiRepository::class)
+ * @UniqueEntity(fields={"wikiname"}, message="Es gibt bereits ein Wiki mit diesem Namen!")
  * @Vich\Uploadable
  */
 class Wiki
@@ -23,7 +25,7 @@ class Wiki
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $wikiname;
 
@@ -32,21 +34,21 @@ class Wiki
     /**
      * NOTE: This is not a mapped field of entity metadata, just a simple property.
      *
-     * @Vich\UploadableField(mapping="wikiPB", fileNameProperty="imageName", size="imageSize")
+     * @Vich\UploadableField(mapping="wikiPB", fileNameProperty="imageName")
      *
      * @var File|null
      */
     private $imageFile;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      *
      * @var string|null
      */
     private $imageName;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      *
      * @var \DateTimeInterface|null
      */

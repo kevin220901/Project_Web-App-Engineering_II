@@ -2,6 +2,8 @@
 // src/Controller/BaseController.php
 namespace App\Controller;
 
+use App\Entity\Wiki;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,10 +34,19 @@ class BaseController extends AbstractController
     /**
      * @Route("/wiki/{id}", name="wiki")
      */
-    public function renderWiki(int $id): Response{
+    public function renderWiki(int $id, EntityManagerInterface $entityManager): Response{
+
+        $repository = $entityManager->getRepository(Wiki::class);
+        /** @var Question|null $question */
+        $wiki = $repository->findOneBy(['id' => $id]);
+        if (!$wiki) {
+            $this->addFlash('error', 'Es konnte kein Wiki mit der ID '.$id.' gefunden werden!');
+            return $this->redirectToRoute('home');
+        }
+
         return $this->render('/wikiPages/wikiPage.html.twig', [
             'darkMode' => $this->getDarkMode(),
-            "WikiID" => $id
+            "wiki" => $wiki
         ]);
     }
 

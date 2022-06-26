@@ -1,14 +1,21 @@
 {# templates/wikiPages/createWiki.html.twig #}
 {% extends 'base.html.twig' %}
 
+{# Wir überschreiben das Template, welches form_errors rendert, damit diese nicht als Liste ausgegeben werden #}
+{% form_theme CreateWikiForm 'customError/errors.html.twig' %}
+
 {% block body %}
 
     {# <p>Email: {{ app.user.email }}</p> #}
+
+    {# start form #}
+    {{ form_start(CreateWikiForm) }}
 
     {# Errors #}
     {% if not CreateWikiForm.vars.valid %}
         <div class="alert alert-danger" role="alert">
             {{ form_errors(CreateWikiForm.wikiname) }}
+            {{ form_errors(CreateWikiForm.imageFile) }}
         </div>
     {% endif %}
 
@@ -22,4 +29,10 @@
     }) }}
     {{ form_label(CreateWikiForm.imageFile, 'Name des Wikis', {label_attr: {'class': 'form-label'}}) }}
 
+
+    {# Submit #}
+    <button type="submit" class="btn btn-primary btn-block mb-3">Absenden</button>
+
+    {# end form #}
+    {{ form_end(CreateWikiForm) }}
 {% endblock %}
