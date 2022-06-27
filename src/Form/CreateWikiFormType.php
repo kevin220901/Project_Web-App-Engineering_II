@@ -58,6 +58,7 @@ class CreateWikiFormType extends AbstractType
             ->add('loggedin_edit_posts')
             ->add('collab_edit_posts')
             ->add('allow_votes')
+
         ;
     }
 

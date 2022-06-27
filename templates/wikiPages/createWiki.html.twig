@@ -111,6 +111,16 @@
                 </div>
             </div>
         </div>
+        <span>Tags</span>
+        <div class="container">
+            <div class="tagContainer" id="tagContainerId">
+                <input/>
+            </div>
+        </div>
+
+
+
+
     </div>
 
     <div class="container-fluid border rounded mt-3">
@@ -151,7 +161,13 @@
 
 {% block scripts %}
     <script>
+
+        $(document).on("keydown", ":input:not(textarea)", function(event) {
+            return event.key != "Enter";
+        });
+
         $(document).ready(function() {
+
             let inputField = document.getElementById('create_wiki_form_startseite_md');
             document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
             $("#create_wiki_form_startseite_md").on("input", function () {
@@ -161,6 +177,112 @@
                 //Set height of the preview to the same as the input field
                 document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
             });
+        })
+
+        // Sobald privat_wiki geklickt wird gilt es als privates Wiki
+        $('#create_wiki_form_privat_wiki').change(function() {
+            if($('#create_wiki_form_privat_wiki').is(':checked')){
+                // Wenn checkt, müssen andere Buttons ausgeschaltet und disabled werden!
+                $('#create_wiki_form_everyone_can_see').prop("checked", false);
+                $('#create_wiki_form_everyone_can_see').prop("disabled", true);
+
+                $('#create_wiki_form_loggedin_can_see').prop("checked", false);
+                $('#create_wiki_form_can_user_request_to_join').prop("checked", false);
+                $('#create_wiki_form_loggedin_create_posts').prop("checked", false);
+                $('#create_wiki_form_loggedin_edit_posts').prop("checked", false);
+                $('#create_wiki_form_allow_votes').prop("checked", false);
+
+                $('#create_wiki_form_loggedin_can_see').prop("disabled", true);
+                $('#create_wiki_form_can_user_request_to_join').prop("disabled", true);
+                $('#create_wiki_form_loggedin_create_posts').prop("disabled", true);
+                $('#create_wiki_form_loggedin_edit_posts').prop("disabled", true);
+                $('#create_wiki_form_allow_votes').prop("disabled", true);
+            }
+            else{
+                $('#create_wiki_form_everyone_can_see').prop("disabled", false);
+                $('#create_wiki_form_loggedin_can_see').prop("disabled", false);
+                $('#create_wiki_form_can_user_request_to_join').prop("disabled", false);
+                $('#create_wiki_form_loggedin_create_posts').prop("disabled", false);
+                $('#create_wiki_form_loggedin_edit_posts').prop("disabled", false);
+                $('#create_wiki_form_allow_votes').prop("disabled", false);
+            }
         });
+
+        $('#create_wiki_form_everyone_can_see').change(function() {
+            if($('#create_wiki_form_everyone_can_see').is(':checked')){
+                // Wenn checkt, müssen andere Buttons ausgeschaltet und disabled werden!
+                $('#create_wiki_form_privat_wiki').prop("checked", false);
+                $('#create_wiki_form_privat_wiki').prop("disabled", true);
+
+                $('#create_wiki_form_loggedin_can_see').prop("checked", true);
+                $('#create_wiki_form_loggedin_can_see').prop("disabled", true);
+            }
+            else{
+                $('#create_wiki_form_privat_wiki').prop("disabled", false);
+                $('#create_wiki_form_loggedin_can_see').prop("disabled", false);
+                $('#create_wiki_form_loggedin_can_see').prop("checked", false);
+            }
+        });
+
+        $('#create_wiki_form_loggedin_can_see').change(function() {
+            if($('#create_wiki_form_loggedin_can_see').is(':checked')){
+                // Wenn checkt, müssen andere Buttons ausgeschaltet und disabled werden!
+                $('#create_wiki_form_privat_wiki').prop("checked", false);
+                $('#create_wiki_form_privat_wiki').prop("disabled", true);
+            }
+            else{
+                $('#create_wiki_form_privat_wiki').prop("disabled", false);
+            }
+        });
+
+
+
+
+
+        let tagContainer = document.getElementById('tagContainerId');
+        let tagInput = document.querySelector('.tagContainer input');
+        let tags = []
+
+        // Tag input
+        function createTag(label){
+            let div = document.createElement('div');
+            div.setAttribute('class', 'tag')
+            let span = document.createElement('span');
+            span.innerHTML = label;
+            let closeBtn = document.createElement('i');
+            closeBtn.setAttribute('class', 'bi bi-x xTag')
+
+            div.appendChild(span);
+            div.appendChild(closeBtn);
+            return div;
+        }
+
+        function clearTags() {
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.parentElement.removeChild(tag);
+            });
+        }
+
+        function addTags(){
+            clearTags();
+            tags.slice().reverse().forEach(tag => {
+                tagContainer.prepend(createTag(tag));
+            });
+        }
+
+        tagInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                e.target.value.split(' ').forEach(tag => {
+                    tag = tag.toLowerCase();
+                    if(tags.indexOf(tag) === -1) {
+                        tags.push(tag);
+                        console.log(tag);
+                    }
+                });
+                addTags();
+                tagInput.value = '';
+            }
+        });
+
     </script>
 {% endblock %}

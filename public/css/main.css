@@ -31,3 +31,32 @@
     overflow: auto;
     padding: 6px 12px;
 }
+
+.tagContainer{
+    border: 2px solid black;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+
+}
+.tagContainer .tag{
+    padding: 5px;
+    border: 1px solid black;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    border-radius: 3px;
+}
+
+.xTag{
+    font-size: 16px;
+    margin-left: 5px;
+}
+
+.tagContainer input{
+    flex: 1;
+    padding:5px;
+    outline:none;
+    border: 0;
+
+}
