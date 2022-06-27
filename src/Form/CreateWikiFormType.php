@@ -2,8 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Tags;
 use App\Entity\Wiki;
+use App\Entity\WikiTags;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -58,7 +61,6 @@ class CreateWikiFormType extends AbstractType
             ->add('loggedin_edit_posts')
             ->add('collab_edit_posts')
             ->add('allow_votes')
-
         ;
     }
 

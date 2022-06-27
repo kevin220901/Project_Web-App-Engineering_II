@@ -11,7 +11,11 @@
 
     <label class="form-label">Preview</label>
     <div id="preview" class="fakeTextarea border rounded textArea h-100 w-100"></div>
-    <div>{{ wiki.getStartseiteMd }}</div>
+    <div>
+        {% for foundTags in wiki.WikiTags %}
+            <span>{{ foundTags.tagID.tagName }}</span>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block scripts %}

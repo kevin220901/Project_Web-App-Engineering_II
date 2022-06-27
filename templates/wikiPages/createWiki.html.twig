@@ -117,10 +117,6 @@
                 <input/>
             </div>
         </div>
-
-
-
-
     </div>
 
     <div class="container-fluid border rounded mt-3">
@@ -244,18 +240,35 @@
         let tags = []
 
         // Tag input
-        function createTag(label){
+        function createTag(label, id){
+            // Create the entered tag
             let div = document.createElement('div');
-            div.setAttribute('class', 'tag')
+            div.setAttribute('class', 'tag');
+            div.setAttribute('id', 'tag_' + id);
             let span = document.createElement('span');
             span.innerHTML = label;
-            let closeBtn = document.createElement('i');
-            closeBtn.setAttribute('class', 'bi bi-x xTag')
+            let closeBtn = document.createElement('button');
+            closeBtn.setAttribute('onclick', 'removeMe(\"'+ label + '\",' + id +')');
+            let closeBtnText = document.createElement('i');
+            closeBtn.setAttribute('class', 'bi bi-x');
+            closeBtn.appendChild(closeBtnText);
+
+            // Create the form element for the tag
+            let form_tag = document.createElement('input');
+            form_tag.setAttribute('class', 'form_tag');
+            form_tag.setAttribute('id', 'form_tag_' + id);
+            form_tag.setAttribute('type', 'text');
+            form_tag.setAttribute('name', 'tags[]');
+            form_tag.setAttribute('value', label);
+            form_tag.setAttribute('hidden', "");
 
             div.appendChild(span);
             div.appendChild(closeBtn);
+            div.appendChild(form_tag);
             return div;
         }
+
+        //<input class="form_tag" type="text" name="tags[]" value="test2" hidden/>
 
         function clearTags() {
             document.querySelectorAll('.tag').forEach(tag => {
@@ -263,26 +276,52 @@
             });
         }
 
+
         function addTags(){
             clearTags();
+            let counter = 0;
             tags.slice().reverse().forEach(tag => {
-                tagContainer.prepend(createTag(tag));
+                tagContainer.prepend(createTag(tag, counter));
+                counter += 1;
             });
         }
 
+        function capitalizeString(string) {
+            string =  string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+            return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+        }
+
+        // DONE
         tagInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === ',') {
                 e.target.value.split(' ').forEach(tag => {
-                    tag = tag.toLowerCase();
-                    if(tags.indexOf(tag) === -1) {
-                        tags.push(tag);
-                        console.log(tag);
-                    }
+                    e.target.value.split(',').forEach(tag => {
+                        // Entfernt HTML Tags und fixed escaped " > &
+                        tag = DOMPurify.sanitize(tag, { USE_PROFILES: {html: false} })
+                        tag = capitalizeString(tag);
+                        tag = tag.replace(/ /g, "");
+                        tag = tag.replace(/,/g, "");
+                        if (tag !== "" && tag!== " " && tag !==","){
+                            if(tags.indexOf(tag) === -1) {
+                                tags.push(tag);
+                            }
+                        }
+                    });
                 });
                 addTags();
                 tagInput.value = '';
             }
         });
+
+        function removeMe(label, id){
+            let index = tags.indexOf(label);
+            if (index > -1) {
+                tags.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            clearTags();
+            addTags();
+        }
+
 
     </script>
 {% endblock %}

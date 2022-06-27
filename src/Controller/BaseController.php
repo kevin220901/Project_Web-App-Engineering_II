@@ -2,6 +2,7 @@
 // src/Controller/BaseController.php
 namespace App\Controller;
 
+use App\Entity\Tags;
 use App\Entity\Wiki;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,7 +38,6 @@ class BaseController extends AbstractController
     public function renderWiki(int $id, EntityManagerInterface $entityManager): Response{
 
         $repository = $entityManager->getRepository(Wiki::class);
-        /** @var Question|null $question */
         $wiki = $repository->findOneBy(['id' => $id]);
         if (!$wiki) {
             $this->addFlash('error', 'Es konnte kein Wiki mit der ID '.$id.' gefunden werden!');
@@ -67,8 +67,10 @@ class BaseController extends AbstractController
     /**
      * @Route("/browse", name="browse")
      */
-    public function renderBrowse(): Response{
-
+    public function renderBrowse(EntityManagerInterface $entityManager): Response{
+        $repository = $entityManager->getRepository(Tags::class);
+        $wikiTags = $repository->findAll();
+        /*
         $wikiTags = [
             '0' => ['tag' => 'Filme', 'id' => 1],
             '1' => ['tag' => 'Bücher', 'id' => 2],
@@ -78,10 +80,10 @@ class BaseController extends AbstractController
             '5' => ['tag' => 'Allgemein', 'id' => 6],
             '6' => ['tag' => 'Sport', 'id' => 7],
         ];
-
+        */
         return $this->render('/wikiPages/browse.html.twig', [
             'darkMode' => $this->getDarkMode(),
-            'wikiTags' => $wikiTags
+            'wikiTags' => $wikiTags,
         ]);
     }
 

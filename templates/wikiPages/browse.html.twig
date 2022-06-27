@@ -25,7 +25,7 @@
         <div class="mt-2 row w-75 mx-auto">
             <div class="col-3"></div>
             <div class="col p-0">
-                {% for t in wikiTags %}
+                {# {% for t in wikiTags %}
                     <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
 
                         <input class="form-check-input hideCheckbox" type="checkbox" id="inlineCheckbox{{ t.id }}INCLUDE" value="include_{{ t.id }}">
@@ -34,7 +34,20 @@
                         <input class="form-check-input hideCheckbox" type="checkbox" id="inlineCheckbox{{ t.id }}EXCLUDE" value="exclude_{{ t.id }}">
                         <label class="form-check-label btn btn-sm btn-secondary w-100 display-none" id="inlineLabel{{ t.id }}EXCLUDE" for="inlineCheckbox{{ t.id }}EXCLUDE" onclick="secondCheckboxClick({{ t.id }})">{{ t.tag }}</label>
                     </div>
+                {% endfor %} #}
+
+
+                {% for t in wikiTags %}
+                    <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
+
+                        <input class="form-check-input hideCheckbox" type="checkbox" id="inlineCheckbox{{ t.id }}INCLUDE" value="include_{{ t.id }}">
+                        <label class="form-check-label btn btn-sm btn-secondary w-100" id="inlineLabel{{ t.id }}INCLUDE" for="inlineCheckbox{{ t.id }}+ 'INCLUDE'" onclick="firstCheckboxClick({{ t.id }})">{{ t.tagName }}</label>
+
+                        <input class="form-check-input hideCheckbox" type="checkbox" id="inlineCheckbox{{ t.id }}EXCLUDE" value="exclude_{{ t.id }}">
+                        <label class="form-check-label btn btn-sm btn-secondary w-100 display-none" id="inlineLabel{{ t.id }}EXCLUDE" for="inlineCheckbox{{ t.id }}EXCLUDE" onclick="secondCheckboxClick({{ t.id }})">{{ t.tagName }}</label>
+                    </div>
                 {% endfor %}
+
             </div>
         </div>
     </div>
