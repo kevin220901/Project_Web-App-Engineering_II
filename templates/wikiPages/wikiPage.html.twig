@@ -16,13 +16,19 @@
             <span>{{ foundTags.tagID.tagName }}</span>
         {% endfor %}
     </div>
+    <span>{{ wiki.getStartseiteMd }}</span>
+
+    <div hidden id="db_markdown">{{ wiki.getStartseiteMd }}</div>
+
 {% endblock %}
 
 {% block scripts %}
 
     <script>
         $(document).ready(function() {
-            let text = `{{ wiki.getStartseiteMd }}`;
+            let text = $('#db_markdown').html();
+            // Die Ausgabe der Datenbank encoden
+            text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/"/g, '&quot;').replace(/&gt;/g, '>');
             let dirtyText = marked.parse(text); //parsed md zu html
             let cleanText = DOMPurify.sanitize(dirtyText, { USE_PROFILES: {html: true} }); //Überprüft den Code und entfernt alle Text die nicht in standard html sind <script> etc
             $("#preview").html(cleanText);

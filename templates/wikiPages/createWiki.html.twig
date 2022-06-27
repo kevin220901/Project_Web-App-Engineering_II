@@ -48,7 +48,7 @@
                         {{ form_widget(CreateWikiForm.privat_wiki, {
                             attr: {'class': 'custom-control-input'}
                         }) }}
-                        {{ form_label(CreateWikiForm.privat_wiki, 'privat_wiki', {label_attr: {'class': 'custom-control-label'}}) }}
+                        {{ form_label(CreateWikiForm.privat_wiki, 'Wiki privat schalten', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Nur Du, Admins und Collaborator können das Wiki sehen'}}) }}
                     </div>
                 </div>
                 <div class="col-5 col-sm-3">
@@ -56,7 +56,7 @@
                         {{ form_widget(CreateWikiForm.everyone_can_see, {
                             attr: {'class': 'custom-control-input'}
                         }) }}
-                        {{ form_label(CreateWikiForm.everyone_can_see, 'everyone_can_see', {label_attr: {'class': 'custom-control-label'}}) }}
+                        {{ form_label(CreateWikiForm.everyone_can_see, 'Öffentlich sichtbar', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Jeder kann das Wiki sehen'}}) }}
                     </div>
                 </div>
                 <div class="col-5 col-sm-3">
@@ -64,7 +64,7 @@
                         {{ form_widget(CreateWikiForm.loggedin_can_see, {
                             attr: {'class': 'custom-control-input'}
                         }) }}
-                        {{ form_label(CreateWikiForm.loggedin_can_see, 'loggedin_can_see', {label_attr: {'class': 'custom-control-label'}}) }}
+                        {{ form_label(CreateWikiForm.loggedin_can_see, 'Nur für Nutzer sichtbar', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Nur angemeldete Nutzer können das Wiki sehen'}}) }}
                     </div>
                 </div>
                 <div class="col-5 col-sm-3">
@@ -72,7 +72,7 @@
                         {{ form_widget(CreateWikiForm.can_user_request_to_join, {
                             attr: {'class': 'custom-control-input'}
                         }) }}
-                        {{ form_label(CreateWikiForm.can_user_request_to_join, 'can_user_request_to_join', {label_attr: {'class': 'custom-control-label'}}) }}
+                        {{ form_label(CreateWikiForm.can_user_request_to_join, 'Collaboratoranfragen erlauben', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Nutzer können den Collaborator Status anfragen'}}) }}
                     </div>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                         {{ form_widget(CreateWikiForm.loggedin_create_posts, {
                             attr: {'class': 'custom-control-input'}
                         }) }}
-                        {{ form_label(CreateWikiForm.loggedin_create_posts, 'loggedin_create_posts', {label_attr: {'class': 'custom-control-label'}}) }}
+                        {{ form_label(CreateWikiForm.loggedin_create_posts, 'Nutzer können Beiträge erstellen', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Angemeldete Nutzer können Beiträge erstellen'}}) }}
                     </div>
                 </div>
                 <div class="col-5 col-sm-3">
@@ -90,7 +90,7 @@
                         {{ form_widget(CreateWikiForm.loggedin_edit_posts, {
                             attr: {'class': 'custom-control-input'}
                         }) }}
-                        {{ form_label(CreateWikiForm.loggedin_edit_posts, 'loggedin_edit_posts', {label_attr: {'class': 'custom-control-label'}}) }}
+                        {{ form_label(CreateWikiForm.loggedin_edit_posts, 'Nutzer können Beiträge bearbeiten', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Angemeldete Nutzer können Beiträge bearbeiten'}}) }}
                     </div>
                 </div>
                 <div class="col-5 col-sm-3">
@@ -98,7 +98,7 @@
                         {{ form_widget(CreateWikiForm.collab_edit_posts, {
                             attr: {'class': 'custom-control-input'}
                         }) }}
-                        {{ form_label(CreateWikiForm.collab_edit_posts, 'collab_edit_posts', {label_attr: {'class': 'custom-control-label'}}) }}
+                        {{ form_label(CreateWikiForm.collab_edit_posts, 'Collaborator können Beiträge bearbeiten', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Collaborator können Beiträge bearbeiten'}}) }}
                     </div>
                 </div>
                 <div class="col-5 col-sm-3">
@@ -106,7 +106,7 @@
                         {{ form_widget(CreateWikiForm.allow_votes, {
                             attr: {'class': 'custom-control-input'}
                         }) }}
-                        {{ form_label(CreateWikiForm.allow_votes, 'allow_votes', {label_attr: {'class': 'custom-control-label'}}) }}
+                        {{ form_label(CreateWikiForm.allow_votes, 'Bewertung erlauben', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Angemeldete Nutzer können das Wiki bewerten'}}) }}
                     </div>
                 </div>
             </div>
@@ -158,8 +158,16 @@
 {% block scripts %}
     <script>
 
+        // Aktiviere Tooltips
+        let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+
+
+        // Falls Enter gedrückt wird, wird so das Form nicht abgeschickt
         $(document).on("keydown", ":input:not(textarea)", function(event) {
-            return event.key != "Enter";
+            return event.key !== "Enter";
         });
 
         $(document).ready(function() {
@@ -228,6 +236,18 @@
             }
             else{
                 $('#create_wiki_form_privat_wiki').prop("disabled", false);
+            }
+        });
+
+        $('#create_wiki_form_loggedin_edit_posts').change(function() {
+            if($('#create_wiki_form_loggedin_edit_posts').is(':checked')){
+                // Wenn checkt, müssen andere Buttons ausgeschaltet und disabled werden!
+                $('#create_wiki_form_collab_edit_posts').prop("checked", true);
+                $('#create_wiki_form_collab_edit_posts').prop("disabled", true);
+            }
+            else{
+                $('#create_wiki_form_collab_edit_posts').prop("disabled", false);
+                $('#create_wiki_form_collab_edit_posts').prop("checked", false);
             }
         });
 
