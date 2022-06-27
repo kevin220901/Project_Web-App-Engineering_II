@@ -31,3 +31,4 @@ var/*
 vendor/*
 tests/*
 migrations/*
+public/uploads/*

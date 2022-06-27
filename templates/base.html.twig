@@ -48,6 +48,20 @@
                     {% endif %}
                 {% endif %}
             }
+            .textArea{
+                {% if darkMode is defined %}
+                    {% if darkMode == true%} background-color: #343a40 !important;
+                    {% endif %}
+                {% endif %}
+            }
+            .textArea:focus{
+            {# LightMode #}
+                color: black;
+                {% if darkMode is defined %}
+                    {% if darkMode == true%} color: #eceff3;
+                    {% endif %}
+                {% endif %}
+            }
         </style>
     </head>
     <body class="localBackground textColor">

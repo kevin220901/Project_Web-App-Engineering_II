@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Wiki;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -39,7 +40,16 @@ class CreateWikiFormType extends AbstractType
                 'asset_helper' => true,
             ])
 
-            ->add('startseite_md')
+            ->add('startseite_md', TextareaType::class, [
+                'required' => false,
+                'constraints' => [
+                    new Length([
+                        'min' => 0,
+                        'max' => 65535,
+                        'maxMessage' => 'Der Markdown Text darf nur max. {{ limit }} Zeichen lang sein!',
+                    ]),
+                ]
+            ])
             ->add('privat_wiki')
             ->add('everyone_can_see')
             ->add('loggedin_can_see')

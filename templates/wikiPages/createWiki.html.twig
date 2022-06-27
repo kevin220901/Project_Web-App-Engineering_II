@@ -11,28 +11,156 @@
     {# start form #}
     {{ form_start(CreateWikiForm) }}
 
-    {# Errors #}
-    {% if not CreateWikiForm.vars.valid %}
-        <div class="alert alert-danger" role="alert">
-            {{ form_errors(CreateWikiForm.wikiname) }}
-            {{ form_errors(CreateWikiForm.imageFile) }}
+
+    <div class="container mt-3 border rounded">
+        {# Errors #}
+        {% if not CreateWikiForm.vars.valid %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ form_errors(CreateWikiForm.wikiname) }}
+                {{ form_errors(CreateWikiForm.imageFile) }}
+            </div>
+        {% endif %}
+        <div class="row my-3">
+            <div class="col-sm-3 col-lg-5">
+                {{ form_label(CreateWikiForm.wikiname, 'Name des Wikis', {label_attr: {'class': 'form-label'}}) }}
+
+                {{ form_widget(CreateWikiForm.wikiname, {
+                    attr: {'class': 'form-control', 'placeholder': '...'}
+                }) }}
+            </div>
         </div>
-    {% endif %}
 
-    {{ form_widget(CreateWikiForm.wikiname, {
-        attr: {'class': 'form-control', 'placeholder': '...'}
-    }) }}
-    {{ form_label(CreateWikiForm.wikiname, 'Name des Wikis', {label_attr: {'class': 'form-label'}}) }}
+        <div class="row mb-3">
+            <div class="col-sm-3 col-lg-5">
+                {{ form_label(CreateWikiForm.imageFile, 'Wiki Bild', {label_attr: {'class': 'form-label'}}) }}
 
-    {{ form_widget(CreateWikiForm.imageFile, {
-        attr: {'class': 'form-control', 'placeholder': '...'}
-    }) }}
-    {{ form_label(CreateWikiForm.imageFile, 'Name des Wikis', {label_attr: {'class': 'form-label'}}) }}
+                {{ form_widget(CreateWikiForm.imageFile, {
+                    attr: {'class': 'form-control'}
+                }) }}
+            </div>
+        </div>
 
+        <p class="mb-2">Wiki Einstellungen</p>
+        <div class="border rounded p-2 rounded mb-3">
+            <div class="row mb-3">
+                <div class="col-5 col-sm-3">
+                    <div class="custom-control custom-switch">
+                        {{ form_widget(CreateWikiForm.privat_wiki, {
+                            attr: {'class': 'custom-control-input'}
+                        }) }}
+                        {{ form_label(CreateWikiForm.privat_wiki, 'privat_wiki', {label_attr: {'class': 'custom-control-label'}}) }}
+                    </div>
+                </div>
+                <div class="col-5 col-sm-3">
+                    <div class="custom-control custom-switch">
+                        {{ form_widget(CreateWikiForm.everyone_can_see, {
+                            attr: {'class': 'custom-control-input'}
+                        }) }}
+                        {{ form_label(CreateWikiForm.everyone_can_see, 'everyone_can_see', {label_attr: {'class': 'custom-control-label'}}) }}
+                    </div>
+                </div>
+                <div class="col-5 col-sm-3">
+                    <div class="custom-control custom-switch">
+                        {{ form_widget(CreateWikiForm.loggedin_can_see, {
+                            attr: {'class': 'custom-control-input'}
+                        }) }}
+                        {{ form_label(CreateWikiForm.loggedin_can_see, 'loggedin_can_see', {label_attr: {'class': 'custom-control-label'}}) }}
+                    </div>
+                </div>
+                <div class="col-5 col-sm-3">
+                    <div class="custom-control custom-switch">
+                        {{ form_widget(CreateWikiForm.can_user_request_to_join, {
+                            attr: {'class': 'custom-control-input'}
+                        }) }}
+                        {{ form_label(CreateWikiForm.can_user_request_to_join, 'can_user_request_to_join', {label_attr: {'class': 'custom-control-label'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5 col-sm-3">
+                    <div class="custom-control custom-switch">
+                        {{ form_widget(CreateWikiForm.loggedin_create_posts, {
+                            attr: {'class': 'custom-control-input'}
+                        }) }}
+                        {{ form_label(CreateWikiForm.loggedin_create_posts, 'loggedin_create_posts', {label_attr: {'class': 'custom-control-label'}}) }}
+                    </div>
+                </div>
+                <div class="col-5 col-sm-3">
+                    <div class="custom-control custom-switch">
+                        {{ form_widget(CreateWikiForm.loggedin_edit_posts, {
+                            attr: {'class': 'custom-control-input'}
+                        }) }}
+                        {{ form_label(CreateWikiForm.loggedin_edit_posts, 'loggedin_edit_posts', {label_attr: {'class': 'custom-control-label'}}) }}
+                    </div>
+                </div>
+                <div class="col-5 col-sm-3">
+                    <div class="custom-control custom-switch">
+                        {{ form_widget(CreateWikiForm.collab_edit_posts, {
+                            attr: {'class': 'custom-control-input'}
+                        }) }}
+                        {{ form_label(CreateWikiForm.collab_edit_posts, 'collab_edit_posts', {label_attr: {'class': 'custom-control-label'}}) }}
+                    </div>
+                </div>
+                <div class="col-5 col-sm-3">
+                    <div class="custom-control custom-switch">
+                        {{ form_widget(CreateWikiForm.allow_votes, {
+                            attr: {'class': 'custom-control-input'}
+                        }) }}
+                        {{ form_label(CreateWikiForm.allow_votes, 'allow_votes', {label_attr: {'class': 'custom-control-label'}}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    {# Submit #}
-    <button type="submit" class="btn btn-primary btn-block mb-3">Absenden</button>
+    <div class="container-fluid border rounded mt-3">
+        <div class="row mt-3">
+            <div class="col-6">
+                <div class="form-group">
+                    {{ form_label(CreateWikiForm.startseite_md, 'startseite_md', {label_attr: {'class': 'form-label'}}) }}
 
+                    {{ form_widget(CreateWikiForm.startseite_md, {
+                        attr: {'class': 'form-control textArea textColor', 'rows': '25'}
+                    }) }}
+                </div>
+            </div>
+            <div class="col-6">
+                <label class="form-label">Preview</label>
+                <div id="preview" class="fakeTextarea border rounded textArea w-100"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="container">
+       <div class="row mt-3">
+           <div class="col-2"></div>
+           <div class="col-4">
+               <button type="submit" class="btn btn-primary btn-block">Wiki erstellen</button>
+           </div>
+           <div class="col-4">
+               <a class="btn btn-danger btn-block" href="/">Abbrechen</a>
+           </div>
+
+       </div>
+    </div>
     {# end form #}
     {{ form_end(CreateWikiForm) }}
+    {# Submit #}
+{% endblock %}
+
+
+{% block scripts %}
+    <script>
+        $(document).ready(function() {
+            let inputField = document.getElementById('create_wiki_form_startseite_md');
+            document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
+            $("#create_wiki_form_startseite_md").on("input", function () {
+
+                $("#preview").html(DOMPurify.sanitize(marked.parse($("#create_wiki_form_startseite_md").val()), { USE_PROFILES: {html: true} }));
+
+                //Set height of the preview to the same as the input field
+                document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
+            });
+        });
+    </script>
 {% endblock %}

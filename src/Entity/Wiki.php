@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=WikiRepository::class)
@@ -33,7 +34,13 @@ class Wiki
     // Für das hochladen der Bilder
     /**
      * NOTE: This is not a mapped field of entity metadata, just a simple property.
-     *
+     * @Assert\File(
+     *     maxSize = "8Mi",
+     *     maxSizeMessage = "Die Datei ist zu größ ({{ size }} {{ suffix }})! Die maximal Größe ist {{ limit }} {{ suffix }}.",
+     *     mimeTypes = {"image/png", "image/svg+xml", "image/gif", "image/jpg", "image/jpeg", "image/webp"},
+     *     mimeTypesMessage = "Das verwendete Dateiformat ist ungültig! Folgende Typen sind erlaubt: {{ types }}",
+     *     uploadErrorMessage = "Es kam zu einem Fehler während des Uploads der Datei!"
+     * )
      * @Vich\UploadableField(mapping="wikiPB", fileNameProperty="imageName")
      *
      * @var File|null
@@ -41,7 +48,7 @@ class Wiki
     private $imageFile;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @var string|null
      */

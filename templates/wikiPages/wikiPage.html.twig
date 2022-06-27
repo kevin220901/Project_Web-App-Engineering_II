@@ -1,11 +1,28 @@
 {# templates/wikiPages/wikiPage.html.twig #}
 {% extends 'base.html.twig' %}
+
 {% block body %}
     <h1>{{ wiki.wikiname }}</h1>
     {% if wiki.imageName != null %}
         <img src="{{ vich_uploader_asset(wiki) }}" alt="{{ wiki.id }}">
     {% else %}
-        <span>Error</span>
         <img class="filter-logo" src="{{ asset('assets/No-File.svg') }}" alt="{{ wiki.id }}">
     {% endif %}
+
+    <label class="form-label">Preview</label>
+    <div id="preview" class="fakeTextarea border rounded textArea h-100 w-100"></div>
+    <div>{{ wiki.getStartseiteMd }}</div>
+{% endblock %}
+
+{% block scripts %}
+
+    <script>
+        $(document).ready(function() {
+            let text = `{{ wiki.getStartseiteMd }}`;
+            let dirtyText = marked.parse(text); //parsed md zu html
+            let cleanText = DOMPurify.sanitize(dirtyText, { USE_PROFILES: {html: true} }); //Überprüft den Code und entfernt alle Text die nicht in standard html sind <script> etc
+            $("#preview").html(cleanText);
+        });
+    </script>
+
 {% endblock %}

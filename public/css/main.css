@@ -21,3 +21,13 @@
 .display-none{
     display: none;
 }
+
+.w-90{
+    width: 90%;
+}
+
+.fakeTextarea{
+    overflow-wrap: break-word;
+    overflow: auto;
+    padding: 6px 12px;
+}
