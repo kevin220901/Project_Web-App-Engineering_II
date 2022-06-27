@@ -32,3 +32,4 @@ vendor/*
 tests/*
 migrations/*
 public/uploads/*
+.env.test
