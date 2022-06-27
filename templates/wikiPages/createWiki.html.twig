@@ -111,8 +111,8 @@
                 </div>
             </div>
         </div>
-        <span>Tags</span>
-        <div class="container">
+        <p class="mb-2">Tags <span class="text-secondary ml-1 ts-small" id="amount_tags">0/6</span></p>
+        <div class="border rounded p-2 rounded mb-3 tagContainerParent">
             <div class="tagContainer" id="tagContainerId">
                 <input/>
             </div>
@@ -249,8 +249,9 @@
             span.innerHTML = label;
             let closeBtn = document.createElement('button');
             closeBtn.setAttribute('onclick', 'removeMe(\"'+ label + '\",' + id +')');
+            closeBtn.setAttribute('class', 'btn tagBtn');
             let closeBtnText = document.createElement('i');
-            closeBtn.setAttribute('class', 'bi bi-x');
+            closeBtnText.setAttribute('class', 'bi bi-x');
             closeBtn.appendChild(closeBtnText);
 
             // Create the form element for the tag
@@ -284,6 +285,8 @@
                 tagContainer.prepend(createTag(tag, counter));
                 counter += 1;
             });
+            let tagCountDisplay = document.getElementById('amount_tags');
+            tagCountDisplay.innerHTML = "" + tags.length + "/6";
         }
 
         function capitalizeString(string) {
@@ -294,21 +297,24 @@
         // DONE
         tagInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter' || e.key === ' ' || e.key === ',') {
-                e.target.value.split(' ').forEach(tag => {
-                    e.target.value.split(',').forEach(tag => {
-                        // Entfernt HTML Tags und fixed escaped " > &
-                        tag = DOMPurify.sanitize(tag, { USE_PROFILES: {html: false} })
-                        tag = capitalizeString(tag);
-                        tag = tag.replace(/ /g, "");
-                        tag = tag.replace(/,/g, "");
-                        if (tag !== "" && tag!== " " && tag !==","){
-                            if(tags.indexOf(tag) === -1) {
-                                tags.push(tag);
+
+                if(tags.length<6){
+                    e.target.value.split(' ').forEach(tag => {
+                        e.target.value.split(',').forEach(tag => {
+                            // Entfernt HTML Tags und fixed escaped " > &
+                            tag = DOMPurify.sanitize(tag, { USE_PROFILES: {html: false} })
+                            tag = capitalizeString(tag);
+                            tag = tag.replace(/ /g, "");
+                            tag = tag.replace(/,/g, "");
+                            if (tag !== "" && tag!== " " && tag !==","){
+                                if(tags.indexOf(tag) === -1) {
+                                    tags.push(tag);
+                                }
                             }
-                        }
+                        });
                     });
-                });
-                addTags();
+                    addTags();
+                }
                 tagInput.value = '';
             }
         });

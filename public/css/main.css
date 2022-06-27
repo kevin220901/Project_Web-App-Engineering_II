@@ -32,25 +32,43 @@
     padding: 6px 12px;
 }
 
-.tagContainer{
-    border: 2px solid black;
-    padding: 10px;
-    border-radius: 5px;
-    display: flex;
 
+.ts-small{
+    font-size: 12px;
 }
+
+.tagContainerParent{
+    background: white;
+    color: black;
+}
+
+.tagContainer{
+    display: flex;
+}
+
 .tagContainer .tag{
-    padding: 5px;
-    border: 1px solid black;
-    margin: 5px;
+    margin: 0 5px;
     display: flex;
     align-items: center;
-    border-radius: 3px;
+    overflow: auto;
 }
 
-.xTag{
-    font-size: 16px;
-    margin-left: 5px;
+.tagContainer .tag span{
+    border: 1px solid gray;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    padding: 5px 15px;
+}
+
+.tagBtn{
+    border: 1px solid gray;
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    padding: 2px;
+    font-size: 20px;
+    background: lightgray;
 }
 
 .tagContainer input{
@@ -58,5 +76,4 @@
     padding:5px;
     outline:none;
     border: 0;
-
 }
