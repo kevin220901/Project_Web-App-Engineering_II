@@ -2,21 +2,89 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>{{ wiki.wikiname }}</h1>
-    {% if wiki.imageName != null %}
-        <img src="{{ vich_uploader_asset(wiki) }}" alt="{{ wiki.id }}">
-    {% else %}
-        <img class="filter-logo" src="{{ asset('assets/No-File.svg') }}" alt="{{ wiki.id }}">
-    {% endif %}
 
-    <label class="form-label">Preview</label>
-    <div id="preview" class="fakeTextarea border rounded textArea h-100 w-100"></div>
-    <div>
-        {% for foundTags in wiki.WikiTags %}
-            <span>{{ foundTags.tagID.tagName }}</span>
-        {% endfor %}
+    <div class="container mt-3">
+        <div class="row">
+            {# Startpage, Bild und Name #}
+            <div class="col-9">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4">
+                            {% if wiki.imageName != null %}
+                                <img class="wikiPB" src="{{ vich_uploader_asset(wiki) }}" alt="{{ wiki.id }}">
+                            {% else %}
+                                <img class="filter-logo wikiPB" src="{{ asset('assets/No-File.svg') }}" alt="{{ wiki.id }}">
+                            {% endif %}
+                        </div>
+                        <div class="col-8">
+                            <h1 class="mb-2">{{ wiki.wikiname }}</h1>
+                            {% for foundTags in wiki.WikiTags %}
+                                <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
+                                    <span class="tag_text btn btn-sm btn-info w-100 noOverflow">{{ foundTags.tagID.tagName }}</span>
+                                </div>
+                            {% endfor %}
+                            {# Momentanen Wiki Einstellungen #}
+                        </div>
+                    </div>
+
+                    <div id="preview" class="fakeTextarea border rounded textArea h-100 w-100 mt-3"
+                         {% if not wiki.getStartseiteMd|length > 0 %}hidden{% endif %}
+                    >
+
+                    </div>
+                </div>
+            </div>
+            {# Sidepanel #}
+            <div class="col-3">
+                <div class="container border rounded borderDarkMode py-3">
+                    {% if isPlatformAdmin %}
+                        <div class="m-0">
+                            <span class="tag_text btn platformAdminColor w-100 noOverflow">Platform Admin</span>
+                        </div>
+                    {% endif %}
+
+                    {% if userPermissions[0] %}
+                        <div class="m-0 mt-1">
+                            <span class="tag_text btn platformAdminColor w-100 noOverflow">Owner</span>
+                        </div>
+                    {% elseif userPermissions[1] %}
+                        <div class="m-0 mt-1">
+                            <span class="tag_text btn btn-info w-100 noOverflow">Admin</span>
+                        </div>
+                    {% elseif userPermissions[2] %}
+                        <div class="m-0 mt-1">
+                            <span class="tag_text btn btn-warning w-100 noOverflow">Collaborator</span>
+                        </div>
+                    {% else %}
+                        <div class="m-0 mt-1">
+                            <span class="tag_text btn btn-success w-100 noOverflow">Besucher</span>
+                        </div>
+                    {% endif %}
+                    <hr>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        {% if wiki.isLoggedinCreatePosts %}
+                            <div class="m-0 mt-1">
+                                <a class="tag_text btn btn-secondary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
+                            </div>
+                            {# Falls nur Collaboratore Beiträge erstellen können#}
+                        {% elseif userPermissions[2]%}
+                            <div class="m-0 mt-1">
+                                <a class="tag_text btn btn-secondary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
+                            </div>
+                        {% endif %}
+                        {% if wiki.isCanUserRequestToJoin %}
+                            {% if not userPermissions[2]%}
+                                <div class="m-0 mt-1"> {# request/{{ wiki.id }} #}
+                                    <a class="tag_text btn btn-warning w-100 noOverflow" href="/request/{{ wiki.id }}">Collaborator Status anfragen</a>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
     </div>
-    <span>{{ wiki.getStartseiteMd }}</span>
 
     <div hidden id="db_markdown">{{ wiki.getStartseiteMd }}</div>
 
@@ -32,6 +100,11 @@
             let dirtyText = marked.parse(text); //parsed md zu html
             let cleanText = DOMPurify.sanitize(dirtyText, { USE_PROFILES: {html: true} }); //Überprüft den Code und entfernt alle Text die nicht in standard html sind <script> etc
             $("#preview").html(cleanText);
+
+            let tags = document.getElementsByClassName('tag_text');
+            Array.from(tags).forEach(tag => {
+                tag.innerHTML = tag.innerHTML.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/"/g, '&quot;').replace(/&gt;/g, '>');
+            })
         });
     </script>
 

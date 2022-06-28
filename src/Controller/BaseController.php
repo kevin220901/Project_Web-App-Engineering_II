@@ -2,8 +2,13 @@
 // src/Controller/BaseController.php
 namespace App\Controller;
 
+use App\Entity\BanedUsersFromWiki;
+use App\Entity\Collaborator;
+use App\Entity\PlatformAdmin;
 use App\Entity\Tags;
 use App\Entity\Wiki;
+use App\Entity\Wikiadmin;
+use App\Entity\Wikivotes;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,6 +27,66 @@ class BaseController extends AbstractController
     }
 
     /**
+     * @param $wiki
+     * @param EntityManagerInterface $entityManager
+     * @return bool[] [isOwner, isAdmin, isCollab]
+     */
+    public function getUserPermissions($wiki, EntityManagerInterface $entityManager): array
+    {
+        $user = $this->getUser();
+        // Überprüfe ob der User Owner/Admin/Collab des Wiki's ist
+        $isOwner = false;
+        $isAdmin = false;
+        $isCollab = false;
+        if ($user){
+            if ($user == $wiki->getUserID()) {
+                $isOwner = true;
+                $isAdmin = true;
+                $isCollab = true;
+            }
+            else{
+                $repository = $entityManager->getRepository(Wikiadmin::class);
+                $wikiAdmin = $repository->findOneBy(['userID' => $user, 'wikiID' => $wiki->getID()]);
+                if($wikiAdmin){
+                    $isAdmin = true;
+                    $isCollab = true;
+                }
+            }
+            if($isOwner == false && $isAdmin == false){
+                $repository = $entityManager->getRepository(Collaborator::class);
+                $wikiCollab = $repository->findOneBy(['userID' => $user, 'wikiID' => $wiki->getID()]);
+                if($wikiCollab){
+                    $isCollab = true;
+                }
+            }
+        }
+        return [$isOwner, $isAdmin, $isCollab];
+    }
+
+    public function isPlatformAdmin(EntityManagerInterface $entityManager): bool
+    {
+        $user = $this->getUser();
+        $repository = $entityManager->getRepository(PlatformAdmin::class);
+        $platformAdmin = $repository->findOneBy(['userID' => $user]);
+        if($platformAdmin){
+            return true;
+        }
+        return false;
+    }
+
+    public function isUserBanned($wiki, EntityManagerInterface $entityManager): bool
+    {
+        $user = $this->getUser();
+        $repository = $entityManager->getRepository(BanedUsersFromWiki::class);
+        $bannedUser = $repository->findOneBy(['userID' => $user, 'wikiID' => $wiki->getID()]);
+        if($bannedUser){
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
      * @Route("/", name="home")
      */
     public function renderBase(): Response{
@@ -31,6 +96,19 @@ class BaseController extends AbstractController
         ]);
     }
 
+    public function countVotes(int $id, EntityManagerInterface $entityManager){
+        // 2. Setup repository of some entity
+        $repository = $entityManager->getRepository(Wikivotes::class);
+        // 3. Query how many rows are there in the Articles table
+        // 4. Return a number as response
+        // e.g 972
+        return $repository->createQueryBuilder('a')
+            // Filter by some parameter if you want
+            ->where('a.wikiID = '.$id)
+            ->select('count(a.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
     /**
      * @Route("/wiki/{id}", name="wiki")
@@ -44,9 +122,63 @@ class BaseController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
+        $isPlatformAdmin = $this->isPlatformAdmin($entityManager);
+
+        if ($wiki->isWikiBanned()){
+            if(!$isPlatformAdmin) {
+                $this->addFlash('error', 'Dieses Wiki wurde gesperrt!');
+                return $this->redirectToRoute('home');
+            }
+            else{
+                $this->addFlash('warning', 'Dieses Wiki wurde gesperrt!');
+            }
+        }
+
+        // Gebannte User können nicht auf das Wiki zugreifen, Platform Admins können noch immer drauf zugreifen, haben aber eine Warnung
+        if($this->isUserBanned($wiki, $entityManager)){
+            if(!$isPlatformAdmin) {
+                $this->addFlash('error', 'Du wurdest von diesem Wiki gebannt!');
+                return $this->redirectToRoute('home');
+            }
+            else{
+                $this->addFlash('warning', 'Du wurdest von diesem Wiki gebannt!');
+            }
+        }
+
+        // Falls das Wiki privat ist, können nur Collab, Admins, Owner es sehen.
+        // Platform Admins werden die Warnung erhalten, dass das Wiki privat ist, können aber trotzdem drauf zugreifen.
+        $userPermissions = $this->getUserPermissions($wiki, $entityManager);
+        if($wiki->isPrivatWiki()){
+            if(!$userPermissions[2]){
+                if(!$isPlatformAdmin){
+                    $this->addFlash('error', 'Dieses Wiki ist privat!');
+                    return $this->redirectToRoute('home');
+                }
+                else{
+                    $this->addFlash('warning', 'Dieses Wiki ist privat!');
+                }
+            }
+        }
+
+        // Überprüfen ob everyone_can_see oder logged_in_can_see
+        if($wiki->isLoggedinCanSee()){
+           if(!$wiki->isEveryoneCanSee()) {
+               $user = $this->getUser();
+               if(!$user){
+                   $this->addFlash('error', 'Du musst eingeloggt sein um dieses Wiki zu sehen!');
+                   return $this->redirectToRoute('home');
+               }
+           }
+        }
+
+
         return $this->render('/wikiPages/wikiPage.html.twig', [
             'darkMode' => $this->getDarkMode(),
-            "wiki" => $wiki
+            'wiki' => $wiki,
+            'userPermissions' => $userPermissions,
+            'isPlatformAdmin' => $isPlatformAdmin,
+            'wikiVotes' => $this->countVotes($wiki->getId(), $entityManager),
+
         ]);
     }
 

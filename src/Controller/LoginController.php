@@ -15,6 +15,12 @@ class LoginController extends AbstractController
      */
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
+        $user = $this->getUser();
+        if($user){
+            $this->addFlash('error', 'Du bist bereits eingeloggt!');
+            return $this->redirectToRoute('home');
+        }
+
         // get the login error if there is one
         $base = new BaseController();
         $error = $authenticationUtils->getLastAuthenticationError();

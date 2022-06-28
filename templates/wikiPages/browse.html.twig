@@ -41,10 +41,10 @@
                     <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
 
                         <input class="form-check-input hideCheckbox" type="checkbox" id="inlineCheckbox{{ t.id }}INCLUDE" value="include_{{ t.id }}">
-                        <label class="form-check-label btn btn-sm btn-secondary w-100 noOverflow" id="inlineLabel{{ t.id }}INCLUDE" for="inlineCheckbox{{ t.id }}+ 'INCLUDE'" onclick="firstCheckboxClick({{ t.id }})">{{ t.tagName }}</label>
+                        <label class="tag_text form-check-label btn btn-sm btn-secondary w-100 noOverflow" id="inlineLabel{{ t.id }}INCLUDE" for="inlineCheckbox{{ t.id }}+ 'INCLUDE'" onclick="firstCheckboxClick({{ t.id }})">{{ t.tagName }}</label>
 
                         <input class="form-check-input hideCheckbox" type="checkbox" id="inlineCheckbox{{ t.id }}EXCLUDE" value="exclude_{{ t.id }}">
-                        <label class="form-check-label btn btn-sm btn-secondary w-100 display-none noOverflow" id="inlineLabel{{ t.id }}EXCLUDE" for="inlineCheckbox{{ t.id }}EXCLUDE" onclick="secondCheckboxClick({{ t.id }})">{{ t.tagName }}</label>
+                        <label class="tag_text form-check-label btn btn-sm btn-secondary w-100 display-none noOverflow" id="inlineLabel{{ t.id }}EXCLUDE" for="inlineCheckbox{{ t.id }}EXCLUDE" onclick="secondCheckboxClick({{ t.id }})">{{ t.tagName }}</label>
                     </div>
                 {% endfor %}
 
@@ -55,6 +55,14 @@
 
 {% block scripts %}
         <script>
+            $(document).ready(function() {
+                let tags = document.getElementsByClassName('tag_text');
+                Array.from(tags).forEach(tag => {
+                    tag.innerHTML = tag.innerHTML.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/"/g, '&quot;').replace(/&gt;/g, '>');
+                })
+            });
+
+
             {# Jeder Tag ruft diese Funktion mit seiner eigenen Id auf, sobald diese gedrückt werden. Dadruch aktivieren sich die Checkboxen allerdings nicht mehr, darum setzen wir diese manuell #}
             {# Da es nur an/aus für eine Checkbox gibt, wir aber ignore/include/exclude für die Suche haben, haben wir 2 Checkboxen die je nach momentanen Status ausgetauscht werden #}
             {# Falls include gesetzt ist und man nochmal auf include klickt, wird include deaktiviert, versteckt und dafür exclude aktiviert und angezeigt. Analog für Exclude #}

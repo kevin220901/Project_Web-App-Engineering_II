@@ -81,3 +81,34 @@
 .noOverflow{
     overflow: hidden;
 }
+
+.wikiPB{
+    width: 100%;
+    height: auto;
+}
+
+.platformAdminColor{
+    color: #fff;
+    background-color: #8a0505;
+    border-color: #8a0505;
+}
+.platformAdminColor:hover{
+    color: #fff;
+    background-color: #7A0404FF;
+    border-color: #7A0404FF;
+}
+#btn-back-to-top {
+    position: fixed;
+    bottom: 25px;
+    right: 35px;
+    display: none;
+}
+.btn-circle {
+    width: 35px;
+    height: 35px;
+    padding: 6px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    border-radius: 20px;
+    text-align: center;
+}

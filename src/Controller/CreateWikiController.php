@@ -32,19 +32,27 @@ class CreateWikiController extends AbstractController
 
             $tagRepository = $entityManager->getRepository(Tags::class);
 
-            foreach ($_POST["tags"] as $tag){
-                //Tags sind uinique, darum gibt es ein Error wenn man den selben Tag nochmal einfügen möchte
-                // in sql kann man das mit insert ignore umgehen, so etwas gibt es für Doctrine nicht
-                // Also testen wir ob es den Tag bereits gibt und wenn nicht fügen wir ihn ein!
-                $tagExists = $tagRepository->findOneBy(['tagName' => $tag]);
-                if (!$tagExists) {
-                    // Wenn der tag nicht existiert, füge ihn hinzu
-                    $wikiTag = new Tags();
-                    $wikiTag->setTagName($tag);
-                    $entityManager->persist($wikiTag);
-                    $entityManager->flush();
+            // Da max 6 Tags erlaubt sind, werden hier nur die ersten 6 aus dem Array hinzugefügt
+            $counter = 0;
+            if (array_key_exists("tags", $_POST)){
+                foreach ($_POST["tags"] as $tag){
+                    $counter += 1;
+                    //Tags sind uinique, darum gibt es ein Error wenn man den selben Tag nochmal einfügen möchte
+                    // in sql kann man das mit insert ignore umgehen, so etwas gibt es für Doctrine nicht
+                    // Also testen wir ob es den Tag bereits gibt und wenn nicht fügen wir ihn ein!
+                    if($counter < 7){
+                        $tagExists = $tagRepository->findOneBy(['tagName' => $tag]);
+                        if (!$tagExists) {
+                            // Wenn der tag nicht existiert, füge ihn hinzu
+                            $wikiTag = new Tags();
+                            $wikiTag->setTagName($tag);
+                            $entityManager->persist($wikiTag);
+                            $entityManager->flush();
+                        }
+                    }
                 }
             }
+            $counter = 0;
 
             # Default values eines wikis
             $date = new \DateTime();
@@ -57,13 +65,19 @@ class CreateWikiController extends AbstractController
             $id = $wiki->getId();
 
             //Jeder Tag ist jetzt in der Datenbank und das Wiki wurde erstellt. Jetzt müssen die Tags und das Wiki verknüpft werden!
-            foreach ($_POST["tags"] as $tag){
-                $newWikiTag = new WikiTags();
-                $wikiTag = $tagRepository->findOneBy(['tagName' => $tag]);
-                $newWikiTag->setTagID($wikiTag);
-                $newWikiTag->setWikiID($wiki);
-                $entityManager->persist($newWikiTag);
-                $entityManager->flush();
+            // Da max 6 Tags erlaubt sind, werden hier nur die ersten 6 aus dem Array hinzugefügt
+            if (array_key_exists("tags", $_POST)) {
+                foreach ($_POST["tags"] as $tag){
+                    $counter += 1;
+                    if ($counter < 7){
+                        $newWikiTag = new WikiTags();
+                        $wikiTag = $tagRepository->findOneBy(['tagName' => $tag]);
+                        $newWikiTag->setTagID($wikiTag);
+                        $newWikiTag->setWikiID($wiki);
+                        $entityManager->persist($newWikiTag);
+                        $entityManager->flush();
+                    }
+                }
             }
 
             $this->addFlash('success', 'Das Wiki wurde erfolgreich erstellt!');
@@ -71,16 +85,15 @@ class CreateWikiController extends AbstractController
         }
 
         $base = new BaseController();
-        if($user != null){
+        if($user){
             return $this->render('wikiPages/createWiki.html.twig', [
                 'CreateWikiForm' => $form->createView(),
                 'darkMode' => $base->getDarkMode(),
             ]);
         }
         else{
-            return $this->render('customError/noPermissions.html.twig', [
-                'darkMode' => $base->getDarkMode(),
-            ]);
+            $this->addFlash('error', 'Du hast keine Berechtigung ein neues Wiki zu erstellen!');
+            return $this->redirectToRoute('home');
         }
     }
 }

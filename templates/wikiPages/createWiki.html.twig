@@ -12,7 +12,7 @@
     {{ form_start(CreateWikiForm) }}
 
 
-    <div class="container mt-3 border rounded">
+    <div class="container mt-3 border rounded borderDarkMode">
         {# Errors #}
         {% if not CreateWikiForm.vars.valid %}
             <div class="alert alert-danger mt-3" role="alert">
@@ -41,12 +41,12 @@
         </div>
 
         <p class="mb-2">Wiki Einstellungen</p>
-        <div class="border rounded p-2 rounded mb-3">
+        <div class="border rounded p-2 rounded mb-3 borderDarkMode">
             <div class="row mb-3">
                 <div class="col-5 col-sm-3">
                     <div class="custom-control custom-switch">
                         {{ form_widget(CreateWikiForm.privat_wiki, {
-                            attr: {'class': 'custom-control-input'}
+                            attr: {'class': 'custom-control-input', 'disabled':''}
                         }) }}
                         {{ form_label(CreateWikiForm.privat_wiki, 'Wiki privat schalten', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Nur Du, Admins und Collaborator können das Wiki sehen'}}) }}
                     </div>
@@ -54,15 +54,15 @@
                 <div class="col-5 col-sm-3">
                     <div class="custom-control custom-switch">
                         {{ form_widget(CreateWikiForm.everyone_can_see, {
-                            attr: {'class': 'custom-control-input'}
+                            attr: {'class': 'custom-control-input', 'checked':''}
                         }) }}
-                        {{ form_label(CreateWikiForm.everyone_can_see, 'Öffentlich sichtbar', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Jeder kann das Wiki sehen'}}) }}
+                        {{ form_label(CreateWikiForm.everyone_can_see, 'Öffentlich sichtbar', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Jeder kann das Wiki sehen. Falls alle drei Sichtbarkeits Optionen deaktiviert sind, ist das Wiki für alle sichtbar!'}}) }}
                     </div>
                 </div>
                 <div class="col-5 col-sm-3">
                     <div class="custom-control custom-switch">
                         {{ form_widget(CreateWikiForm.loggedin_can_see, {
-                            attr: {'class': 'custom-control-input'}
+                            attr: {'class': 'custom-control-input', 'disabled':'', 'checked':''}
                         }) }}
                         {{ form_label(CreateWikiForm.loggedin_can_see, 'Nur für Nutzer sichtbar', {label_attr: {'class': 'custom-control-label', 'data-bs-toggle':'tooltip', 'title': 'Nur angemeldete Nutzer können das Wiki sehen'}}) }}
                     </div>
@@ -111,19 +111,19 @@
                 </div>
             </div>
         </div>
-        <p class="mb-2">Tags <span class="text-secondary ml-1 ts-small" id="amount_tags">0/6</span></p>
-        <div class="border rounded p-2 rounded mb-3 tagContainerParent">
+        <p class="mb-2"><span data-bs-toggle="tooltip" title="Themenfelder deinen Wikis (max. 6 Tags wobei ein Tag max. 9 Zeichen lang sein darf)">Tags</span> <span class="text-secondary ml-1 ts-small" id="amount_tags">0/6</span></p>
+        <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
             <div class="tagContainer" id="tagContainerId">
                 <input/>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid border rounded mt-3">
+    <div class="container-fluid border rounded mt-3 borderDarkMode">
         <div class="row mt-3">
             <div class="col-6">
                 <div class="form-group">
-                    {{ form_label(CreateWikiForm.startseite_md, 'startseite_md', {label_attr: {'class': 'form-label'}}) }}
+                    {{ form_label(CreateWikiForm.startseite_md, 'Wiki Startseite', {label_attr: {'class': 'form-label', 'data-bs-toggle':'tooltip', 'title': 'Hier kannst du die Startseite deines Wikis schreiben.'}}) }}
 
                     {{ form_widget(CreateWikiForm.startseite_md, {
                         attr: {'class': 'form-control textArea textColor', 'rows': '25'}
@@ -310,8 +310,9 @@
         }
 
         function capitalizeString(string) {
-            string =  string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-            return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+            string = string.replace(/"/g, '&quot;');
+            string = string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+            return string.slice(0,9);
         }
 
         // DONE

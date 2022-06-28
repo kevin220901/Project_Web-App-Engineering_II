@@ -1,3 +1,11 @@
+# Production Probleme beheben!
+Falls `APP_ENV=prod` gesetzt ist kann es sein, dass `/createWiki` eine 500ter Fehlermeldung erzeugt.
+
+**Das liegt nicht ander Website!** Sondern daran, dass `/var/cache/prod` nicht auf `drwxrwxrwx` gesetzt ist!
+Das passiert, wenn man `cache:clear` als **sudo** ausführt!
+
+
+
 # Project_Web-App-Engineering_II
 
 `git clone ...` im `/var/www/html` Verzeichnis
