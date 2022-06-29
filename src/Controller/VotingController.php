@@ -89,7 +89,7 @@ class VotingController extends AbstractController{
                 }
             }
         }
-        
+
         if($origin == "wiki"){
             return $this->redirectToRoute($origin, array('id' => $id));
         }

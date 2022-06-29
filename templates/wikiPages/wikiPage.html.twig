@@ -6,7 +6,7 @@
     <div class="container mt-3">
         <div class="row">
             {# Startpage, Bild und Name #}
-            <div class="col-9">
+            <div class="col-9" id="wikiMainContent">
                 <div class="container">
                     <div class="row">
                         <div class="col-4">
@@ -51,7 +51,7 @@
                 </div>
             </div>
             {# Sidepanel #}
-            <div class="col-3">
+            <div class="col-3" id="wikiSideContent">
                 <div class="container border rounded borderDarkMode py-3">
                     {% if isPlatformAdmin %}
                         <div class="m-0">
@@ -76,16 +76,22 @@
                             <span class="tag_text btn btn-success w-100 noOverflow">Besucher</span>
                         </div>
                     {% endif %}
+                    {% if userPermissions[1] or isPlatformAdmin %}
+                        <hr>
+                        <div class="m-0">
+                            <a class="tag_text btn btn-secondary w-100 noOverflow" href="/settings/{{ wiki.id }}">Wiki Einstellungen</a>
+                        </div>
+                    {% endif %}
                     <hr>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         {% if wiki.isLoggedinCreatePosts %}
                             <div class="m-0 mt-1">
-                                <a class="tag_text btn btn-secondary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
+                                <a class="tag_text btn btn-primary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
                             </div>
                             {# Falls nur Collaboratore Beiträge erstellen können#}
                         {% elseif userPermissions[2]%}
                             <div class="m-0 mt-1">
-                                <a class="tag_text btn btn-secondary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
+                                <a class="tag_text btn btn-primary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
                             </div>
                         {% endif %}
                         {% if wiki.isCanUserRequestToJoin %}
@@ -95,8 +101,18 @@
                                 </div>
                             {% endif %}
                         {% endif %}
+                        <hr>
                     {% endif %}
+                    <button type="button" class="btn btn-secondary w-100" onclick="hideSidepanel()" data-bs-toggle="tooltip" title="Verstecke das Sidepanel">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
                 </div>
+            </div>
+
+            <div class="col-1" id="sidePanelButton" hidden>
+                <button type="button" class="btn btn-secondary" onclick="showSidepanel()">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
             </div>
 
         </div>
@@ -109,6 +125,13 @@
 {% block scripts %}
 
     <script>
+
+        // Aktiviere Tooltips
+        let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+
         $(document).ready(function() {
             let text = $('#db_markdown').html();
             // Die Ausgabe der Datenbank encoden
@@ -122,6 +145,24 @@
                 tag.innerHTML = tag.innerHTML.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/"/g, '&quot;').replace(/&gt;/g, '>');
             })
         });
+
+        function hideSidepanel(){
+            $('#sidePanelButton').removeAttr('hidden',"");
+            $('#wikiSideContent').attr('hidden',"");
+
+            $('#wikiMainContent').removeClass('col-9');
+            $('#wikiMainContent').addClass('col-11');
+
+        }
+
+        function showSidepanel(){
+            $('#sidePanelButton').attr('hidden',"");
+            $('#wikiSideContent').removeAttr('hidden',"");
+
+            $('#wikiMainContent').removeClass('col-11');
+            $('#wikiMainContent').addClass('col-9');
+        }
+
     </script>
 
 {% endblock %}

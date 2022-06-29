@@ -25,7 +25,7 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
     - [ ] Moderator     (Read/Write/Delete/Edit/Manage Users)
     - [ ] Collaborator    (Read/Write/Edit)
 
-- [ ] Wikis sollen eine Upvote-Funktion haben.
+- ✔ Wikis sollen eine Upvote-Funktion haben.
 
 - ❌ Registrierung nur mit gültiger E-Mail. Account wird durch Bestätigungsmail verifiziert.
 - ❌ Nicht bestätigte Accounts werden nach Ablauf einer Frist gelöscht.
@@ -54,7 +54,7 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
     - [ ] Wikis als “Nicht Interessiert” markieren, um es auszublenden
     - [ ] Benachrichtigung's Einstellungen ändern
     - [ ] Account löschen
-    - [ ] 2FA aktivieren (per Mail oder per 2FA App z.B. Google Authenticator) (TOTP)
+    - ❌ 2FA aktivieren (per Mail oder per 2FA App z.B. Google Authenticator) (TOTP)
 
 - [ ] Benachrichtigung's Einstellungen umfassen:
     - [ ] Ob User über Einladungen in ein Wiki eine Mail erhalten sollen
