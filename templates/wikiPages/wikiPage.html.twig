@@ -23,7 +23,23 @@
                                     <span class="tag_text btn btn-sm btn-info w-100 noOverflow">{{ foundTags.tagID.tagName }}</span>
                                 </div>
                             {% endfor %}
-                            {# Momentanen Wiki Einstellungen #}
+                            {# Wiki Votes (falls aktiviert) #}
+                            {% if wiki.isAllowVotes %}
+                                <div class="mt-2">
+                                    <h5>
+                                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                            {% if userVoted %}
+                                                <a href="{{ path('removeVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square-fill" style="filter: invert(57%) sepia(67%) saturate(555%) hue-rotate(63deg) brightness(99%) contrast(87%);"></i></a>
+                                            {% else %}
+                                                <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square" style="filter: invert(57%) sepia(67%) saturate(555%) hue-rotate(63deg) brightness(99%) contrast(87%);"></i></a>
+                                            {% endif %}
+                                        {% else %}
+                                            <a href="/login"><i class="bi bi-arrow-up-square" style="filter: invert(57%) sepia(67%) saturate(555%) hue-rotate(63deg) brightness(99%) contrast(87%);"></i></a>
+                                        {% endif %}
+                                        <span class="ml-1">{{ wikiVotes }}</span>
+                                    </h5>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 

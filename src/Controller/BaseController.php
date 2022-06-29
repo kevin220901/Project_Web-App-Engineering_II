@@ -96,7 +96,8 @@ class BaseController extends AbstractController
         ]);
     }
 
-    public function countVotes(int $id, EntityManagerInterface $entityManager){
+    public function countVotes(int $id, EntityManagerInterface $entityManager): int
+    {
         // 2. Setup repository of some entity
         $repository = $entityManager->getRepository(Wikivotes::class);
         // 3. Query how many rows are there in the Articles table
@@ -108,6 +109,22 @@ class BaseController extends AbstractController
             ->select('count(a.id)')
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    /**
+     * @param int $wikiId
+     * @param $user  / Der User den man durch $this->getUser() erhält
+     * @param EntityManagerInterface $entityManager
+     * @return bool
+     */
+    public function hasVoted(int $wikiId, $user, EntityManagerInterface $entityManager): bool
+    {
+        $repository = $entityManager->getRepository(Wikivotes::class);
+        $userVoted = $repository->findOneBy(['userID' => $user, 'wikiID' => $wikiId]);
+        if($userVoted){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -161,9 +178,9 @@ class BaseController extends AbstractController
         }
 
         // Überprüfen ob everyone_can_see oder logged_in_can_see
+        $user = $this->getUser();
         if($wiki->isLoggedinCanSee()){
            if(!$wiki->isEveryoneCanSee()) {
-               $user = $this->getUser();
                if(!$user){
                    $this->addFlash('error', 'Du musst eingeloggt sein um dieses Wiki zu sehen!');
                    return $this->redirectToRoute('home');
@@ -171,6 +188,10 @@ class BaseController extends AbstractController
            }
         }
 
+        $hasVoted = false;
+        if($user){
+            $hasVoted = $this->hasVoted($wiki->getId(), $user,  $entityManager);
+        }
 
         return $this->render('/wikiPages/wikiPage.html.twig', [
             'darkMode' => $this->getDarkMode(),
@@ -178,7 +199,7 @@ class BaseController extends AbstractController
             'userPermissions' => $userPermissions,
             'isPlatformAdmin' => $isPlatformAdmin,
             'wikiVotes' => $this->countVotes($wiki->getId(), $entityManager),
-
+            'userVoted' => $hasVoted,
         ]);
     }
 
