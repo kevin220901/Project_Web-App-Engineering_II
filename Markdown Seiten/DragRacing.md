@@ -1,0 +1,9 @@
+# Dragster der atemberaubende Motorsport
+
+## Drag Racing
+Ein **Beschleunigungsrennen**, **Dragsterrennen** oder **Drag Race** ist eine Motorsportveranstaltung für Autos und Motorräder, bei der eine gerade Strecke bei stehendem Start schnellstmöglich zurückzulegen ist. Die traditionellen Renndistanzen sind die Viertelmeile (402,34 m) und die Achtelmeile (201,17 m). Die Rennen der oberen Amateurklassen sowie der Profiklassen werden mit Dragstern und Drag Bikes bestritten, die bis zu einigen tausend PS bzw. kW leisten. Die Reaktionsschnelligkeit der Fahrer sowie ihre Fähigkeit, die enorme Leistung der Dragster auf den speziell präparierten Drag Strip zu bringen, entscheiden über Sieg oder Niederlage.
+
+## Geschichte
+Die Anfänge der Beschleunigungsrennen liegen in den ersten Jahren nach dem Zweiten Weltkrieg. Zu dieser Zeit kam es bei Jugendlichen in den USA in Mode, sich mit frisierten Autos illegale Straßenrennen zu liefern. Üblicherweise fuhren zwei Fahrzeuge gleichzeitig an einer Ampel los und beschleunigten bis zu einem vereinbarten Ziel, etwa der nächsten Ampel oder dem Ende des Häuserblocks. Die Wettkämpfe wurden alsbald in legalem Rahmen veranstaltet und vor allem auf Flugplätze verlegt, die nach dem Ende des Krieges in großer Zahl zur Verfügung standen. In Südkalifornien wurden auch ausgetrocknete Salzseen als Rennstrecken genutzt. Die erste speziell auf Beschleunigungsrennen ausgelegte Rennstrecke wurde 1950 auf einem alten Flughafen in Santa Ana in Kalifornien eröffnet.
+## Wettkampf
+Es gibt verschiedene Wettkampfklassen. Hierzu gehören die Amateurklasse, die Profiklasse und das Junior-Dragster für die jüngeren Generationen
