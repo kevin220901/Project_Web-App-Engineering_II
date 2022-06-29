@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Tags;
+use App\Entity\User;
 use App\Entity\Wiki;
 use App\Entity\WikiTags;
 use App\Form\CreateWikiFormType;
@@ -86,13 +87,21 @@ class CreateWikiController extends AbstractController
 
         $base = new BaseController();
         if($user){
+            $repository = $entityManager->getRepository(User::class);
+            $userEntity = $repository->findOneBy(['id' => $user]);
+
+            if($user->isUserBanned()){
+                $this->addFlash('error', 'Du hast keine Berechtigung ein neues Wiki zu erstellen!');
+                return $this->redirectToRoute('home');
+            }
+
             return $this->render('wikiPages/createWiki.html.twig', [
                 'CreateWikiForm' => $form->createView(),
                 'darkMode' => $base->getDarkMode(),
             ]);
         }
         else{
-            $this->addFlash('error', 'Du hast keine Berechtigung ein neues Wiki zu erstellen!');
+            $this->addFlash('error', 'Du musst eingeloggt sein um ein neues Wiki zu erstellen!');
             return $this->redirectToRoute('home');
         }
     }

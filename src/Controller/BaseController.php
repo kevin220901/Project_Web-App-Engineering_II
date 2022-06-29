@@ -6,6 +6,8 @@ use App\Entity\BanedUsersFromWiki;
 use App\Entity\Collaborator;
 use App\Entity\PlatformAdmin;
 use App\Entity\Tags;
+use App\Entity\UserFavoriteWiki;
+use App\Entity\UserIgnoreWiki;
 use App\Entity\Wiki;
 use App\Entity\Wikiadmin;
 use App\Entity\Wikivotes;
@@ -78,8 +80,7 @@ class BaseController extends AbstractController
     {
         $user = $this->getUser();
         $repository = $entityManager->getRepository(BanedUsersFromWiki::class);
-        $bannedUser = $repository->findOneBy(['userID' => $user, 'wikiID' => $wiki->getID()]);
-        if($bannedUser){
+        if($repository->findOneBy(['userID' => $user, 'wikiID' => $wiki->getID()])){
             return true;
         }
         return false;
@@ -120,8 +121,35 @@ class BaseController extends AbstractController
     public function hasVoted(int $wikiId, $user, EntityManagerInterface $entityManager): bool
     {
         $repository = $entityManager->getRepository(Wikivotes::class);
-        $userVoted = $repository->findOneBy(['userID' => $user, 'wikiID' => $wikiId]);
-        if($userVoted){
+        if($repository->findOneBy(['userID' => $user, 'wikiID' => $wikiId])){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param int $wikiId
+     * @param $user / Der User den man durch $this->getUser() erhält
+     * @param EntityManagerInterface $entityManager
+     * @return bool
+     */
+    public function isFavoriteWiki(int $wikiId, $user, EntityManagerInterface $entityManager): bool{
+        $repository = $entityManager->getRepository(UserFavoriteWiki::class);
+        if($repository->findOneBy(['userID' => $user, 'wikiID' => $wikiId])){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param int $wikiId
+     * @param $user / Der User den man durch $this->getUser() erhält
+     * @param EntityManagerInterface $entityManager
+     * @return bool
+     */
+    public function isIgnoredWiki(int $wikiId, $user, EntityManagerInterface $entityManager): bool{
+        $repository = $entityManager->getRepository(UserIgnoreWiki::class);
+        if($repository->findOneBy(['userID' => $user, 'wikiID' => $wikiId])){
             return true;
         }
         return false;
@@ -150,10 +178,10 @@ class BaseController extends AbstractController
                 $this->addFlash('warning', 'Dieses Wiki wurde gesperrt!');
             }
         }
-
-        // Gebannte User können nicht auf das Wiki zugreifen, Platform Admins können noch immer drauf zugreifen, haben aber eine Warnung
+        $userPermissions = $this->getUserPermissions($wiki, $entityManager);
+        // Gebannte User können nicht auf das Wiki zugreifen, Platform Admins und Owner können noch immer drauf zugreifen, haben aber eine Warnung
         if($this->isUserBanned($wiki, $entityManager)){
-            if(!$isPlatformAdmin) {
+            if(!$isPlatformAdmin && !$userPermissions[0]) {
                 $this->addFlash('error', 'Du wurdest von diesem Wiki gebannt!');
                 return $this->redirectToRoute('home');
             }
@@ -164,7 +192,6 @@ class BaseController extends AbstractController
 
         // Falls das Wiki privat ist, können nur Collab, Admins, Owner es sehen.
         // Platform Admins werden die Warnung erhalten, dass das Wiki privat ist, können aber trotzdem drauf zugreifen.
-        $userPermissions = $this->getUserPermissions($wiki, $entityManager);
         if($wiki->isPrivatWiki()){
             if(!$userPermissions[2]){
                 if(!$isPlatformAdmin){
@@ -189,8 +216,15 @@ class BaseController extends AbstractController
         }
 
         $hasVoted = false;
+        $isFavoriteWiki = false;
+        $isIgnoredWiki = false;
         if($user){
-            $hasVoted = $this->hasVoted($wiki->getId(), $user,  $entityManager);
+            $hasVoted = $this->hasVoted($id, $user, $entityManager);
+            $isFavoriteWiki = $this->isFavoriteWiki($id, $user, $entityManager);
+            $isIgnoredWiki = $this->isIgnoredWiki($id, $user, $entityManager);
+            if($isIgnoredWiki){
+                $this->addFlash('warning', 'Du hast dieses Wiki versteckt!');
+            }
         }
 
         return $this->render('/wikiPages/wikiPage.html.twig', [
@@ -198,8 +232,10 @@ class BaseController extends AbstractController
             'wiki' => $wiki,
             'userPermissions' => $userPermissions,
             'isPlatformAdmin' => $isPlatformAdmin,
-            'wikiVotes' => $this->countVotes($wiki->getId(), $entityManager),
+            'wikiVotes' => $this->countVotes($id, $entityManager),
             'userVoted' => $hasVoted,
+            'isFavoriteWiki' => $isFavoriteWiki,
+            'isIgnoredWiki' => $isIgnoredWiki,
         ]);
     }
 

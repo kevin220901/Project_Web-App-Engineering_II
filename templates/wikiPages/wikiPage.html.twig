@@ -24,22 +24,45 @@
                                 </div>
                             {% endfor %}
                             {# Wiki Votes (falls aktiviert) #}
-                            {% if wiki.isAllowVotes %}
-                                <div class="mt-2">
-                                    <h5>
-                                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                                            {% if userVoted %}
-                                                <a href="{{ path('removeVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square-fill" style="filter: invert(57%) sepia(67%) saturate(555%) hue-rotate(63deg) brightness(99%) contrast(87%);"></i></a>
+                            <div class="row mt-2">
+                                <div class="col-9">
+                                    {% if wiki.isAllowVotes %}
+                                        <h4 class="m-0 p-1">
+                                            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                                {% if userVoted %}
+                                                    <a href="{{ path('removeVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square-fill voteColor"></i></a>
+                                                {% else %}
+                                                    <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
+                                                {% endif %}
                                             {% else %}
-                                                <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square" style="filter: invert(57%) sepia(67%) saturate(555%) hue-rotate(63deg) brightness(99%) contrast(87%);"></i></a>
+                                                <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
                                             {% endif %}
-                                        {% else %}
-                                            <a href="/login"><i class="bi bi-arrow-up-square" style="filter: invert(57%) sepia(67%) saturate(555%) hue-rotate(63deg) brightness(99%) contrast(87%);"></i></a>
-                                        {% endif %}
-                                        <span class="ml-1">{{ wikiVotes }}</span>
-                                    </h5>
+                                            <span class="ml-1">{{ wikiVotes }}</span>
+                                        </h4>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
+                                <div class="col-3">
+                                    {# Favorite / Ignore #}
+                                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                        <h3 class="m-0">
+                                            {# Favorite Wiki #}
+                                            {% if isFavoriteWiki %}
+                                                <a href="{{ path('removeFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Entferne das Wiki aus deinen Favoriten" class="border rounded p-1 borderDarkMode"><i class="bi bi-heart-fill heartColor"></i></a>
+                                            {% else %}
+                                                <a href="{{ path('addFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Füge das Wiki deinen Favoriten hinzu" class="border rounded p-1 borderDarkMode"><i class="bi bi-heart heartColor"></i></a>
+                                            {% endif %}
+
+
+                                            {# Ignore Wiki #}
+                                            {% if isIgnoredWiki %}
+                                                <a href="{{ path('removeIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="ml-2 border rounded p-1 borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki nicht länger verstecken"><i class="bi bi-eye-slash textColor"></i></a>
+                                            {% else %}
+                                                <a href="{{ path('addIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="ml-2 border rounded p-1 borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki verstecken"><i class="bi bi-eye textColor"></i></a>
+                                            {% endif %}
+                                        </h3>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -103,7 +126,7 @@
                         {% endif %}
                         <hr>
                     {% endif %}
-                    <button type="button" class="btn btn-secondary w-100" onclick="hideSidepanel()" data-bs-toggle="tooltip" title="Verstecke das Sidepanel">
+                    <button type="button" class="btn btn-secondary w-100" onclick="hideSidepanel()">
                         <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
@@ -125,7 +148,7 @@
 {% block scripts %}
 
     <script>
-
+        {#  data-bs-toggle="tooltip" title="Verstecke das Sidepanel" #}
         // Aktiviere Tooltips
         let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
