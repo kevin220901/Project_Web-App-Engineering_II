@@ -13,7 +13,7 @@ class LoginController extends AbstractController
     /**
      * @Route("/login", name="login")
      */
-    public function index(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
         $user = $this->getUser();
         if($user){

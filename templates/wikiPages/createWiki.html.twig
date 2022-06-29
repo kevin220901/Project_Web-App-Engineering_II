@@ -4,6 +4,11 @@
 {# Wir überschreiben das Template, welches form_errors rendert, damit diese nicht als Liste ausgegeben werden #}
 {% form_theme CreateWikiForm 'customError/errors.html.twig' %}
 
+{% block title %}
+    Neues Wiki
+{% endblock %}
+
+
 {% block body %}
 
     {# <p>Email: {{ app.user.email }}</p> #}
@@ -18,6 +23,7 @@
             <div class="alert alert-danger mt-3" role="alert">
                 {{ form_errors(CreateWikiForm.wikiname) }}
                 {{ form_errors(CreateWikiForm.imageFile) }}
+                {{ form_errors(CreateWikiForm.startseite_md) }}
             </div>
         {% endif %}
         <div class="row my-3">

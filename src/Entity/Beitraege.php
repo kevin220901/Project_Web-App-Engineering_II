@@ -37,7 +37,7 @@ class Beitraege
     private $title;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $inhalt_md;
 

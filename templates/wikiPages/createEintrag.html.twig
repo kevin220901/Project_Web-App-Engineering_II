@@ -1,0 +1,89 @@
+{# templates/wikiPages/createEintrag.html.twig #}
+{% extends 'base.html.twig' %}
+
+{# Wir überschreiben das Template, welches form_errors rendert, damit diese nicht als Liste ausgegeben werden #}
+{% form_theme CreateEintragForm 'customError/errors.html.twig' %}
+
+{% block title %}
+    Neuer Eintrag
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(CreateEintragForm) }}
+
+    <div class="container mt-3 border rounded borderDarkMode">
+        {# Errors #}
+        {% if not CreateEintragForm.vars.valid %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ form_errors(CreateEintragForm.title) }}
+                {{ form_errors(CreateEintragForm.inhalt_md) }}
+            </div>
+        {% endif %}
+        <div class="row my-3">
+            <div class="col-sm-3 col-lg-5">
+                {{ form_label(CreateEintragForm.title, 'Titel', {label_attr: {'class': 'form-label'}}) }}
+
+                {{ form_widget(CreateEintragForm.title, {
+                    attr: {'class': 'form-control', 'placeholder': '...'}
+                }) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid border rounded mt-3 borderDarkMode">
+        <div class="row mt-3">
+            <div class="col-6">
+                <div class="form-group">
+                    {{ form_label(CreateEintragForm.inhalt_md, 'Eintrag', {label_attr: {'class': 'form-label', 'data-bs-toggle':'tooltip', 'title': 'Hier kannst du die Startseite deines Wikis schreiben.'}}) }}
+
+                    {{ form_widget(CreateEintragForm.inhalt_md, {
+                        attr: {'class': 'form-control textArea textColor', 'rows': '25'}
+                    }) }}
+                </div>
+            </div>
+            <div class="col-6">
+                <label class="form-label">Preview</label>
+                <div id="preview" class="fakeTextarea border rounded textArea w-100"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-2"></div>
+            <div class="col-4">
+                <button type="submit" class="btn btn-primary btn-block">Eintrag erstellen</button>
+            </div>
+            <div class="col-4">
+                <a class="btn btn-danger btn-block" href="/">Abbrechen</a>
+            </div>
+
+        </div>
+    </div>
+
+    {{ form_end(CreateEintragForm) }}
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // Falls Enter gedrückt wird, wird so das Form nicht abgeschickt
+        $(document).on("keydown", ":input:not(textarea)", function(event) {
+            return event.key !== "Enter";
+        });
+
+        $(document).ready(function() {
+
+            let inputField = document.getElementById('create_eintrag_form_inhalt_md');
+            document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
+            $("#create_eintrag_form_inhalt_md").on("input", function () {
+
+                $("#preview").html(DOMPurify.sanitize(marked.parse($("#create_eintrag_form_inhalt_md").val()), { USE_PROFILES: {html: true} }));
+
+                //Set height of the preview to the same as the input field
+                document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
+            });
+        })
+    </script>
+{% endblock %}

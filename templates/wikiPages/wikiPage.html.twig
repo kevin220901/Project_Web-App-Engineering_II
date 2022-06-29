@@ -1,6 +1,10 @@
 {# templates/wikiPages/wikiPage.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% block title %}
+{{ wiki.wikiname }}
+{% endblock %}
+
 {% block body %}
 
     <div class="container mt-3">
@@ -107,24 +111,26 @@
                     {% endif %}
                     <hr>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                        {% if wiki.isLoggedinCreatePosts %}
-                            <div class="m-0 mt-1">
-                                <a class="tag_text btn btn-primary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
-                            </div>
-                            {# Falls nur Collaboratore Beiträge erstellen können#}
-                        {% elseif userPermissions[2]%}
-                            <div class="m-0 mt-1">
-                                <a class="tag_text btn btn-primary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
-                            </div>
-                        {% endif %}
-                        {% if wiki.isCanUserRequestToJoin %}
-                            {% if not userPermissions[2]%}
-                                <div class="m-0 mt-1"> {# request/{{ wiki.id }} #}
-                                    <a class="tag_text btn btn-warning w-100 noOverflow" href="/request/{{ wiki.id }}">Collaborator Status anfragen</a>
+                        {% if not app.user.isUserBanned %}
+                            {% if wiki.isLoggedinCreatePosts %}
+                                <div class="m-0 mt-1">
+                                    <a class="tag_text btn btn-primary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
+                                </div>
+                                {# Falls nur Collaboratore Beiträge erstellen können#}
+                            {% elseif userPermissions[2]%}
+                                <div class="m-0 mt-1">
+                                    <a class="tag_text btn btn-primary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
                                 </div>
                             {% endif %}
+                            {% if wiki.isCanUserRequestToJoin %}
+                                {% if not userPermissions[2]%}
+                                    <div class="m-0 mt-1"> {# request/{{ wiki.id }} #}
+                                        <a class="tag_text btn btn-warning w-100 noOverflow" href="/request/{{ wiki.id }}">Collaborator Status anfragen</a>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            <hr>
                         {% endif %}
-                        <hr>
                     {% endif %}
                     <button type="button" class="btn btn-secondary w-100" onclick="hideSidepanel()">
                         <i class="bi bi-arrow-right"></i>

@@ -7,9 +7,7 @@ use App\Entity\User;
 use App\Entity\Wiki;
 use App\Entity\WikiTags;
 use App\Form\CreateWikiFormType;
-use App\Repository\WikiRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use mysql_xdevapi\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +20,7 @@ class CreateWikiController extends AbstractController
     /**
      * @Route("/createWiki", name="wiki_create")
      */
-    public function register(Request $request, EntityManagerInterface $entityManager): Response
+    public function createWiki(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
         $wiki = new Wiki();
