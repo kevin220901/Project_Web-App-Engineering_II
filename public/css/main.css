@@ -121,3 +121,10 @@
     filter: invert(13%) sepia(61%) saturate(5734%) hue-rotate(0deg) brightness(82%) contrast(121%);
     color: black;
 }
+
+.font-20{
+    font-size: 20px;
+}
+.normalDisable{
+    opacity: .65;
+}

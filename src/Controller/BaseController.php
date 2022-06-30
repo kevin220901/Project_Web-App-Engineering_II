@@ -33,9 +33,8 @@ class BaseController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return bool[] [isOwner, isAdmin, isCollab]
      */
-    public function getUserPermissions($wiki, EntityManagerInterface $entityManager): array
+    public function getUserPermissions($user, $wiki, EntityManagerInterface $entityManager): array
     {
-        $user = $this->getUser();
         // Überprüfe ob der User Owner/Admin/Collab des Wiki's ist
         $isOwner = false;
         $isAdmin = false;
@@ -65,9 +64,8 @@ class BaseController extends AbstractController
         return [$isOwner, $isAdmin, $isCollab];
     }
 
-    public function isPlatformAdmin(EntityManagerInterface $entityManager): bool
+    public function isPlatformAdmin($user, EntityManagerInterface $entityManager): bool
     {
-        $user = $this->getUser();
         $repository = $entityManager->getRepository(PlatformAdmin::class);
         $platformAdmin = $repository->findOneBy(['userID' => $user]);
         if($platformAdmin){
@@ -76,9 +74,8 @@ class BaseController extends AbstractController
         return false;
     }
 
-    public function isUserBanned($wiki, EntityManagerInterface $entityManager): bool
+    public function isUserBanned($user, $wiki, EntityManagerInterface $entityManager): bool
     {
-        $user = $this->getUser();
         $repository = $entityManager->getRepository(BanedUsersFromWiki::class);
         if($repository->findOneBy(['userID' => $user, 'wikiID' => $wiki->getID()])){
             return true;
@@ -167,7 +164,8 @@ class BaseController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
-        $isPlatformAdmin = $this->isPlatformAdmin($entityManager);
+        $user = $this->getUser();
+        $isPlatformAdmin = $this->isPlatformAdmin($user, $entityManager);
 
         if ($wiki->isWikiBanned()){
             if(!$isPlatformAdmin) {
@@ -178,9 +176,9 @@ class BaseController extends AbstractController
                 $this->addFlash('warning', 'Dieses Wiki wurde gesperrt!');
             }
         }
-        $userPermissions = $this->getUserPermissions($wiki, $entityManager);
+        $userPermissions = $this->getUserPermissions($user, $wiki, $entityManager);
         // Gebannte User können nicht auf das Wiki zugreifen, Platform Admins und Owner können noch immer drauf zugreifen, haben aber eine Warnung
-        if($this->isUserBanned($wiki, $entityManager)){
+        if($this->isUserBanned($user, $wiki, $entityManager)){
             if(!$isPlatformAdmin && !$userPermissions[0]) {
                 $this->addFlash('error', 'Du wurdest von diesem Wiki gebannt!');
                 return $this->redirectToRoute('home');
@@ -205,7 +203,6 @@ class BaseController extends AbstractController
         }
 
         // Überprüfen ob everyone_can_see oder logged_in_can_see
-        $user = $this->getUser();
         if($wiki->isLoggedinCanSee()){
            if(!$wiki->isEveryoneCanSee()) {
                if(!$user){

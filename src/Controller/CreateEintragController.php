@@ -42,24 +42,85 @@ class CreateEintragController extends AbstractController
 
             $postId = $post->getId();
 
-
             $this->addFlash('success', 'Der Eintrag wurde erfolgreich erstellt!');
             return $this->redirectToRoute('eintrag', array('wikiId' => $id, 'postId' => $postId));
         }
 
-        $base = new BaseController();
-        if($user){
-            $repository = $entityManager->getRepository(User::class);
+        if (!$wiki) {
+            $this->addFlash('error', 'Es konnte kein Wiki mit der ID '.$id.' gefunden werden!');
+            return $this->redirectToRoute('home');
+        }
 
-            if($user->isUserBanned()){
-                $this->addFlash('error', 'Du hast keine Berechtigung neue Einträge zu erstellen!');
+        $base = new BaseController();
+        $isPlatformAdmin = $base->isPlatformAdmin($user, $entityManager);
+
+        if ($wiki->isWikiBanned()){
+            if(!$isPlatformAdmin) {
+                $this->addFlash('error', 'Dieses Wiki wurde gesperrt!');
                 return $this->redirectToRoute('home');
+            }
+            else{
+                $this->addFlash('warning', 'Dieses Wiki wurde gesperrt!');
+            }
+        }
+
+        if($user){
+            $userPermissions = $base->getUserPermissions($user, $wiki, $entityManager);
+            if($user->isUserBanned() || $base->isUserBanned($user, $wiki, $entityManager)){
+                if(!$isPlatformAdmin && !$userPermissions[0]){
+                    $this->addFlash('error', 'Du hast nicht die Berechtigung Einträge zu erstellen!');
+                    return $this->redirectToRoute('home');
+                }
+                else{
+                    $this->addFlash('warning', 'Du wurdest von diesem Wiki gebannt!');
+                }
+            }
+
+            if($wiki->isPrivatWiki()){
+                if(!$userPermissions[2]){
+                    if(!$isPlatformAdmin){
+                        $this->addFlash('error', 'Dieses Wiki ist privat!');
+                        return $this->redirectToRoute('home');
+                    }
+                    else{
+                        $this->addFlash('warning', 'Dieses Wiki ist privat!');
+                    }
+                }
+            }
+
+            if($wiki->isLoggedinCanSee()){
+                if(!$wiki->isEveryoneCanSee()) {
+                    if(!$user){
+                        $this->addFlash('error', 'Du musst eingeloggt sein um dieses Wiki zu sehen!');
+                        return $this->redirectToRoute('home');
+                    }
+                }
+            }
+
+            // Überprüfe, wer Einträge erstellen kann
+            if(!$wiki->isLoggedinCreatePosts()){
+                if(!$userPermissions[2]){
+                    $this->addFlash('error', 'Du musst Collaborator sein um in diesem Wiki Einträge erstellen zu können!');
+                    return $this->redirectToRoute('home');
+                }
+            }
+
+
+            $hasVoted = $base->hasVoted($id, $user, $entityManager);
+            $isFavoriteWiki = $base->isFavoriteWiki($id, $user, $entityManager);
+            $isIgnoredWiki = $base->isIgnoredWiki($id, $user, $entityManager);
+            if($isIgnoredWiki){
+                $this->addFlash('warning', 'Du hast dieses Wiki versteckt!');
             }
 
             return $this->render('wikiPages/createEintrag.html.twig', [
                 'CreateEintragForm' => $form->createView(),
                 'darkMode' => $base->getDarkMode(),
                 'wiki' => $wiki,
+                'userVoted' => $hasVoted,
+                'isFavoriteWiki' => $isFavoriteWiki,
+                'isIgnoredWiki' => $isIgnoredWiki,
+                'wikiVotes' => $base->countVotes($id, $entityManager),
             ]);
         }
         else{

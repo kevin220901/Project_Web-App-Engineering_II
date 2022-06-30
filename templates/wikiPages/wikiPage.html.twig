@@ -51,17 +51,17 @@
                                         <h3 class="m-0">
                                             {# Favorite Wiki #}
                                             {% if isFavoriteWiki %}
-                                                <a href="{{ path('removeFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Entferne das Wiki aus deinen Favoriten" class="border rounded p-1 borderDarkMode"><i class="bi bi-heart-fill heartColor"></i></a>
+                                                <a href="{{ path('removeFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Entferne das Wiki aus deinen Favoriten" class="border btn borderDarkMode"><i class="font-20 bi bi-heart-fill heartColor"></i></a>
                                             {% else %}
-                                                <a href="{{ path('addFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Füge das Wiki deinen Favoriten hinzu" class="border rounded p-1 borderDarkMode"><i class="bi bi-heart heartColor"></i></a>
+                                                <a href="{{ path('addFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Füge das Wiki deinen Favoriten hinzu" class="border btn borderDarkMode"><i class="font-20 bi bi-heart heartColor"></i></a>
                                             {% endif %}
 
 
                                             {# Ignore Wiki #}
                                             {% if isIgnoredWiki %}
-                                                <a href="{{ path('removeIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="ml-2 border rounded p-1 borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki nicht länger verstecken"><i class="bi bi-eye-slash textColor"></i></a>
+                                                <a href="{{ path('removeIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="border btn borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki nicht länger verstecken"><i class="font-20 bi bi-eye-slash textColor"></i></a>
                                             {% else %}
-                                                <a href="{{ path('addIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="ml-2 border rounded p-1 borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki verstecken"><i class="bi bi-eye textColor"></i></a>
+                                                <a href="{{ path('addIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="border btn borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki verstecken"><i class="font-20 bi bi-eye textColor"></i></a>
                                             {% endif %}
                                         </h3>
                                     {% endif %}

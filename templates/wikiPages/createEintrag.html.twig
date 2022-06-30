@@ -10,6 +10,74 @@
 
 {% block body %}
 
+
+    <div class="container mt-3">
+        <div class="row">
+            {# Startpage, Bild und Name #}
+            <div class="col-9" id="wikiMainContent">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4">
+                            {% if wiki.imageName != null %}
+                                <img class="wikiPB" src="{{ vich_uploader_asset(wiki) }}" alt="{{ wiki.id }}">
+                            {% else %}
+                                <img class="filter-logo wikiPB" src="{{ asset('assets/No-File.svg') }}" alt="{{ wiki.id }}">
+                            {% endif %}
+                        </div>
+                        <div class="col-8">
+                            <h1 class="mb-2">{{ wiki.wikiname }}</h1>
+                            {% for foundTags in wiki.WikiTags %}
+                                <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
+                                    <span class="tag_text btn btn-sm btn-info w-100 noOverflow">{{ foundTags.tagID.tagName }}</span>
+                                </div>
+                            {% endfor %}
+                            {# Wiki Votes (falls aktiviert) #}
+                            <div class="row mt-2">
+                                <div class="col-9">
+                                    {% if wiki.isAllowVotes %}
+                                        <h4 class="m-0 p-1">
+                                            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                                {% if userVoted %}
+                                                    <i class="bi bi-arrow-up-square-fill voteColor normalDisable"></i>
+                                                {% else %}
+                                                    <i class="bi bi-arrow-up-square voteColor normalDisable"></i>
+                                                {% endif %}
+                                            {% else %}
+                                                <i class="bi bi-arrow-up-square voteColor normalDisable"></i>
+                                            {% endif %}
+                                            <span class="ml-1">{{ wikiVotes }}</span>
+                                        </h4>
+                                    {% endif %}
+                                </div>
+                                <div class="col-3">
+                                    {# Favorite / Ignore #}
+                                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                        <h3 class="m-0">
+                                            {# Favorite Wiki #}
+                                            {% if isFavoriteWiki %}
+                                                <a href="" data-bs-toggle="tooltip" title="Entferne das Wiki aus deinen Favoriten" class="border btn borderDarkMode disabled"><i class="font-20 bi bi-heart-fill heartColor"></i></a>
+                                            {% else %}
+                                                <a href="" data-bs-toggle="tooltip" title="Füge das Wiki deinen Favoriten hinzu" class="border btn borderDarkMode disabled"><i class="font-20 bi bi-heart heartColor"></i></a>
+                                            {% endif %}
+
+
+                                            {# Ignore Wiki #}
+                                            {% if isIgnoredWiki %}
+                                                <a href="" class="border btn borderDarkMode disabled" data-bs-toggle="tooltip" title="Das Wiki nicht länger verstecken"><i class="font-20 bi bi-eye-slash textColor"></i></a>
+                                            {% else %}
+                                                <a href="" class="border btn borderDarkMode disabled" data-bs-toggle="tooltip" title="Das Wiki verstecken"><i class="font-20 bi bi-eye textColor"></i></a>
+                                            {% endif %}
+                                        </h3>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{ form_start(CreateEintragForm) }}
 
     <div class="container mt-3 border rounded borderDarkMode">
@@ -56,7 +124,7 @@
                 <button type="submit" class="btn btn-primary btn-block">Eintrag erstellen</button>
             </div>
             <div class="col-4">
-                <a class="btn btn-danger btn-block" href="/">Abbrechen</a>
+                <a class="btn btn-danger btn-block" href="/wiki/{{ wiki.id }}">Abbrechen</a>
             </div>
 
         </div>
