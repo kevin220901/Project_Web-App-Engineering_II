@@ -128,3 +128,11 @@
 .normalDisable{
     opacity: .65;
 }
+
+.smallHr{
+    margin: 0 !important;
+}
+
+.otherPosts{
+    margin-top: .5rem;
+}

@@ -64,8 +64,8 @@ Unsere Plattform soll durch seine Funktionsweise ein Platz für kollaboratives S
 
     - [ ] Einträge haben folgende Funktionen:
     - [ ] Neue Einträge können als Entwurf gespeichert werden
-    - [ ] Man kann eine Preview von neuen Einträgen sehen
-    - [ ] Text kann verschiedene Schriftfarben haben, dick, kursiv, etc, sein, Bilder können eingebunden werden, Tabellen und ähnliche Formationen sollen möglich sein
+    - ✔ Man kann eine Preview von neuen Einträgen sehen
+    - ✔ Text kann verschiedene Schriftfarben haben, dick, kursiv, etc, sein, Bilder können eingebunden werden, Tabellen und ähnliche Formationen sollen möglich sein
     - [ ] Einträge können gemeldet werden, je nach Grund geht die Meldung an die Moderatoren / Owner des Wikis oder direkt an die Plattform Admins
    
  - [ ] Pages:

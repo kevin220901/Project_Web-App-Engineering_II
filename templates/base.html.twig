@@ -76,6 +76,15 @@
             {% endif %}
             }
 
+            .noLink:hover{
+                text-decoration: none;
+                color: black;
+                {% if darkMode is defined %}
+                    {% if darkMode == true%} color: #eceff3;
+                    {% endif %}
+                {% endif %}
+            }
+
         </style>
     </head>
     <body class="localBackground textColor">
@@ -230,7 +239,7 @@
 
 
         {# Our JavaScript #}
-        <script src="{{ asset('js/main.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/main.js') }}"></script>
 
         {# Script only for this side #}
         <script>
