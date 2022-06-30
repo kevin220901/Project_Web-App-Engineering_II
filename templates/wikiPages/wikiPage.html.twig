@@ -14,38 +14,41 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-4">
+                            {% block image %}
                             {% if wiki.imageName != null %}
                                 <img class="wikiPB" src="{{ vich_uploader_asset(wiki) }}" alt="{{ wiki.id }}">
                             {% else %}
                                 <img class="filter-logo wikiPB" src="{{ asset('assets/No-File.svg') }}" alt="{{ wiki.id }}">
                             {% endif %}
+                            {% endblock %}
                         </div>
                         <div class="col-8">
+                            {% block name %}
                             <h1 class="mb-2">{{ wiki.wikiname }}</h1>
                             {% for foundTags in wiki.WikiTags %}
                                 <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
                                     <span class="tag_text btn btn-sm btn-info w-100 noOverflow">{{ foundTags.tagID.tagName }}</span>
                                 </div>
                             {% endfor %}
+                            {% endblock %}
                             {# Wiki Votes (falls aktiviert) #}
                             <div class="row mt-2">
                                 <div class="col-9">
+                                    {% block votes %}
                                     {% if wiki.isAllowVotes %}
                                         <h4 class="m-0 p-1">
-                                            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                                                {% if userVoted %}
-                                                    <a href="{{ path('removeVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square-fill voteColor"></i></a>
-                                                {% else %}
-                                                    <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
-                                                {% endif %}
+                                            {% if userVoted %}
+                                                <a href="{{ path('removeVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square-fill voteColor"></i></a>
                                             {% else %}
                                                 <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
                                             {% endif %}
                                             <span class="ml-1">{{ wikiVotes }}</span>
                                         </h4>
                                     {% endif %}
+                                    {% endblock %}
                                 </div>
                                 <div class="col-3">
+                                    {% block favIgnore %}
                                     {# Favorite / Ignore #}
                                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                                         <h3 class="m-0">
@@ -65,16 +68,18 @@
                                             {% endif %}
                                         </h3>
                                     {% endif %}
+                                    {% endblock %}
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div id="preview" class="fakeTextarea border rounded textArea h-100 w-100 mt-3"
-                         {% if not wiki.getStartseiteMd|length > 0 %}hidden{% endif %}
-                    >
-
-                    </div>
+                    {% block markdown %}
+                        <div id="preview" class="fakeTextarea border rounded textArea h-100 w-100 mt-3"
+                             {% if not wiki.getStartseiteMd|length > 0 %}hidden{% endif %}
+                        >
+                        </div>
+                        <div hidden id="db_markdown">{{ wiki.getStartseiteMd }}</div>
+                    {% endblock %}
                 </div>
             </div>
             {# Sidepanel #}
@@ -109,6 +114,8 @@
                             <a class="tag_text btn btn-secondary w-100 noOverflow" href="/settings/{{ wiki.id }}">Wiki Einstellungen</a>
                         </div>
                     {% endif %}
+                    {% block editPost %}
+                    {% endblock %}
                     <hr>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         {% if not app.user.isUserBanned %}
@@ -125,7 +132,7 @@
                             {% if wiki.isCanUserRequestToJoin %}
                                 {% if not userPermissions[2]%}
                                     <div class="m-0 mt-1"> {# request/{{ wiki.id }} #}
-                                        <a class="tag_text btn btn-warning w-100 noOverflow" href="/request/{{ wiki.id }}">Collaborator Status anfragen</a>
+                                        <a class="tag_text btn btn-warning w-100 noOverflow {% if collabRequest %} disabled {% endif %}" href="/request/{{ wiki.id }}">Collaborator Status anfragen</a>
                                     </div>
                                 {% endif %}
                             {% endif %}
@@ -146,8 +153,6 @@
 
         </div>
     </div>
-
-    <div hidden id="db_markdown">{{ wiki.getStartseiteMd }}</div>
 
 {% endblock %}
 

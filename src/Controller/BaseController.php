@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\BanedUsersFromWiki;
+use App\Entity\Beitraege;
+use App\Entity\BeitragVotes;
 use App\Entity\Collaborator;
 use App\Entity\PlatformAdmin;
 use App\Entity\Tags;
@@ -94,7 +96,7 @@ class BaseController extends AbstractController
         ]);
     }
 
-    public function countVotes(int $id, EntityManagerInterface $entityManager): int
+    public function countWikiVotes(int $id, EntityManagerInterface $entityManager): int
     {
         // 2. Setup repository of some entity
         $repository = $entityManager->getRepository(Wikivotes::class);
@@ -109,16 +111,40 @@ class BaseController extends AbstractController
             ->getSingleScalarResult();
     }
 
+    public function countEintragVotes(int $id, EntityManagerInterface $entityManager): int
+    {
+        // 2. Setup repository of some entity
+        $repository = $entityManager->getRepository(BeitragVotes::class);
+        // 3. Query how many rows are there in the Articles table
+        // 4. Return a number as response
+        // e.g 972
+        return $repository->createQueryBuilder('a')
+            // Filter by some parameter if you want
+            ->where('a.beitragID = '.$id)
+            ->select('count(a.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     /**
      * @param int $wikiId
      * @param $user  / Der User den man durch $this->getUser() erhält
      * @param EntityManagerInterface $entityManager
      * @return bool
      */
-    public function hasVoted(int $wikiId, $user, EntityManagerInterface $entityManager): bool
+    public function hasWikiVoted(int $wikiId, $user, EntityManagerInterface $entityManager): bool
     {
         $repository = $entityManager->getRepository(Wikivotes::class);
         if($repository->findOneBy(['userID' => $user, 'wikiID' => $wikiId])){
+            return true;
+        }
+        return false;
+    }
+
+    public function hasEintragVoted(int $postId, $user, EntityManagerInterface $entityManager): bool
+    {
+        $repository = $entityManager->getRepository(BeitragVotes::class);
+        if($repository->findOneBy(['userID' => $user, 'beitragID' => $postId])){
             return true;
         }
         return false;
@@ -151,6 +177,12 @@ class BaseController extends AbstractController
         }
         return false;
     }
+
+    public function hasSendCollabRequest($user, $wiki, EntityManagerInterface $entityManager): bool{
+        return false;
+    }
+
+
 
     /**
      * @Route("/wiki/{id}", name="wiki")
@@ -216,7 +248,7 @@ class BaseController extends AbstractController
         $isFavoriteWiki = false;
         $isIgnoredWiki = false;
         if($user){
-            $hasVoted = $this->hasVoted($id, $user, $entityManager);
+            $hasVoted = $this->hasWikiVoted($id, $user, $entityManager);
             $isFavoriteWiki = $this->isFavoriteWiki($id, $user, $entityManager);
             $isIgnoredWiki = $this->isIgnoredWiki($id, $user, $entityManager);
             if($isIgnoredWiki){
@@ -229,12 +261,110 @@ class BaseController extends AbstractController
             'wiki' => $wiki,
             'userPermissions' => $userPermissions,
             'isPlatformAdmin' => $isPlatformAdmin,
-            'wikiVotes' => $this->countVotes($id, $entityManager),
+            'wikiVotes' => $this->countWikiVotes($id, $entityManager),
             'userVoted' => $hasVoted,
             'isFavoriteWiki' => $isFavoriteWiki,
             'isIgnoredWiki' => $isIgnoredWiki,
+            'collabRequest' => $this->hasSendCollabRequest($user, $wiki, $entityManager),
+
         ]);
     }
+
+
+    /**
+     * @Route("/eintrag/{wikiId}/{postId}", name="eintrag")
+     */
+    public function renderEintrag(int $wikiId, int $postId, EntityManagerInterface $entityManager): Response{
+
+        $repository = $entityManager->getRepository(Wiki::class);
+        $wiki = $repository->findOneBy(['id' => $wikiId]);
+        if (!$wiki) {
+            $this->addFlash('error', 'Es konnte kein Wiki mit der ID '.$wikiId.' gefunden werden!');
+            return $this->redirectToRoute('home');
+        }
+
+        $repository = $entityManager->getRepository(Beitraege::class);
+        $post = $repository->findOneBy(['id' => $postId]);
+        if (!$post) {
+            $this->addFlash('error', 'Es konnte kein Eintrag mit der ID '.$postId.' gefunden werden!');
+            return $this->redirectToRoute('home');
+        }
+
+        $user = $this->getUser();
+        $isPlatformAdmin = $this->isPlatformAdmin($user, $entityManager);
+
+        if ($wiki->isWikiBanned()){
+            if(!$isPlatformAdmin) {
+                $this->addFlash('error', 'Dieses Wiki wurde gesperrt!');
+                return $this->redirectToRoute('home');
+            }
+            else{
+                $this->addFlash('warning', 'Dieses Wiki wurde gesperrt!');
+            }
+        }
+        $userPermissions = $this->getUserPermissions($user, $wiki, $entityManager);
+        // Gebannte User können nicht auf das Wiki zugreifen, Platform Admins und Owner können noch immer drauf zugreifen, haben aber eine Warnung
+        if($this->isUserBanned($user, $wiki, $entityManager)){
+            if(!$isPlatformAdmin && !$userPermissions[0]) {
+                $this->addFlash('error', 'Du wurdest von diesem Wiki gebannt!');
+                return $this->redirectToRoute('home');
+            }
+            else{
+                $this->addFlash('warning', 'Du wurdest von diesem Wiki gebannt!');
+            }
+        }
+        if($user){
+            if($user->isUserBanned()){
+                $this->addFlash('error', 'Dafür hast du keine Berechtigung!');
+                return $this->redirectToRoute('home');
+            }
+        }
+        
+        // Falls das Wiki privat ist, können nur Collab, Admins, Owner es sehen.
+        // Platform Admins werden die Warnung erhalten, dass das Wiki privat ist, können aber trotzdem drauf zugreifen.
+        if($wiki->isPrivatWiki()){
+            if(!$userPermissions[2]){
+                if(!$isPlatformAdmin){
+                    $this->addFlash('error', 'Dieses Wiki ist privat!');
+                    return $this->redirectToRoute('home');
+                }
+                else{
+                    $this->addFlash('warning', 'Dieses Wiki ist privat!');
+                }
+            }
+        }
+
+        // Überprüfen ob everyone_can_see oder logged_in_can_see
+        if($wiki->isLoggedinCanSee()){
+            if(!$wiki->isEveryoneCanSee()) {
+                if(!$user){
+                    $this->addFlash('error', 'Du musst eingeloggt sein um dieses Wiki zu sehen!');
+                    return $this->redirectToRoute('home');
+                }
+            }
+        }
+
+        $hasVoted = false;
+        if($user){
+            $hasVoted = $this->hasEintragVoted($postId, $user, $entityManager);
+            $isIgnoredWiki = $this->isIgnoredWiki($wikiId, $user, $entityManager);
+            if($isIgnoredWiki){
+                $this->addFlash('warning', 'Du hast dieses Wiki versteckt!');
+            }
+        }
+
+        return $this->render('/wikiPages/eintragPage.html.twig', [
+            'darkMode' => $this->getDarkMode(),
+            'wiki' => $wiki,
+            'post' => $post,
+            'userPermissions' => $userPermissions,
+            'isPlatformAdmin' => $isPlatformAdmin,
+            'eintragVotes' => $this->countEintragVotes($postId, $entityManager),
+            'userVoted' => $hasVoted,
+            'collabRequest' => $this->hasSendCollabRequest($user, $wiki, $entityManager),
+        ]);
+    }
+
 
     // Erzeugt eine rdm Nummer und gibt diese an die wiki Route
     /**

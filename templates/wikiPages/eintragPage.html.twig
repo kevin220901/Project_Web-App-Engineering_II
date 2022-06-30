@@ -1,0 +1,47 @@
+{# templates/wikiPages/eintragPage.html.twig #}
+{% extends 'wikiPages/wikiPage.html.twig' %}
+
+{% block title %}
+    {{ post.title }}
+{% endblock %}
+
+{% block name %}
+    <h1 class="mb-2">{{ post.title }}</h1>
+{% endblock %}
+
+{% block votes %}
+    {% if wiki.isAllowVotes %}
+        <h4 class="m-0 p-1">
+            {% if userVoted %}
+                <a href="{{ path('removeVoteEintrag',{'postId':post.id, 'wikiId':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square-fill voteColor"></i></a>
+            {% else %}
+                <a href="{{ path('addVoteEintrag',{'postId':post.id, 'wikiId':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
+            {% endif %}
+            <span class="ml-1">{{ eintragVotes }}</span>
+        </h4>
+    {% endif %}
+{% endblock %}
+
+{% block favIgnore %}
+{% endblock %}
+
+{% block markdown %}
+    <div id="preview" class="fakeTextarea border rounded textArea h-100 w-100 mt-3"
+         {% if not post.getInhaltMd|length > 0 %}hidden{% endif %}
+    >
+    </div>
+    <div hidden id="db_markdown">{{ post.getInhaltMd }}</div>
+{% endblock %}
+
+{% block editPost %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        {# Überprüfe wer alles den Eintrag bearbeiten darf #}
+        {% if wiki.isLoggedinEditPosts or (wiki.isCollabEditPosts and userPermissions[2]) or userPermissions[1] or isPlatformAdmin or post.userID.getId == app.user.getId %}
+            <hr>
+            <div class="m-0">
+                <a class="tag_text btn btn-secondary w-100 noOverflow" href="/edit/{{ wiki.id }}/{{ post.id }}">Eintrag bearbeiten</a>
+            </div>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

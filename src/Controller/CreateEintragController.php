@@ -42,6 +42,9 @@ class CreateEintragController extends AbstractController
 
             $postId = $post->getId();
 
+
+            // Jeder User der das Wiki als Favorite halt sollt eine Notification bekommen!
+
             $this->addFlash('success', 'Der Eintrag wurde erfolgreich erstellt!');
             return $this->redirectToRoute('eintrag', array('wikiId' => $id, 'postId' => $postId));
         }
@@ -106,7 +109,7 @@ class CreateEintragController extends AbstractController
             }
 
 
-            $hasVoted = $base->hasVoted($id, $user, $entityManager);
+            $hasVoted = $base->hasWikiVoted($id, $user, $entityManager);
             $isFavoriteWiki = $base->isFavoriteWiki($id, $user, $entityManager);
             $isIgnoredWiki = $base->isIgnoredWiki($id, $user, $entityManager);
             if($isIgnoredWiki){
@@ -120,7 +123,7 @@ class CreateEintragController extends AbstractController
                 'userVoted' => $hasVoted,
                 'isFavoriteWiki' => $isFavoriteWiki,
                 'isIgnoredWiki' => $isIgnoredWiki,
-                'wikiVotes' => $base->countVotes($id, $entityManager),
+                'wikiVotes' => $base->countWikiVotes($id, $entityManager),
             ]);
         }
         else{
