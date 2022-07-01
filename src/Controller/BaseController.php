@@ -85,17 +85,6 @@ class BaseController extends AbstractController
         return false;
     }
 
-
-    /**
-     * @Route("/", name="home")
-     */
-    public function renderBase(): Response{
-
-        return $this->render('/wikiPages/home.html.twig', [
-            'darkMode' => $this->getDarkMode()
-        ]);
-    }
-
     public function countWikiVotes(int $id, EntityManagerInterface $entityManager): int
     {
         // 2. Setup repository of some entity
@@ -182,7 +171,21 @@ class BaseController extends AbstractController
         return false;
     }
 
+    // Routen
 
+    /**
+     * @Route("/", name="home")
+     */
+    public function renderBase(EntityManagerInterface $entityManager): Response{
+
+        $user = $this->getUser();
+        $isPlatformAdmin = $this->isPlatformAdmin($user, $entityManager);
+
+        return $this->render('/wikiPages/home.html.twig', [
+            'darkMode' => $this->getDarkMode(),
+            'isPlatformAdmin' => $isPlatformAdmin,
+        ]);
+    }
 
     /**
      * @Route("/wiki/{id}", name="wiki")
@@ -386,6 +389,34 @@ class BaseController extends AbstractController
     public function renderBrowse(EntityManagerInterface $entityManager): Response{
         $repository = $entityManager->getRepository(Tags::class);
         $wikiTags = $repository->findAll();
+        $repository = $entityManager->getRepository(Wiki::class);
+        $allWikis = $repository->findAll();
+
+        $i = sizeof($allWikis);
+        $favs = array_fill(0, $i, false);
+        $votes = array_fill(0, $i, false);
+        $ignores = array_fill(0, $i, false);
+
+        $user = $this->getUser();
+        if($user){
+
+            $allIgnores = $user->getUserIgnoreWikis()->getValues();
+            $allFavs = $user->getUserFavoriteWikis()->getValues();
+            $allVotes = $user->getWikiVotes()->getValues();
+            $counter = 0;
+            foreach ($allWikis as $wiki){
+                /*
+                $votes[$counter] = $this->hasWikiVoted($wiki->getId(), $user, $entityManager);
+                $favs[$counter] = $this->isFavoriteWiki($wiki->getId(), $user, $entityManager);
+                $ignores[$counter] = $this->isIgnoredWiki($wiki->getId(), $user, $entityManager);
+                */
+                $votes[$counter] = $wiki instanceof $allVotes;
+                $counter += 1;
+            }
+
+
+        }
+
         /*
         $wikiTags = [
             '0' => ['tag' => 'Filme', 'id' => 1],
@@ -400,6 +431,10 @@ class BaseController extends AbstractController
         return $this->render('/wikiPages/browse.html.twig', [
             'darkMode' => $this->getDarkMode(),
             'wikiTags' => $wikiTags,
+            'allWikis' =>$allWikis,
+            'votes' => $votes,
+            'favs' => $favs,
+            'ignores' => $ignores,
         ]);
     }
 

@@ -49,6 +49,9 @@ class FavIgnoreController extends AbstractController{
         if($origin == "wiki"){
             return $this->redirectToRoute($origin, array('id' => $id));
         }
+        elseif($origin == "browse"){
+            return $this->redirectToRoute($origin);
+        }
         return $this->redirectToRoute('home');
     }
 
@@ -86,6 +89,9 @@ class FavIgnoreController extends AbstractController{
 
         if($origin == "wiki"){
             return $this->redirectToRoute($origin, array('id' => $id));
+        }
+        elseif($origin == "browse"){
+            return $this->redirectToRoute($origin);
         }
         return $this->redirectToRoute('home');
     }
@@ -128,6 +134,9 @@ class FavIgnoreController extends AbstractController{
         if($origin == "wiki"){
             return $this->redirectToRoute($origin, array('id' => $id));
         }
+        elseif($origin == "browse"){
+            return $this->redirectToRoute($origin);
+        }
         return $this->redirectToRoute('home');
     }
 
@@ -165,6 +174,9 @@ class FavIgnoreController extends AbstractController{
 
         if($origin == "wiki"){
             return $this->redirectToRoute($origin, array('id' => $id));
+        }
+        elseif($origin == "browse"){
+            return $this->redirectToRoute($origin);
         }
         return $this->redirectToRoute('home');
     }

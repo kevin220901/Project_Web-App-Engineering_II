@@ -20,6 +20,9 @@
             <span class="ml-1">{{ eintragVotes }}</span>
         </h4>
     {% endif %}
+    <span class="text-secondary ts-small">Erstellt von: {{ post.getUserID.getUserIdentifier }}</span>
+    <hr>
+    <a href="/wiki/{{ wiki.id }}" class="btn btn-info">Zurück zum Wiki</a>
 {% endblock %}
 
 {% block favIgnore %}
@@ -36,6 +39,11 @@
 {% block editPost %}
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         {# Überprüfe wer alles den Eintrag bearbeiten darf #}
+        {% if post.userID.getId == app.user.getId or userPermissions[1] or isPlatformAdmin %}
+            <div class="m-0 mt-1">
+                <a class="tag_text btn btn-secondary w-100 noOverflow" href="/delete/{{ wiki.id }}/{{ post.id }}">Eintrag löschen</a>
+            </div>
+        {% endif %}
         {% if wiki.isLoggedinEditPosts or (wiki.isCollabEditPosts and userPermissions[2]) or userPermissions[1] or isPlatformAdmin or post.userID.getId == app.user.getId %}
             <hr>
             <div class="m-0">
@@ -44,4 +52,26 @@
         {% endif %}
     {% endif %}
 
+{% endblock %}
+
+{% block otherPosts %}
+    {% if wiki.getBeitraege is not empty %}
+        {% if wiki.getBeitraege|length > 1 %}
+            <h2 class="{# border rounded borderDarkMode py-1 px-2 #}">Wiki Einträge:</h2>
+            {% for eintrag in wiki.getBeitraege %}
+                {% if post.id != eintrag.id %}
+                    <a href="/eintrag/{{ wiki.id }}/{{ eintrag.id }}" class="textColor noLink">
+                        <div class="mb-1 border rounded borderDarkMode pt-1 px-2 countMe">
+                            <h5>{{ eintrag.title }}</h5>
+                            {% if eintrag.getInhaltMd|length > 0 %}
+                                <hr class="smallHr">
+                                <span class="otherPosts text-secondary" id="insert_{{ loop.index }}"></span>
+                                <span class="otherPosts parseMe" hidden>{{ eintrag.getInhaltMd|slice(0,200) }}</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
 {% endblock %}

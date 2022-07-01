@@ -26,6 +26,7 @@
                         </div>
                         <div class="col-8">
                             <h1 class="mb-2">{{ wiki.wikiname }}</h1>
+                            <hr>
                             {% for foundTags in wiki.WikiTags %}
                                 <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
                                     <span class="tag_text btn btn-sm btn-info w-100 noOverflow">{{ foundTags.tagID.tagName }}</span>
@@ -48,6 +49,7 @@
                                             <span class="ml-1">{{ wikiVotes }}</span>
                                         </h4>
                                     {% endif %}
+                                    <span class="text-secondary ts-small">Erstellt von: {{ wiki.getUserID.getUserIdentifier }}</span>
                                 </div>
                                 <div class="col-3">
                                     {# Favorite / Ignore #}

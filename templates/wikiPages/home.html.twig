@@ -2,6 +2,18 @@
 {% extends 'base.html.twig' %}
 {% block title %}World Wild Wiki{% endblock %}
 {% block body %}
+
+    {% if isPlatformAdmin %}
+        <div class="adminSettings container mt-3">
+            <div class="row">
+                <div class="col-10"></div>
+                <div class="col-2">
+                    <a href="/adminSettings" class="btn btn-primary">Platform Settings</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="container mt-3 border rounded borderDarkMode">
         <div id="parseToMD" class="mt-2">{# Dieses div muss leer bleiben! Der gewünschte Inhalt muss direkt an main.js übergeben werden! #}</div>
     </div>

@@ -18,7 +18,7 @@ class UserIgnoreWiki
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Wiki::class)
+     * @ORM\ManyToOne(targetEntity=Wiki::class, inversedBy="userIgnoreWikis")
      * @ORM\JoinColumn(nullable=false)
      */
     private $wikiID;

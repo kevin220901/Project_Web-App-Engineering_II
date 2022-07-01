@@ -153,6 +153,11 @@ class Wiki
     private $userFavoriteWikis;
 
     /**
+     * @ORM\OneToMany(targetEntity=UserIgnoreWiki::class, mappedBy="wikiID")
+     */
+    private $userIgnoreWikis;
+
+    /**
      * @ORM\OneToMany(targetEntity=WikiTags::class, mappedBy="wikiID")
      */
     private $wikiTags;
@@ -165,6 +170,7 @@ class Wiki
         $this->wikivotes = new ArrayCollection();
         $this->banedUsersFromWikis = new ArrayCollection();
         $this->userFavoriteWikis = new ArrayCollection();
+        $this->userIgnoreWikis = new ArrayCollection();
         $this->wikiTags = new ArrayCollection();
     }
 
@@ -544,6 +550,39 @@ class Wiki
 
         return $this;
     }
+
+
+
+    /**
+     * @return Collection<int, UserIgnoreWiki>
+     */
+    public function getUserIgnoreWikis(): Collection
+    {
+        return $this->userIgnoreWikis;
+    }
+
+    public function addUserIgnoreWiki(UserIgnoreWiki $userIgnoreWiki): self
+    {
+        if (!$this->userIgnoreWikis->contains($userIgnoreWiki)) {
+            $this->userIgnoreWikis[] = $userIgnoreWiki;
+            $userIgnoreWiki->setWikiID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserIgnoreWiki(UserIgnoreWiki $userIgnoreWiki): self
+    {
+        if ($this->userIgnoreWikis->removeElement($userIgnoreWiki)) {
+            // set the owning side to null (unless already changed)
+            if ($userIgnoreWiki->getWikiID() === $this) {
+                $userIgnoreWiki->setWikiID(null);
+            }
+        }
+
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, WikiTags>

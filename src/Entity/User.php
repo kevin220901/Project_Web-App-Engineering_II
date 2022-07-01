@@ -91,6 +91,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $beitragVotes;
 
     /**
+     * @ORM\OneToMany(targetEntity=Wikivotes::class, mappedBy="userID")
+     */
+    private $wikiVotes;
+
+    /**
      * @ORM\OneToMany(targetEntity=UserFavoriteWiki::class, mappedBy="userID")
      */
     private $userFavoriteWikis;
@@ -105,6 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->wikis = new ArrayCollection();
         $this->beitraege = new ArrayCollection();
         $this->beitragVotes = new ArrayCollection();
+        $this->wikiVotes = new ArrayCollection();
         $this->userFavoriteWikis = new ArrayCollection();
         $this->userIgnoreWikis = new ArrayCollection();
     }
@@ -366,6 +372,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($beitragVote->getUserID() === $this) {
                 $beitragVote->setUserID(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection<int, Wikivotes>
+     */
+    public function getWikiVotes(): Collection
+    {
+        return $this->wikiVotes;
+    }
+
+    public function addWikiVote(Wikivotes $wikiVote): self
+    {
+        if (!$this->wikiVotes->contains($wikiVote)) {
+            $this->wikiVotes[] = $wikiVote;
+            $wikiVote->setUserID($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWikiVote(Wikivotes $wikiVote): self
+    {
+        if ($this->wikiVotes->removeElement($wikiVote)) {
+            // set the owning side to null (unless already changed)
+            if ($wikiVote->getUserID() === $this) {
+                $wikiVote->setUserID(null);
             }
         }
 

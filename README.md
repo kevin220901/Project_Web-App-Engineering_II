@@ -4,6 +4,8 @@ Falls `APP_ENV=prod` gesetzt ist kann es sein, dass `/createWiki` eine 500ter Fe
 **Das liegt nicht ander Website!** Sondern daran, dass `/var/cache/prod` nicht auf `drwxrwxrwx` gesetzt ist!
 Das passiert, wenn man `cache:clear` als **sudo** ausführt!
 
+Falls man keine Datein hochladen kann, müssen die Dateiberechtigungen für den /uploads Ordner angepasst werden!
+
 
 
 # Project_Web-App-Engineering_II

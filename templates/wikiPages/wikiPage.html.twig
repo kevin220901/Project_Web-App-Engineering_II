@@ -25,6 +25,7 @@
                         <div class="col-8">
                             {% block name %}
                             <h1 class="mb-2">{{ wiki.wikiname }}</h1>
+                            <hr>
                             {% for foundTags in wiki.WikiTags %}
                                 <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
                                     <span class="tag_text btn btn-sm btn-info w-100 noOverflow">{{ foundTags.tagID.tagName }}</span>
@@ -45,6 +46,7 @@
                                             <span class="ml-1">{{ wikiVotes }}</span>
                                         </h4>
                                     {% endif %}
+                                        <span class="text-secondary ts-small">Erstellt von: {{ wiki.getUserID.getUserIdentifier }}</span>
                                     {% endblock %}
                                 </div>
                                 <div class="col-3">
@@ -81,36 +83,23 @@
                         <div hidden id="db_markdown">{{ wiki.getStartseiteMd }}</div>
                     {% endblock %}
                     <div class="mt-5">
+                        {% block otherPosts %}
                         {% if wiki.getBeitraege is not empty %}
                             <h2 class="{# border rounded borderDarkMode py-1 px-2 #}">Wiki Einträge:</h2>
                             {% for eintrag in wiki.getBeitraege %}
-                                {% if post is defined %}
-                                    {% if post.id != eintrag.id %}
-                                        <a href="/eintrag/{{ wiki.id }}/{{ eintrag.id }}" class="textColor noLink">
-                                            <div class="mb-1 border rounded borderDarkMode pt-1 px-2">
-                                                <h5>{{ eintrag.title }}</h5>
-                                                {% if eintrag.getInhaltMd|length > 0 %}
-                                                    <hr class="smallHr">
-                                                    <span class="otherPosts text-secondary" id="{{ loop.index }}"></span>
-                                                    <span class="otherPosts parseMe" hidden>{{ eintrag.getInhaltMd|slice(0,200) }}</span>
-                                                {% endif %}
-                                            </div>
-                                        </a>
-                                    {% endif %}
-                                {% else %}
-                                    <a href="/eintrag/{{ wiki.id }}/{{ eintrag.id }}" class="textColor noLink">
-                                        <div class="mb-1 border rounded borderDarkMode pt-1 px-2 countMe">
-                                            <h5>{{ eintrag.title }}</h5>
-                                            {% if eintrag.getInhaltMd|length > 0 %}
-                                                <hr class="smallHr">
-                                                <span class="otherPosts text-secondary" id="insert_{{ loop.index }}"></span>
-                                                <span class="otherPosts parseMe" hidden>{{ eintrag.getInhaltMd|slice(0,200) }}</span>
-                                            {% endif %}
-                                        </div>
-                                    </a>
-                                {% endif %}
+                                <a href="/eintrag/{{ wiki.id }}/{{ eintrag.id }}" class="textColor noLink">
+                                    <div class="mb-1 border rounded borderDarkMode pt-1 px-2 countMe">
+                                        <h5>{{ eintrag.title }}</h5>
+                                        {% if eintrag.getInhaltMd|length > 0 %}
+                                            <hr class="smallHr">
+                                            <span class="otherPosts text-secondary" id="insert_{{ loop.index }}"></span>
+                                            <span class="otherPosts parseMe" hidden>{{ eintrag.getInhaltMd|slice(0,200) }}</span>
+                                        {% endif %}
+                                    </div>
+                                </a>
                             {% endfor %}
                         {% endif %}
+                        {% endblock %}
                     </div>
                 </div>
             </div>

@@ -24,7 +24,7 @@ class Wikivotes
     private $wikiID;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="wikiVotes")
      * @ORM\JoinColumn(nullable=false)
      */
     private $userID;
