@@ -9,6 +9,8 @@
     <h1 class="mb-2">{{ post.title }}</h1>
 {% endblock %}
 
+{% set insertC = 0 %}
+
 {% block votes %}
     {% if wiki.isAllowVotes %}
         <h4 class="m-0 p-1">
@@ -65,8 +67,9 @@
                             <h5>{{ eintrag.title }}</h5>
                             {% if eintrag.getInhaltMd|length > 0 %}
                                 <hr class="smallHr">
-                                <span class="otherPosts text-secondary" id="insert_{{ loop.index }}"></span>
-                                <span class="otherPosts parseMe" hidden>{{ eintrag.getInhaltMd|slice(0,200) }}</span>
+                                <span class="otherPosts text-secondary" id="insert_{{ insertC }}"></span>
+                                <span class="otherPosts parseMe" id="parse_{{ insertC }}" hidden>{{ eintrag.getInhaltMd|slice(0,200) }}</span>
+                                {% set insertC = insertC + 1 %}
                             {% endif %}
                         </div>
                     </a>

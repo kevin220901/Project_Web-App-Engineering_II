@@ -1,17 +1,11 @@
 {# templates/wikiPages/browse.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% set hiddenC = 0 %}
+
+{% set insertC = 0 %}
+
 {% block body %}
-
-    {% for t in votes %}
-        {% if t %}
-            <span>yes</span>
-        {% else %}
-            <span>no</span>
-        {% endif %}
-    {% endfor %}
-
-
     <div class="container">
         <div class="mt-3 row w-75 mx-auto">
             <div class="col-3">
@@ -63,79 +57,138 @@
     </div>
 
     <div class="container">
-
         {% for wiki in allWikis %}
-        <div class="row w-75 mx-auto mt-2">
-            <div class="col-12 border rounded borderDarkMode">
+            {% if not wiki.isWikiBanned and not wiki.isPrivatWiki and ((wiki.isLoggedinCanSee and is_granted('IS_AUTHENTICATED_FULLY')) or not wiki.isLoggedinCanSee )%}
+                <div class="row w-75 mx-auto mt-4" {% if ignores[loop.index0] %} id="hidden_{{ hiddenC }}" {% set hiddenC = hiddenC + 1 %} {% endif %}>
+                    <div class="col-12 border rounded borderDarkMode">
 
-                <div class="row">
-                    <div class="col-2 my-2">
-                        {% if wiki.imageName != null %}
-                            <img class="wikiPB" src="{{ vich_uploader_asset(wiki) }}" alt="{{ wiki.id }}">
-                        {% else %}
-                            <img class="filter-logo wikiPB" src="{{ asset('assets/No-File.svg') }}" alt="{{ wiki.id }}">
-                        {% endif %}
-                    </div>
-                    <div class="col-10">
-                        <h1 class="mb-2">{{ wiki.wikiname }}</h1>
-                        <hr>
-                        {% for foundTags in wiki.WikiTags %}
-                            <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
-                                <span class="tag_text btn btn-sm btn-info w-100 noOverflow">{{ foundTags.tagID.tagName }}</span>
-                            </div>
-                        {% endfor %}
-                        {# Wiki Votes (falls aktiviert) #}
-                        <div class="row mt-2">
-                            <div class="col-9">
-                                {% if wiki.isAllowVotes %}
-                                    <h4 class="m-0 p-1">
-                                        {% if votes[loop.index0] %}
-                                            <a href="{{ path('removeVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square-fill voteColor"></i></a>
-                                        {% else %}
-                                            <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
-                                        {% endif %}
-                                        <span class="ml-1">{{ wiki.getWikivotes|length }}</span>
-                                    </h4>
+                        <div class="row">
+                            <div class="col-2 my-2">
+                                {% if wiki.imageName != null %}
+                                    <img class="wikiPB" src="{{ vich_uploader_asset(wiki) }}" alt="{{ wiki.id }}">
+                                {% else %}
+                                    <img class="filter-logo wikiPB" src="{{ asset('assets/No-File.svg') }}" alt="{{ wiki.id }}">
                                 {% endif %}
-                                <span class="text-secondary ts-small">Erstellt von: {{ wiki.getUserID.getUserIdentifier }}</span>
                             </div>
-                            <div class="col-3">
-                                {# Favorite / Ignore #}
-                                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                                    <h3 class="m-0">
-                                        {# Favorite Wiki #}
-                                        {% if favs[loop.index0] %}
-                                            <a href="{{ path('removeFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Entferne das Wiki aus deinen Favoriten" class="border btn borderDarkMode"><i class="font-20 bi bi-heart-fill heartColor"></i></a>
-                                        {% else %}
-                                            <a href="{{ path('addFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Füge das Wiki deinen Favoriten hinzu" class="border btn borderDarkMode"><i class="font-20 bi bi-heart heartColor"></i></a>
+                            <div class="col-10">
+                                <h1 class="mb-2"><a class="noLink textColor" href="/wiki/{{ wiki.id }}">{{ wiki.wikiname }}</a></h1>
+                                <hr class="smallHr mb-2">
+                                {% for foundTags in wiki.WikiTags %}
+                                    <div class="form-check form-check-inline col-2 p-0 m-0 mb-1">
+                                        <span class="tag_text btn btn-sm btn-info w-100 noOverflow">{{ foundTags.tagID.tagName }}</span>
+                                    </div>
+                                {% endfor %}
+                                {# Wiki Votes (falls aktiviert) #}
+                                <div class="row mt-2">
+                                    <div class="col-9 mb-2">
+                                        {% if wiki.isAllowVotes %}
+                                            <h4 class="m-0 p-1">
+                                                {% if votes[loop.index0] %}
+                                                    <a href="{{ path('removeVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square-fill voteColor"></i></a>
+                                                {% else %}
+                                                    <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
+                                                {% endif %}
+                                                <span class="ml-1">{{ wiki.getWikivotes|length }}</span>
+                                            </h4>
                                         {% endif %}
+                                        <span class="text-secondary ts-small mb-2">Erstellt von: {{ wiki.getUserID.getUserIdentifier }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {# Favorite / Ignore #}
+                                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                            <h3 class="m-0 mb-2">
+                                                {# Favorite Wiki #}
+                                                {% if favs[loop.index0] %}
+                                                    <a href="{{ path('removeFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Entferne das Wiki aus deinen Favoriten" class="border btn borderDarkMode"><i class="font-20 bi bi-heart-fill heartColor"></i></a>
+                                                {% else %}
+                                                    <a href="{{ path('addFavorite',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" data-bs-toggle="tooltip" title="Füge das Wiki deinen Favoriten hinzu" class="border btn borderDarkMode"><i class="font-20 bi bi-heart heartColor"></i></a>
+                                                {% endif %}
 
 
-                                        {# Ignore Wiki #}
-                                        {% if ignores[loop.index0] %}
-                                            <a href="{{ path('removeIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="border btn borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki nicht länger verstecken"><i class="font-20 bi bi-eye-slash textColor"></i></a>
-                                        {% else %}
-                                            <a href="{{ path('addIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="border btn borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki verstecken"><i class="font-20 bi bi-eye textColor"></i></a>
+                                                {# Ignore Wiki #}
+                                                {% if ignores[loop.index0] %}
+                                                    <a href="{{ path('removeIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="border btn borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki nicht länger verstecken"><i class="font-20 bi bi-eye-slash textColor"></i></a>
+                                                {% else %}
+                                                    <a href="{{ path('addIgnore',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}" class="border btn borderDarkMode" data-bs-toggle="tooltip" title="Das Wiki verstecken"><i class="font-20 bi bi-eye textColor"></i></a>
+                                                {% endif %}
+                                            </h3>
                                         {% endif %}
-                                    </h3>
-                                {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="mb-1 countMe">
+                                    {% if wiki.getStartseiteMd|length > 0 %}
+                                        <hr class="smallHr mb-1">
+                                        <span class="otherPosts text-secondary" id="insert_{{ insertC }}"></span><a class="text-secondary ts-small font-weight-bold" href="/wiki/{{ wiki.id }}"><u>Read more</u></a>
+                                        <span class="otherPosts parseMe" id="parse_{{ insertC }}" hidden>{{ wiki.getStartseiteMd|slice(0,200) }}</span>
+                                        {% set insertC = insertC + 1 %}
+                                    {% endif %}
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            {% endif %}
         {% endfor %}
     </div>
+    {{ app.session.set('hiddenC', hiddenC) }}
+    {% if hiddenC > 0 %}
+        <div class="container">
+            <div class="row w-75 mx-auto mt-4" id="see_button">
+                <span class="text-secondary">
+                    {% if hiddenC == 1 %}
+                        Ein ausgeblendetes Wiki...
+                    {% else %}
+                        {{ hiddenC }} ausgeblendete Wikis...
+                    {% endif %}
+                </span>
+                <button class="btn btn-link p-0 border-0 text-secondary font-weight-bold" onclick="showWikis()"><u>anzeigen</u></button>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="container" id="insert_hidden_here" hidden>
+        <hr>
+    </div>
+
+    <div class="container">
+        <div class="row w-75 mx-auto mt-4" id="hide_button" hidden>
+            <button class="btn btn-link p-0 border-0 text-secondary font-weight-bold" onclick="hideWikis()">
+                <u>
+                    {% if hiddenC == 1 %}
+                        Wiki verstecken
+                    {% else %}
+                        Wikis verstecken
+                    {% endif %}
+                </u>
+            </button>
+        </div>
+    </div>
+
+
 {% endblock %}
 
 {% block scripts %}
         <script>
             $(document).ready(function() {
+                // Tags encoden
                 let tags = document.getElementsByClassName('tag_text');
                 Array.from(tags).forEach(tag => {
                     tag.innerHTML = tag.innerHTML.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/"/g, '&quot;').replace(/&gt;/g, '>');
                 })
+
+
+                // verschieben der als hidden_... makierten Objekte in insert_hidden_here
+                {% set hiddenC = app.session.get('hiddenC') %}
+                for(let i = 0; i<{{ hiddenC }}; i+=1){
+                    $("#hidden_" + i).appendTo("#insert_hidden_here");
+                }
+
+                // Sobald das Dokument fertig geladen ist soll die ScrollPosition gesetzt werden!
+                $(window).scrollTop(sessionStorage.scrollPos || 0)
+
             });
 
 
@@ -167,5 +220,24 @@
                     $('#inlineLabel' + id + 'INCLUDE').removeClass('display-none');
                 }
             }
+
+
+            $(window).scroll(function () {
+                // Setzt die Scrollposition in eine session Variable
+                sessionStorage.scrollPos = $(window).scrollTop();
+            });
+
+            function showWikis(){
+                $('#insert_hidden_here').prop("hidden", false);
+                $('#see_button').prop("hidden", true);
+                $('#hide_button').prop("hidden", false);
+            }
+
+            function hideWikis(){
+                $('#insert_hidden_here').prop("hidden", true);
+                $('#see_button').prop("hidden", false);
+                $('#hide_button').prop("hidden", true);
+            }
+
         </script>
 {% endblock %}

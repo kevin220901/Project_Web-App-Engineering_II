@@ -131,7 +131,11 @@
 }
 
 .smallHr{
-    margin: 0 !important;
+    margin: 0;
+}
+
+.smallHr-b{
+    margin-bottom: 8px;
 }
 
 .otherPosts{

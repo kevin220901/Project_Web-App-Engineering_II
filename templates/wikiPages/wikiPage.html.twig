@@ -5,6 +5,8 @@
 {{ wiki.wikiname }}
 {% endblock %}
 
+{% set insertC = 0 %}
+
 {% block body %}
 
     <div class="container mt-3">
@@ -92,8 +94,9 @@
                                         <h5>{{ eintrag.title }}</h5>
                                         {% if eintrag.getInhaltMd|length > 0 %}
                                             <hr class="smallHr">
-                                            <span class="otherPosts text-secondary" id="insert_{{ loop.index }}"></span>
-                                            <span class="otherPosts parseMe" hidden>{{ eintrag.getInhaltMd|slice(0,200) }}</span>
+                                            <span class="otherPosts text-secondary" id="insert_{{ insertC }}"></span>
+                                            <span class="otherPosts parseMe" id="parse_{{ insertC }}" hidden>{{ eintrag.getInhaltMd|slice(0,200) }}</span>
+                                            {% set insertC = insertC + 1 %}
                                         {% endif %}
                                     </div>
                                 </a>
@@ -140,24 +143,30 @@
                     <hr>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         {% if not app.user.isUserBanned %}
+                            {% set inIf = false %}
                             {% if wiki.isLoggedinCreatePosts %}
                                 <div class="m-0 mt-1">
                                     <a class="tag_text btn btn-primary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
                                 </div>
+                                {% set inIf = true %}
                                 {# Falls nur Collaboratore Beiträge erstellen können#}
-                            {% elseif userPermissions[2]%}
+                            {% elseif userPermissions[2] or isPlatformAdmin %}
                                 <div class="m-0 mt-1">
                                     <a class="tag_text btn btn-primary w-100 noOverflow" href="/createPost/{{ wiki.id }}">Eintrag erstellen</a>
                                 </div>
+                                {% set inIf = true %}
                             {% endif %}
                             {% if wiki.isCanUserRequestToJoin %}
                                 {% if not userPermissions[2]%}
                                     <div class="m-0 mt-1"> {# request/{{ wiki.id }} #}
                                         <a class="tag_text btn btn-warning w-100 noOverflow {% if collabRequest %} disabled {% endif %}" href="/request/{{ wiki.id }}">Collaborator Status anfragen</a>
                                     </div>
+                                    {% set inIf = true %}
                                 {% endif %}
                             {% endif %}
-                            <hr>
+                            {% if inIf %}
+                                <hr>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                     <button type="button" class="btn btn-secondary w-100" onclick="hideSidepanel()">
@@ -198,19 +207,6 @@
             let tags = document.getElementsByClassName('tag_text');
             Array.from(tags).forEach(tag => {
                 tag.innerHTML = tag.innerHTML.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/"/g, '&quot;').replace(/&gt;/g, '>');
-            });
-
-
-            let counter = 1;
-            $(".countMe").each( function() {
-                if($(this).find(".parseMe").length > 0){
-                    text = $(this).find(".parseMe").html();
-                    text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/"/g, '&quot;').replace(/&gt;/g, '>');
-                    let dirtyText = marked.parse(text); //parsed md zu html
-                    let cleanText = DOMPurify.sanitize(dirtyText, { USE_PROFILES: {html: true} });
-                    $("#insert_" + counter).html(cleanText);
-                }
-                counter += 1;
             });
 
         });

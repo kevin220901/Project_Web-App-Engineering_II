@@ -12,6 +12,7 @@ use App\Entity\UserFavoriteWiki;
 use App\Entity\UserIgnoreWiki;
 use App\Entity\Wiki;
 use App\Entity\Wikiadmin;
+use App\Entity\WikiTags;
 use App\Entity\Wikivotes;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -387,8 +388,23 @@ class BaseController extends AbstractController
      * @Route("/browse", name="browse")
      */
     public function renderBrowse(EntityManagerInterface $entityManager): Response{
+        // viele Wikis diesen Tag benutzen müssen, damit er angezeigt wird:
+        $minAmountForTag = 5;
+
         $repository = $entityManager->getRepository(Tags::class);
         $wikiTags = $repository->findAll();
+
+        $repository = $entityManager->getRepository(WikiTags::class);
+        $counter = 0;
+        foreach ($wikiTags as $tag){
+            $wikisWithTag = $repository->findBy(['tagID' => $tag->getId()]);
+            if(sizeof($wikisWithTag) < $minAmountForTag){
+                unset($wikiTags[$counter]);
+            }
+            $counter += 1;
+        }
+        $wikiTags = array_values($wikiTags);
+
         $repository = $entityManager->getRepository(Wiki::class);
         $allWikis = $repository->findAll();
 
@@ -397,24 +413,45 @@ class BaseController extends AbstractController
         $votes = array_fill(0, $i, false);
         $ignores = array_fill(0, $i, false);
 
+        $allVotes = null;
+
         $user = $this->getUser();
         if($user){
 
             $allIgnores = $user->getUserIgnoreWikis()->getValues();
-            $allFavs = $user->getUserFavoriteWikis()->getValues();
-            $allVotes = $user->getWikiVotes()->getValues();
             $counter = 0;
-            foreach ($allWikis as $wiki){
-                /*
-                $votes[$counter] = $this->hasWikiVoted($wiki->getId(), $user, $entityManager);
-                $favs[$counter] = $this->isFavoriteWiki($wiki->getId(), $user, $entityManager);
-                $ignores[$counter] = $this->isIgnoredWiki($wiki->getId(), $user, $entityManager);
-                */
-                $votes[$counter] = $wiki instanceof $allVotes;
+            foreach ($allIgnores as $wikiIgnore) {
+                $allIgnores[$counter] = $wikiIgnore->getWikiID();
                 $counter += 1;
             }
 
+            $allFavs = $user->getUserFavoriteWikis()->getValues();
+            $counter = 0;
+            foreach ($allFavs as $wikiFav) {
+                $allFavs[$counter] = $wikiFav->getWikiID();
+                $counter += 1;
+            }
 
+            // Jedes Element von $allVotes ist von Typ wikiVotes, also müssen wir jededs dieser Elemente zu einem Wiki Element umformen, damit diese mit $wiki verglichen werden können
+            $allVotes = $user->getWikiVotes()->getValues();
+            $counter = 0;
+            foreach ($allVotes as $wikiVote) {
+                $allVotes[$counter] = $wikiVote->getWikiID();
+                $counter += 1;
+            }
+            $counter = 0;
+            foreach ($allWikis as $wiki){
+
+                //Das würde auch funktionieren, würde aber 140 Database Request ausführen
+                //$votes[$counter] = $this->hasWikiVoted($wiki->getId(), $user, $entityManager);
+                //$favs[$counter] = $this->isFavoriteWiki($wiki->getId(), $user, $entityManager);
+                //$ignores[$counter] = $this->isIgnoredWiki($wiki->getId(), $user, $entityManager);
+
+                $votes[$counter] = in_array($wiki, $allVotes);
+                $favs[$counter] = in_array($wiki, $allFavs);
+                $ignores[$counter] = in_array($wiki, $allIgnores);
+                $counter += 1;
+            }
         }
 
         /*
