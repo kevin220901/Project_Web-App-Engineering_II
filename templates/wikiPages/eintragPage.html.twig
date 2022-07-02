@@ -19,7 +19,7 @@
             {% else %}
                 <a href="{{ path('addVoteEintrag',{'postId':post.id, 'wikiId':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
             {% endif %}
-            <span class="ml-1">{{ eintragVotes }}</span>
+            <span class="ml-1">{{ post.getBeitragVotes|length }}</span>
         </h4>
     {% endif %}
     <span class="text-secondary ts-small">Erstellt von: {{ post.getUserID.getUserIdentifier }}</span>
@@ -43,7 +43,7 @@
         {# Überprüfe wer alles den Eintrag bearbeiten darf #}
         {% if post.userID.getId == app.user.getId or userPermissions[1] or isPlatformAdmin %}
             <div class="m-0 mt-1">
-                <a class="tag_text btn btn-secondary w-100 noOverflow" href="/delete/{{ wiki.id }}/{{ post.id }}">Eintrag löschen</a>
+                <a class="tag_text btn btn-secondary w-100 noOverflow" href="/deletePost/{{ wiki.id }}/{{ post.id }}">Eintrag löschen</a>
             </div>
         {% endif %}
         {% if wiki.isLoggedinEditPosts or (wiki.isCollabEditPosts and userPermissions[2]) or userPermissions[1] or isPlatformAdmin or post.userID.getId == app.user.getId %}

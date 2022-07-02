@@ -45,7 +45,7 @@
                                             {% else %}
                                                 <a href="{{ path('addVote',{'id':wiki.id,'origin':app.request.attributes.get('_route')})}}"><i class="bi bi-arrow-up-square voteColor"></i></a>
                                             {% endif %}
-                                            <span class="ml-1">{{ wikiVotes }}</span>
+                                            <span class="ml-1">{{ wiki.getWikivotes|length }}</span>
                                         </h4>
                                     {% endif %}
                                         <span class="text-secondary ts-small">Erstellt von: {{ wiki.getUserID.getUserIdentifier }}</span>

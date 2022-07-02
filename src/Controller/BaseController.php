@@ -15,6 +15,7 @@ use App\Entity\Wikiadmin;
 use App\Entity\WikiTags;
 use App\Entity\Wikivotes;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -169,7 +170,7 @@ class BaseController extends AbstractController
     }
 
     public function hasSendCollabRequest($user, $wiki, EntityManagerInterface $entityManager): bool{
-        return false;
+        return true;
     }
 
     // Routen
@@ -265,7 +266,6 @@ class BaseController extends AbstractController
             'wiki' => $wiki,
             'userPermissions' => $userPermissions,
             'isPlatformAdmin' => $isPlatformAdmin,
-            'wikiVotes' => $this->countWikiVotes($id, $entityManager),
             'userVoted' => $hasVoted,
             'isFavoriteWiki' => $isFavoriteWiki,
             'isIgnoredWiki' => $isIgnoredWiki,
@@ -363,7 +363,6 @@ class BaseController extends AbstractController
             'post' => $post,
             'userPermissions' => $userPermissions,
             'isPlatformAdmin' => $isPlatformAdmin,
-            'eintragVotes' => $this->countEintragVotes($postId, $entityManager),
             'userVoted' => $hasVoted,
             'collabRequest' => $this->hasSendCollabRequest($user, $wiki, $entityManager),
         ]);
@@ -474,5 +473,57 @@ class BaseController extends AbstractController
             'ignores' => $ignores,
         ]);
     }
+
+    /**
+     * @Route("/deletePost/{wikiId}/{postId}", name="deletePost")
+     */
+    public function deleteEintrag(int $wikiId, int $postId, EntityManagerInterface $entityManager): RedirectResponse
+    {
+        $repository = $entityManager->getRepository(Wiki::class);
+        $wiki = $repository->findOneBy(['id' => $wikiId]);
+        if (!$wiki) {
+            $this->addFlash('error', 'Es konnte kein Wiki mit der ID '.$wikiId.' gefunden werden!');
+            return $this->redirectToRoute('home');
+        }
+
+        $repository = $entityManager->getRepository(Beitraege::class);
+        $post = $repository->findOneBy(['id' => $postId]);
+        if (!$post) {
+            $this->addFlash('error', 'Es konnte kein Eintrag mit der ID '.$postId.' gefunden werden!');
+            return $this->redirectToRoute('wiki', array('id' => $wikiId));
+        }
+
+        $user = $this->getUser();
+        $isPlatformAdmin = $this->isPlatformAdmin($user, $entityManager);
+        $userPermissions = $this->getUserPermissions($user, $wiki, $entityManager);
+        // Nur Platfrom Admins / Owner und Wiki Admins können Beiträge löschen!
+        if($isPlatformAdmin or $userPermissions[1]){
+            // Bevor der Post entfernt wird müssen zuerst alle Votes für diesen Eintrag gelöscht werden!
+
+            $wiki->removeBeitraege($post);
+            $repository = $entityManager->getRepository(BeitragVotes::class);
+            // 3. Query how many rows are there in the Articles table
+            // 4. Return a number as response
+            // e.g 972
+            $repository->createQueryBuilder('a')
+                // Filter by some parameter if you want
+                ->where('a.beitragID = '.$postId)
+                ->delete()
+                ->getQuery()
+                ->execute();
+
+            $entityManager->remove($post);
+            $entityManager->flush();
+            $this->addFlash('success', 'Der Eintrag wurde gelöscht!');
+        }
+        else{
+            $this->addFlash('error', 'Du kannst diesen Eintrag nicht löschen!');
+            return $this->redirectToRoute('eintrag', array('wikiId' => $wikiId, 'postId' => $postId));
+        }
+
+
+        return $this->redirectToRoute('wiki', array('id' => $wikiId));
+    }
+
 
 }
