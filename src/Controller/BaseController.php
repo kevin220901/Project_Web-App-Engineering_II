@@ -291,7 +291,7 @@ class BaseController extends AbstractController
         $post = $repository->findOneBy(['id' => $postId]);
         if (!$post) {
             $this->addFlash('error', 'Es konnte kein Eintrag mit der ID '.$postId.' gefunden werden!');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('wiki', array('id' => $wikiId));
         }
 
         $user = $this->getUser();
@@ -393,13 +393,32 @@ class BaseController extends AbstractController
         $repository = $entityManager->getRepository(Tags::class);
         $wikiTags = $repository->findAll();
 
+        /*
+        $wikiTags = $repository->createQueryBuilder('a')
+            // Filter by some parameter if you want
+            ->select('a.id, a.tagName')
+            ->getQuery()
+            ->getResult();
+        */
         $repository = $entityManager->getRepository(WikiTags::class);
         $counter = 0;
         foreach ($wikiTags as $tag){
-            $wikisWithTag = $repository->findBy(['tagID' => $tag->getId()]);
+            $wikisWithTag = $repository->findBy(['tagID' => $tag]);
+            /*
+            $wikisWithTag = $repository->createQueryBuilder('a')
+                // Filter by some parameter if you want
+                ->where('a.tagID = '.$tag['id'])
+                ->select('count(a.id)')
+                ->getQuery()
+                ->getSingleScalarResult();
+            if($wikisWithTag<$minAmountForTag){
+                unset($wikiTags[$counter]);
+            }
+            */
             if(sizeof($wikisWithTag) < $minAmountForTag){
                 unset($wikiTags[$counter]);
             }
+
             $counter += 1;
         }
         $wikiTags = array_values($wikiTags);

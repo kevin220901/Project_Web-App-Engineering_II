@@ -1,0 +1,39 @@
+{# templates/wikiPages/editEintrag.html.twig #}
+{% extends 'wikiPages/createEintrag.html.twig' %}
+
+{% block title %}
+    "{{ post.title }}" bearbeiten
+{% endblock %}
+
+{% block EditTitle%}
+    {{ post.title }}
+{% endblock %}
+
+{% block tags %}
+{% endblock %}
+
+{% block postVotes %}
+    <h4 class="m-0 p-1">
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            {% if userVoted %}
+                <i class="bi bi-arrow-up-square-fill voteColor normalDisable"></i>
+            {% else %}
+                <i class="bi bi-arrow-up-square voteColor normalDisable"></i>
+            {% endif %}
+        {% else %}
+            <i class="bi bi-arrow-up-square voteColor normalDisable"></i>
+        {% endif %}
+        <span class="ml-1">{{ post.getBeitragVotes|length }}</span>
+    </h4>
+{% endblock %}
+
+{% block ersteller %}
+    <span class="text-secondary ts-small">Erstellt von: {{ post.getUserID.getUserIdentifier }}</span>
+{% endblock %}
+
+{% block favIgnore %}
+{% endblock %}
+
+{% block submitBtn %}
+    <button type="submit" class="btn btn-primary btn-block">Bearbeiten abschließen</button>
+{% endblock %}
