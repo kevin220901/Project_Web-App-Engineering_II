@@ -30,9 +30,7 @@ class WikiSettingsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $tagRepository = $entityManager->getRepository(Tags::class);
-
             // Da max 6 Tags erlaubt sind, werden hier nur die ersten 6 aus dem Array hinzugefügt
             $counter = 0;
             if (array_key_exists("tags", $_POST)){
@@ -63,7 +61,14 @@ class WikiSettingsController extends AbstractController
             $entityManager->persist($wiki);
             $entityManager->flush();
 
-            $id = $wiki->getId();
+            // Entferne alle Tags des Wikis
+            $repository = $entityManager->getRepository(WikiTags::class);
+            $repository->createQueryBuilder('a')
+                // Filter by some parameter if you want
+                ->where('a.wikiID = '.$wikiId)
+                ->delete()
+                ->getQuery()
+                ->execute();
 
             //Jeder Tag ist jetzt in der Datenbank und das Wiki wurde erstellt. Jetzt müssen die Tags und das Wiki verknüpft werden!
             // Da max 6 Tags erlaubt sind, werden hier nur die ersten 6 aus dem Array hinzugefügt
@@ -80,28 +85,34 @@ class WikiSettingsController extends AbstractController
                     }
                 }
             }
-
-            $this->addFlash('success', 'Das Wiki wurde erfolgreich erstellt!');
-            return $this->redirectToRoute('wiki', array('id' => $id));
+            $this->addFlash('success', 'Das Wiki wurde erfolgreich aktualisiert!');
+            return $this->redirectToRoute('wiki', array('id' => $wikiId));
         }
 
-        $base = new BaseController();
-        if($user){
-            $repository = $entityManager->getRepository(User::class);
+        if (!$wiki) {
+            $this->addFlash('error', 'Es konnte kein Wiki mit der ID '.$wikiId.' gefunden werden!');
+            return $this->redirectToRoute('home');
+        }
 
-            if($user->isUserBanned()){
-                $this->addFlash('error', 'Du hast keine Berechtigung ein neues Wiki zu erstellen!');
-                return $this->redirectToRoute('home');
+        if($user){
+            $base = new BaseController();
+
+            if($base->isPlatformAdmin($user, $entityManager) || $base->getUserPermissions($user, $wiki, $entityManager)[1]){
+                return $this->render('wikiPages/editWiki.html.twig', [
+                    'CreateWikiForm' => $form->createView(),
+                    'darkMode' => $base->getDarkMode(),
+                    'wiki' => $wiki,
+                ]);
+            }
+            else{
+                $this->addFlash('error', 'Du kannst dieses Wiki nicht bearbeiten!');
+                return $this->redirectToRoute('wiki', array('id' => $wikiId));
             }
 
-            return $this->render('wikiPages/createWiki.html.twig', [
-                'CreateWikiForm' => $form->createView(),
-                'darkMode' => $base->getDarkMode(),
-            ]);
         }
         else{
-            $this->addFlash('error', 'Du musst eingeloggt sein um ein neues Wiki zu erstellen!');
-            return $this->redirectToRoute('home');
+            $this->addFlash('error', 'Du musst eingeloggt sein um Wikis zu bearbeiten!');
+            return $this->redirectToRoute('wiki', array('id' => $wikiId));
         }
     }
 

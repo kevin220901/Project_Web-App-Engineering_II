@@ -117,10 +117,12 @@
                 </div>
             </div>
         </div>
-        <p class="mb-2"><span data-bs-toggle="tooltip" title="Themenfelder deinen Wikis (max. 6 Tags wobei ein Tag max. 9 Zeichen lang sein darf)">Tags</span> <span class="text-secondary ml-1 ts-small" id="amount_tags">0/6</span></p>
+        <p class="mb-2"><span data-bs-toggle="tooltip" title="Themenfelder deinen Wikis (max. 6 Tags wobei ein Tag max. 9 Zeichen lang sein darf)">Tags</span> <span class="text-secondary ml-1 ts-small" id="amount_tags">{% block tagsC %}0{% endblock %}/6</span></p>
         <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
             <div class="tagContainer" id="tagContainerId">
-                <input/>
+                {% block wikiTags %}
+                {% endblock %}
+                <input id="hs"/>
             </div>
         </div>
     </div>
@@ -147,7 +149,9 @@
        <div class="row mt-3">
            <div class="col-2"></div>
            <div class="col-4">
-               <button type="submit" class="btn btn-primary btn-block">Wiki erstellen</button>
+               {% block submitBtn %}
+                   <button type="submit" class="btn btn-primary btn-block">Wiki erstellen</button>
+               {% endblock %}
            </div>
            <div class="col-4">
                <a class="btn btn-danger btn-block" href="/">Abbrechen</a>
@@ -170,6 +174,7 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
 
+        let tags = [] // Tags array muss so früh geladen werden, damit der docReady Block ebenfalls auf das Array zu greifen kann
 
         // Falls Enter gedrückt wird, wird so das Form nicht abgeschickt
         $(document).on("keydown", ":input:not(textarea)", function(event) {
@@ -177,6 +182,8 @@
         });
 
         $(document).ready(function() {
+
+            {% block docReady %}{% endblock %}
 
             let inputField = document.getElementById('create_wiki_form_startseite_md');
             document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
@@ -262,8 +269,7 @@
 
 
         let tagContainer = document.getElementById('tagContainerId');
-        let tagInput = document.querySelector('.tagContainer input');
-        let tags = []
+        let tagInput = document.querySelector('#hs');
 
         // Tag input
         function createTag(label, id){

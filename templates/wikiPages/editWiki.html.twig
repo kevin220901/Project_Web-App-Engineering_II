@@ -1,0 +1,30 @@
+{# templates/wikiPages/editEintrag.html.twig #}
+{% extends 'wikiPages/createWiki.html.twig' %}
+
+{% block title %}
+    "{{ wiki.wikiname }}" Einstellungen
+{% endblock %}
+
+{% block tagsC %}{{  wiki.WikiTags|length }}{% endblock %}
+
+{% block wikiTags %}
+    {% for foundTags in wiki.WikiTags %}
+        <div class="tag" id="tag_{{ loop.index0 }}">
+            <span>{{ foundTags.tagID.tagName }}</span>
+            <button onclick="removeMe('{{ foundTags.tagID.tagName }}',{{ loop.index0 }})" class="btn tagBtn">
+                <i class="bi bi-x"></i>
+            </button>
+            <input class="form_tag" id="form_tag_{{ loop.index0 }}" type="text" name="tags[]" value="{{ foundTags.tagID.tagName }}" hidden="">
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block submitBtn %}
+    <button type="submit" class="btn btn-primary btn-block">Wiki aktualisieren</button>
+{% endblock %}
+
+{% block docReady %}
+    {# Dieser Block befindet sich in $(document).ready(function() {...} #}
+        tags.push({% for foundTags in wiki.WikiTags %}"{{ foundTags.tagID.tagName }}",{% endfor %});
+{% endblock %}
+

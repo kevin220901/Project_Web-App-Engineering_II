@@ -55,7 +55,7 @@ class EditEintragController extends AbstractController
 
         if (!$post) {
             $this->addFlash('error', 'Es konnte kein Eintrag mit der ID '.$postId.' gefunden werden!');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('wiki', array('id' => $wikiId));
         }
 
         $base = new BaseController();

@@ -521,9 +521,6 @@ class BaseController extends AbstractController
 
             $wiki->removeBeitraege($post);
             $repository = $entityManager->getRepository(BeitragVotes::class);
-            // 3. Query how many rows are there in the Articles table
-            // 4. Return a number as response
-            // e.g 972
             $repository->createQueryBuilder('a')
                 // Filter by some parameter if you want
                 ->where('a.beitragID = '.$postId)
@@ -539,8 +536,6 @@ class BaseController extends AbstractController
             $this->addFlash('error', 'Du kannst diesen Eintrag nicht löschen!');
             return $this->redirectToRoute('eintrag', array('wikiId' => $wikiId, 'postId' => $postId));
         }
-
-
         return $this->redirectToRoute('wiki', array('id' => $wikiId));
     }
 
