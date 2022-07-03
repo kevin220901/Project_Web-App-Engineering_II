@@ -1,0 +1,249 @@
+{# templates/wikiPages/browse.html.twig #}
+{% extends 'base.html.twig' %}
+
+{# Wir überschreiben das Template, welches form_errors rendert, damit diese nicht als Liste ausgegeben werden #}
+{% form_theme adminForm 'customError/errors.html.twig' %}
+
+{% block body %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-3">
+                <div class="container border rounded borderDarkMode py-3">
+                    <div class="m-0 mb-2">
+                        <a class="tag_text btn btn-secondary w-100 noOverflow" href="/changeMain/1">Startseite</a>
+                    </div>
+                    <div class="m-0 mb-2">
+                        <a class="tag_text btn btn-secondary w-100 noOverflow" href="/changeMain/2">Impressum</a>
+                    </div>
+                    <div class="m-0 mb-2">
+                        <a class="tag_text btn btn-secondary w-100 noOverflow" href="/changeMain/3">Datenschutz</a>
+                    </div>
+                    <div class="m-0 mb-2">
+                        <a class="tag_text btn btn-secondary w-100 noOverflow" href="/changeMain/5">Entwickler</a>
+                    </div>
+                    <div class="m-0">
+                        <a class="tag_text btn btn-secondary w-100 noOverflow" href="/changeMain/6">About</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-9">
+                {{ form_start(adminForm) }}
+                {# Plafrom Admins #}
+                <p class="mb-2"><span data-bs-toggle="tooltip" title="Alle Platform Admins">Admins</span></p>
+                <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
+                    <div class="tagContainer" id="adminContainerId">
+                        {% for admins in platformAdmins %}
+                            <div class="admin tagField" id="admin_{{ loop.index0 }}">
+                                <span>{{ admins.userID.username }}</span>
+                                <button onclick="removeMeAdmin('{{ admins.userID.username }}',{{ loop.index0 }})" class="btn tagFieldBtn">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                                <input class="form_admin" id="form_admin_{{ loop.index0 }}" type="text" name="admins[]" value="{{ admins.userID.username }}" hidden="">
+                            </div>
+                        {% endfor %}
+                        <input id="adminInput"/>
+                    </div>
+                </div>
+
+                {# Von der Platform gebannte User #}
+                <p class="mb-2"><span data-bs-toggle="tooltip" title="Jeder gebannte User deines Wikis">Gebannte Nutzer</span></p>
+                <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
+                    <div class="tagContainer" id="bannedContainerId">
+                        {% for bUser in allBannedUser %}
+                            <div class="ban tagField" id="ban_{{ loop.index0 }}">
+                                <span>{{ bUser.username }}</span>
+                                <button onclick="removeMeBan('{{ bUser.username }}',{{ loop.index0 }})" class="btn tagFieldBtn">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                                <input class="form_ban" id="form_ban_{{ loop.index0 }}" type="text" name="bans[]" value="{{ bUser.username }}" hidden="">
+                            </div>
+
+                        {% endfor %}
+                        <input id="bannedInput"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Änderungen speichern</button>
+                {{ form_end(adminForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+    <script>
+
+        let admins = [];
+        let banned = [];
+
+        $(document).ready(function() {
+
+            admins.push({% for admins in platformAdmins %}"{{ admins.userID.username }}",{% endfor %});
+            banned.push({% for bUser in allBannedUser %}"{{ bUser.username }}",{% endfor %});
+
+        });
+
+
+        $(document).on("keydown", ":input:not(textarea)", function(event) {
+            return event.key !== "Enter";
+        });
+
+        let adminContainer = document.getElementById('adminContainerId');
+        let adminInput = document.querySelector('#adminInput');
+
+        function createAdmin(label, id){
+            // Create the entered tag
+            let div = document.createElement('div');
+            div.setAttribute('class', 'admin tagField');
+            div.setAttribute('id', 'admin_' + id);
+            let span = document.createElement('span');
+            span.innerHTML = label;
+            let closeBtn = document.createElement('button');
+            closeBtn.setAttribute('onclick', 'removeMeAdmin(\"'+ label + '\",' + id +')');
+            closeBtn.setAttribute('class', 'btn tagFieldBtn');
+            let closeBtnText = document.createElement('i');
+            closeBtnText.setAttribute('class', 'bi bi-x');
+            closeBtn.appendChild(closeBtnText);
+
+            let form_tag = document.createElement('input');
+            form_tag.setAttribute('class', 'form_admin');
+            form_tag.setAttribute('id', 'form_admin_' + id);
+            form_tag.setAttribute('type', 'text');
+            form_tag.setAttribute('name', 'admins[]');
+            form_tag.setAttribute('value', label);
+            form_tag.setAttribute('hidden', "");
+
+            div.appendChild(span);
+            div.appendChild(closeBtn);
+            div.appendChild(form_tag);
+            return div;
+        }
+
+        function clearAdmins() {
+            document.querySelectorAll('.admin').forEach(admin => {
+                admin.parentElement.removeChild(admin);
+            });
+        }
+
+
+        function addAdmins(){
+            clearAdmins();
+            let counter = 0;
+            admins.slice().reverse().forEach(admin => {
+                adminContainer.prepend(createAdmin(admin, counter));
+                counter += 1;
+            });
+        }
+
+        // DONE
+        adminInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === ',') {
+                e.target.value.split(' ').forEach(admin => {
+                    e.target.value.split(',').forEach(admin => {
+                        // Entfernt HTML Tags und fixed escaped " > &
+                        admin = DOMPurify.sanitize(admin, { USE_PROFILES: {html: false} });
+                        admin = admin.replace(/ /g, "");
+                        admin = admin.replace(/,/g, "");
+                        if (admin !== "" && admin!== " " && admin !==","){
+                            if(admins.indexOf(admin) === -1) {
+                                admins.push(admin);
+                            }
+                        }
+                    });
+                });
+                addAdmins();
+                adminInput.value = '';
+            }
+        });
+
+        function removeMeAdmin(label, id){
+            let index = admins.indexOf(label);
+            if (index > -1) {
+                admins.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            addAdmins();
+        }
+
+        let banContainer = document.getElementById('bannedContainerId');
+        let banInput = document.querySelector('#bannedInput');
+
+        function createBan(label, id){
+            // Create the entered tag
+            let div = document.createElement('div');
+            div.setAttribute('class', 'ban tagField');
+            div.setAttribute('id', 'ban_' + id);
+            let span = document.createElement('span');
+            span.innerHTML = label;
+            let closeBtn = document.createElement('button');
+            closeBtn.setAttribute('onclick', 'removeMeBan(\"'+ label + '\",' + id +')');
+            closeBtn.setAttribute('class', 'btn tagFieldBtn');
+            let closeBtnText = document.createElement('i');
+            closeBtnText.setAttribute('class', 'bi bi-x');
+            closeBtn.appendChild(closeBtnText);
+
+            let form_tag = document.createElement('input');
+            form_tag.setAttribute('class', 'form_ban');
+            form_tag.setAttribute('id', 'form_ban_' + id);
+            form_tag.setAttribute('type', 'text');
+            form_tag.setAttribute('name', 'bans[]');
+            form_tag.setAttribute('value', label);
+            form_tag.setAttribute('hidden', "");
+
+            div.appendChild(span);
+            div.appendChild(closeBtn);
+            div.appendChild(form_tag);
+            return div;
+        }
+
+        function clearBans() {
+            document.querySelectorAll('.ban').forEach(ban => {
+                ban.parentElement.removeChild(ban);
+            });
+        }
+
+
+        function addBans(){
+            clearBans();
+            let counter = 0;
+            banned.slice().reverse().forEach(ban => {
+                banContainer.prepend(createBan(ban, counter));
+                counter += 1;
+            });
+        }
+
+        // DONE
+        banInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === ',') {
+                e.target.value.split(' ').forEach(ban => {
+                    e.target.value.split(',').forEach(ban => {
+                        // Entfernt HTML Tags und fixed escaped " > &
+                        ban = DOMPurify.sanitize(ban, { USE_PROFILES: {html: false} });
+                        ban = ban.replace(/ /g, "");
+                        ban = ban.replace(/,/g, "");
+                        if (ban !== "" && ban!== " " && ban !==","){
+                            if(banned.indexOf(ban) === -1) {
+                                banned.push(ban);
+                            }
+                        }
+                    });
+                });
+                addBans();
+                banInput.value = '';
+            }
+        });
+
+        function removeMeBan(label, id){
+            let index = banned.indexOf(label);
+            if (index > -1) {
+                banned.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            addBans();
+        }
+
+
+
+
+    </script>
+
+{% endblock %}

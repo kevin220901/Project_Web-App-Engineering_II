@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use App\Repository\PlatformAdminRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=PlatformAdminRepository::class)
+ * @UniqueEntity(fields={"userID"}, message="Dieser Nutzer ist bereits Platform Admin!")
  */
 class PlatformAdmin
 {
@@ -19,7 +21,7 @@ class PlatformAdmin
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, unique=true)
      */
     private $userID;
 

@@ -368,7 +368,7 @@ class BaseController extends AbstractController
         ]);
     }
 
-
+    /*
     // Erzeugt eine rdm Nummer und gibt diese an die wiki Route
     /**
      * @Route("/rdmWiki", name="generateNumber")
