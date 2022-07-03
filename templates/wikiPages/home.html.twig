@@ -1,7 +1,14 @@
 {# templates/wikiPages/home.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}World Wild Wiki{% endblock %}
+{% if page != null %}
+    {% set id = page.getId %}
+{% else %}
+    {% set id = 6 %}
+{% endif %}
+{% block title %}{% if id == 1 %}Startseite{% elseif id == 2 %}Impressum{% elseif id == 3 %}Datenschutz{% elseif id == 4 %}Entwickler{% elseif id == 4 %}About{% else %}World Wild Wiki{% endif %}{% endblock %}
+
+
 {% block body %}
 
     {% if isPlatformAdmin %}
@@ -19,7 +26,6 @@
             <div id="insert_0"></div>
             <div class="parseMe" id="parse_0" hidden>{% if page != null %}{{ page.getMarkdownMd }}{% else %}# Sorry this page is empty :({% endif %}</div>
     </div>
-
 {% endblock %}
 
 {% block scripts %}
