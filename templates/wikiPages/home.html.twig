@@ -1,5 +1,6 @@
 {# templates/wikiPages/home.html.twig #}
 {% extends 'base.html.twig' %}
+
 {% block title %}World Wild Wiki{% endblock %}
 {% block body %}
 
@@ -14,8 +15,12 @@
         </div>
     {% endif %}
 
-    <div class="container mt-3 border rounded borderDarkMode">
-        <div id="parseToMD" class="mt-2">{# Dieses div muss leer bleiben! Der gewünschte Inhalt muss direkt an main.js übergeben werden! #}</div>
+    <div class="container mt-3 border rounded borderDarkMode fakeTextarea textArea countMe">
+            <div id="insert_0"></div>
+            <div class="parseMe" id="parse_0" hidden>{% if page != null %}{{ page.getMarkdownMd }}{% else %}# Sorry this page is empty :({% endif %}</div>
     </div>
 
+{% endblock %}
+
+{% block scripts %}
 {% endblock %}

@@ -6,6 +6,7 @@ use App\Entity\BanedUsersFromWiki;
 use App\Entity\Beitraege;
 use App\Entity\BeitragVotes;
 use App\Entity\Collaborator;
+use App\Entity\MainPageMarkdown;
 use App\Entity\PlatformAdmin;
 use App\Entity\Tags;
 use App\Entity\UserFavoriteWiki;
@@ -178,15 +179,9 @@ class BaseController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function renderBase(EntityManagerInterface $entityManager): Response{
+    public function renderBase(): Response{
 
-        $user = $this->getUser();
-        $isPlatformAdmin = $this->isPlatformAdmin($user, $entityManager);
-
-        return $this->render('/wikiPages/home.html.twig', [
-            'darkMode' => $this->getDarkMode(),
-            'isPlatformAdmin' => $isPlatformAdmin,
-        ]);
+        return $this->redirectToRoute('mainPage', array('id' => 1));
     }
 
     /**
@@ -537,6 +532,29 @@ class BaseController extends AbstractController
             return $this->redirectToRoute('eintrag', array('wikiId' => $wikiId, 'postId' => $postId));
         }
         return $this->redirectToRoute('wiki', array('id' => $wikiId));
+    }
+
+    /**
+     * @Route("/main/{id}", name="mainPage")
+     */
+    public function renderMainPages(int $id, EntityManagerInterface $entityManager): Response{
+
+        $user = $this->getUser();
+        $isPlatformAdmin = $this->isPlatformAdmin($user, $entityManager);
+
+        if(!($id>=1 && $id<=5)){
+            $id = 1;
+        }
+
+        $MDrepository = $entityManager->getRepository(MainPageMarkdown::class);
+        $mainpage = $MDrepository->findOneBy(['id' => $id]);
+
+        return $this->render('/wikiPages/home.html.twig', [
+            'darkMode' => $this->getDarkMode(),
+            'isPlatformAdmin' => $isPlatformAdmin,
+            'page' => $mainpage,
+        ]);
+
     }
 
 

@@ -100,7 +100,7 @@ function backToTop() {
 // Zusammenfassung der Markdown
 let counter = $(".parseMe").length;
 for(let i=0; i<counter; i+=1){
-    let text = $("#parse_" + i).html() + " ...";
+    let text = $("#parse_" + i).html();
     text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/"/g, '&quot;').replace(/&gt;/g, '>');
     let dirtyText = marked.parse(text); //parsed md zu html
     let cleanText = DOMPurify.sanitize(dirtyText, { USE_PROFILES: {html: true} });

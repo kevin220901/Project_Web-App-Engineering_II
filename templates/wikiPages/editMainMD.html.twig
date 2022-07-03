@@ -1,0 +1,108 @@
+{# templates/wikiPages/createWiki.html.twig #}
+{% extends 'base.html.twig' %}
+
+{# Wir überschreiben das Template, welches form_errors rendert, damit diese nicht als Liste ausgegeben werden #}
+{% form_theme mdEditForm 'customError/errors.html.twig' %}
+
+{% block title %}
+    {% if id == 1 %}
+        Startseite
+    {% elseif id == 2 %}
+        Impressum
+    {% elseif id == 3 %}
+        Datenschutz
+    {% elseif id == 4 %}
+        Entwickler
+    {% else %}
+        About
+    {% endif %}
+     bearbeiten
+{% endblock %}
+
+
+{% block body %}
+
+    {{ form_start(mdEditForm) }}
+
+    <div class="container mt-3">
+        {# Errors #}
+        {% if not mdEditForm.vars.valid %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ form_errors(mdEditForm.markdown_md) }}
+            </div>
+        {% endif %}
+        <h2>{% if id == 1 %}
+                Startseite
+            {% elseif id == 2 %}
+                Impressum
+            {% elseif id == 3 %}
+                Datenschutz
+            {% elseif id == 4 %}
+                Entwickler
+            {% else %}
+                About
+            {% endif %}
+            bearbeiten
+        </h2>
+    </div>
+
+    <div class="container-fluid border rounded mt-3 borderDarkMode">
+        <div class="row mt-3">
+            <div class="col-6">
+                <div class="form-group">
+                    {{ form_label(mdEditForm.markdown_md, 'Text', {label_attr: {'class': 'form-label'}}) }}
+
+                    {{ form_widget(mdEditForm.markdown_md, {
+                        attr: {'class': 'form-control textArea textColor', 'rows': '25'}
+                    }) }}
+                </div>
+            </div>
+            <div class="col-6">
+                <label class="form-label">Preview</label>
+                <div id="preview" class="fakeTextarea border rounded textArea w-100"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-2"></div>
+            <div class="col-4">
+                {% block submitBtn %}
+                    <button type="submit" class="btn btn-primary btn-block">Änderungen speichern</button>
+                {% endblock %}
+            </div>
+            <div class="col-4">
+                <a class="btn btn-danger btn-block" href="/">Abbrechen</a>
+            </div>
+
+        </div>
+    </div>
+
+    {{ form_end(mdEditForm) }}
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script>
+        // Falls Enter gedrückt wird, wird so das Form nicht abgeschickt
+        $(document).on("keydown", ":input:not(textarea)", function(event) {
+            return event.key !== "Enter";
+        });
+
+        $(document).ready(function() {
+            let inputField = document.getElementById('main_md_form_markdown_md');
+            document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
+            $("#main_md_form_markdown_md").on("input", function () {
+
+                $("#preview").html(DOMPurify.sanitize(marked.parse($("#main_md_form_markdown_md").val()), { USE_PROFILES: {html: true} }));
+
+                //Set height of the preview to the same as the input field
+                document.getElementById("preview").style.height = inputField.offsetHeight.toString() + "px";
+            });
+        })
+
+    </script>
+
+{% endblock %}
