@@ -37,38 +37,51 @@ class AdminSettingsController extends AbstractController
 
             $userRepository = $entityManager->getRepository(User::class);
 
+
             if (array_key_exists("bans", $_POST)) {
                 foreach ($_POST["bans"] as $banUser){
                     $userA = $userRepository->findOneBy(['username' => $banUser]);
                     if($userA && $user->getId() != $userA->getId()){
                         if(!$userA->isUserBanned()){
+                            /*
                             $userRepository->createQueryBuilder('a')
                                 ->update()
                                 ->set('a.user_banned','true')
                                 ->where('a.id = '.$userA->getId())
                                 ->getQuery()
                                 ->execute();
+                            $entityManager->flush();
+                            */
+                            $userA->setUserBanned(true);
+                            $entityManager->persist($userA);
+                            $entityManager->flush();
                         }
                     }
-                    unset($allBannedUser[array_search($banUser, $allBannedUser)]);
+                    unset($allBannedUser[array_search($userA, $allBannedUser)]);
                 }
             }
             // Das sind die zuvor gebannten Nutzer die jetzt nicht mehr gebannt sein sollen
             $allBannedUser = array_values($allBannedUser);
             foreach ($allBannedUser as $unbanUser){
-                $userA = $userRepository->findOneBy(['username' => $unbanUser]);
-                if($userA && $user->getId() != $userA->getId()){
-                    if($userA->isUserBanned()){
+                //$userA = $userRepository->findOneBy(['username' => $unbanUser]);
+                if($unbanUser){
+                    if($unbanUser->isUserBanned()){
+                        /*
                         $userRepository->createQueryBuilder('a')
                             ->update()
                             ->set('a.user_banned','false')
                             ->where('a.id = '.$userA->getId())
                             ->getQuery()
                             ->execute();
+                        $entityManager->flush();
+                        */
+                        $unbanUser->setUserBanned(false);
+                        $entityManager->persist($unbanUser);
+                        $entityManager->flush();
                     }
+
                 }
             }
-
 
             // Entferne alle Admins
             $repository = $entityManager->getRepository(PlatformAdmin::class);
