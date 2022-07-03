@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\BanedUsersFromWiki;
+use App\Entity\Collaborator;
 use App\Entity\Tags;
 use App\Entity\User;
 use App\Entity\Wiki;
@@ -112,6 +114,56 @@ class WikiSettingsController extends AbstractController
                 }
             }
 
+
+            // Entferne alle Collabs
+            $repository = $entityManager->getRepository(Collaborator::class);
+            $repository->createQueryBuilder('a')
+                // Filter by some parameter if you want
+                ->where('a.wikiID = '.$wikiId)
+                ->delete()
+                ->getQuery()
+                ->execute();
+            // Adde jeden Collab
+            $userRepository = $entityManager->getRepository(User::class);
+            if (array_key_exists("collabs", $_POST)) {
+                foreach ($_POST["collabs"] as $collab){
+                    $user = $userRepository->findOneBy(['username' => $collab]);
+                    if($user){
+                        if(!$user->isUserBanned()){
+                            $newWikiAdmin = new Collaborator();
+                            $newWikiAdmin->setUserID($user);
+                            $newWikiAdmin->setWikiID($wiki);
+                            $entityManager->persist($newWikiAdmin);
+                            $entityManager->flush();
+                        }
+                    }
+                }
+            }
+
+            // Entferne alle Banns
+            $repository = $entityManager->getRepository(BanedUsersFromWiki::class);
+            $repository->createQueryBuilder('a')
+                // Filter by some parameter if you want
+                ->where('a.wikiID = '.$wikiId)
+                ->delete()
+                ->getQuery()
+                ->execute();
+            // Adde jeden Collab
+            $userRepository = $entityManager->getRepository(User::class);
+            $date = new \DateTime();
+            if (array_key_exists("bans", $_POST)) {
+                foreach ($_POST["bans"] as $ban){
+                    $user = $userRepository->findOneBy(['username' => $ban]);
+                    if($user){
+                        $newBan = new BanedUsersFromWiki();
+                        $newBan->setUserID($user);
+                        $newBan->setWikiID($wiki);
+                        $newBan->setErstellt($date);
+                        $entityManager->persist($newBan);
+                        $entityManager->flush();
+                    }
+                }
+            }
 
 
             $this->addFlash('success', 'Das Wiki wurde erfolgreich aktualisiert!');

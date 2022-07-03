@@ -29,7 +29,7 @@
                     <button onclick="removeMeAdmin('{{ admins.userID.username }}',{{ loop.index0 }})" class="btn tagFieldBtn">
                         <i class="bi bi-x"></i>
                     </button>
-                    <input class="form_admin" id="form_admin_{{ loop.index0 }}" type="text" name="admin[]" value="{{ admins.userID.username }}" hidden="">
+                    <input class="form_admin" id="form_admin_{{ loop.index0 }}" type="text" name="admins[]" value="{{ admins.userID.username }}" hidden="">
                 </div>
             {% endfor %}
             <input id="adminInput"/>
@@ -40,6 +40,15 @@
     <p class="mb-2"><span data-bs-toggle="tooltip" title="Die Collaborator deines Wikis">Collaborator</span></p>
     <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
         <div class="tagContainer" id="collabContainerId">
+            {% for collab in wiki.getCollaborators %}
+                <div class="collab tagField" id="collab_{{ loop.index0 }}">
+                    <span>{{ collab.userID.username }}</span>
+                    <button onclick="removeMeCollab('{{ collab.userID.username }}',{{ loop.index0 }})" class="btn tagFieldBtn">
+                        <i class="bi bi-x"></i>
+                    </button>
+                    <input class="form_collab" id="form_collab_{{ loop.index0 }}" type="text" name="collabs[]" value="{{ collab.userID.username }}" hidden="">
+                </div>
+            {% endfor %}
             <input id="collabInput"/>
         </div>
     </div>
@@ -47,6 +56,16 @@
     <p class="mb-2"><span data-bs-toggle="tooltip" title="Jeder gebannte User deines Wikis">Gebannte Nutzer</span></p>
     <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
         <div class="tagContainer" id="bannedContainerId">
+            {% for bUser in wiki.getBanedUsersFromWikis %}
+                <div class="ban tagField" id="ban_{{ loop.index0 }}">
+                    <span>{{ bUser.userID.username }}</span>
+                    <button onclick="removeMeBan('{{ bUser.userID.username }}',{{ loop.index0 }})" class="btn tagFieldBtn">
+                        <i class="bi bi-x"></i>
+                    </button>
+                    <input class="form_ban" id="form_ban_{{ loop.index0 }}" type="text" name="bans[]" value="{{ bUser.userID.username }}" hidden="">
+                </div>
+
+            {% endfor %}
             <input id="bannedInput"/>
         </div>
     </div>
@@ -143,4 +162,157 @@
             }
             addAdmins();
         }
+
+        let collabContainer = document.getElementById('collabContainerId');
+        let collabInput = document.querySelector('#collabInput');
+
+        function createCollab(label, id){
+            // Create the entered tag
+            let div = document.createElement('div');
+            div.setAttribute('class', 'collab tagField');
+            div.setAttribute('id', 'collab_' + id);
+            let span = document.createElement('span');
+            span.innerHTML = label;
+            let closeBtn = document.createElement('button');
+            closeBtn.setAttribute('onclick', 'removeMeCollab(\"'+ label + '\",' + id +')');
+            closeBtn.setAttribute('class', 'btn tagFieldBtn');
+            let closeBtnText = document.createElement('i');
+            closeBtnText.setAttribute('class', 'bi bi-x');
+            closeBtn.appendChild(closeBtnText);
+
+            let form_tag = document.createElement('input');
+            form_tag.setAttribute('class', 'form_collab');
+            form_tag.setAttribute('id', 'form_collab_' + id);
+            form_tag.setAttribute('type', 'text');
+            form_tag.setAttribute('name', 'collabs[]');
+            form_tag.setAttribute('value', label);
+            form_tag.setAttribute('hidden', "");
+
+            div.appendChild(span);
+            div.appendChild(closeBtn);
+            div.appendChild(form_tag);
+            return div;
+        }
+
+        function clearCollabs() {
+            document.querySelectorAll('.collab').forEach(collab => {
+                collab.parentElement.removeChild(collab);
+            });
+        }
+
+
+        function addCollabs(){
+            clearCollabs();
+            let counter = 0;
+            collabs.slice().reverse().forEach(collab => {
+                collabContainer.prepend(createCollab(collab, counter));
+                counter += 1;
+            });
+        }
+
+        // DONE
+        collabInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === ',') {
+                e.target.value.split(' ').forEach(collab => {
+                    e.target.value.split(',').forEach(collab => {
+                        // Entfernt HTML Tags und fixed escaped " > &
+                        collab = DOMPurify.sanitize(collab, { USE_PROFILES: {html: false} });
+                        collab = collab.replace(/ /g, "");
+                        collab = collab.replace(/,/g, "");
+                        if (collab !== "" && collab!== " " && collab !==","){
+                            if(collabs.indexOf(collab) === -1) {
+                                collabs.push(collab);
+                            }
+                        }
+                    });
+                });
+                addCollabs();
+                collabInput.value = '';
+            }
+        });
+
+        function removeMeCollab(label, id){
+            let index = collabs.indexOf(label);
+            if (index > -1) {
+                collabs.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            addCollabs();
+        }
+
+        let banContainer = document.getElementById('bannedContainerId');
+        let banInput = document.querySelector('#bannedInput');
+
+        function createBan(label, id){
+            // Create the entered tag
+            let div = document.createElement('div');
+            div.setAttribute('class', 'ban tagField');
+            div.setAttribute('id', 'ban_' + id);
+            let span = document.createElement('span');
+            span.innerHTML = label;
+            let closeBtn = document.createElement('button');
+            closeBtn.setAttribute('onclick', 'removeMeBan(\"'+ label + '\",' + id +')');
+            closeBtn.setAttribute('class', 'btn tagFieldBtn');
+            let closeBtnText = document.createElement('i');
+            closeBtnText.setAttribute('class', 'bi bi-x');
+            closeBtn.appendChild(closeBtnText);
+
+            let form_tag = document.createElement('input');
+            form_tag.setAttribute('class', 'form_ban');
+            form_tag.setAttribute('id', 'form_ban_' + id);
+            form_tag.setAttribute('type', 'text');
+            form_tag.setAttribute('name', 'bans[]');
+            form_tag.setAttribute('value', label);
+            form_tag.setAttribute('hidden', "");
+
+            div.appendChild(span);
+            div.appendChild(closeBtn);
+            div.appendChild(form_tag);
+            return div;
+        }
+
+        function clearBans() {
+            document.querySelectorAll('.ban').forEach(ban => {
+                ban.parentElement.removeChild(ban);
+            });
+        }
+
+
+        function addBans(){
+            clearBans();
+            let counter = 0;
+            banned.slice().reverse().forEach(ban => {
+                banContainer.prepend(createBan(ban, counter));
+                counter += 1;
+            });
+        }
+
+        // DONE
+        banInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === ',') {
+                e.target.value.split(' ').forEach(ban => {
+                    e.target.value.split(',').forEach(ban => {
+                        // Entfernt HTML Tags und fixed escaped " > &
+                        ban = DOMPurify.sanitize(ban, { USE_PROFILES: {html: false} });
+                        ban = ban.replace(/ /g, "");
+                        ban = ban.replace(/,/g, "");
+                        if (ban !== "" && ban!== " " && ban !==","){
+                            if(banned.indexOf(ban) === -1) {
+                                banned.push(ban);
+                            }
+                        }
+                    });
+                });
+                addBans();
+                banInput.value = '';
+            }
+        });
+
+        function removeMeBan(label, id){
+            let index = banned.indexOf(label);
+            if (index > -1) {
+                banned.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            addBans();
+        }
+
 {% endblock %}
