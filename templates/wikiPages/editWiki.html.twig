@@ -9,15 +9,49 @@
 
 {% block wikiTags %}
     {% for foundTags in wiki.WikiTags %}
-        <div class="tag" id="tag_{{ loop.index0 }}">
+        <div class="tag tagField" id="tag_{{ loop.index0 }}">
             <span>{{ foundTags.tagID.tagName }}</span>
-            <button onclick="removeMe('{{ foundTags.tagID.tagName }}',{{ loop.index0 }})" class="btn tagBtn">
+            <button onclick="removeMe('{{ foundTags.tagID.tagName }}',{{ loop.index0 }})" class="btn tagFieldBtn">
                 <i class="bi bi-x"></i>
             </button>
             <input class="form_tag" id="form_tag_{{ loop.index0 }}" type="text" name="tags[]" value="{{ foundTags.tagID.tagName }}" hidden="">
         </div>
     {% endfor %}
 {% endblock %}
+
+{% block otherContent %}
+    <p class="mb-2"><span data-bs-toggle="tooltip" title="Die Admins deines Wikis. Falls die eingegebenen Nutzer nicht existieren oder allgemein gebannt sind, werde diese nicht hinzugefügt!">Admins</span></p>
+    <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
+        <div class="tagContainer" id="adminContainerId">
+            {% for admins in wiki.getWikiadmins %}
+                <div class="admin tagField" id="admin_{{ loop.index0 }}">
+                    <span>{{ admins.userID.username }}</span>
+                    <button onclick="removeMeAdmin('{{ admins.userID.username }}',{{ loop.index0 }})" class="btn tagFieldBtn">
+                        <i class="bi bi-x"></i>
+                    </button>
+                    <input class="form_admin" id="form_admin_{{ loop.index0 }}" type="text" name="admin[]" value="{{ admins.userID.username }}" hidden="">
+                </div>
+            {% endfor %}
+            <input id="adminInput"/>
+
+        </div>
+    </div>
+
+    <p class="mb-2"><span data-bs-toggle="tooltip" title="Die Collaborator deines Wikis">Collaborator</span></p>
+    <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
+        <div class="tagContainer" id="collabContainerId">
+            <input id="collabInput"/>
+        </div>
+    </div>
+
+    <p class="mb-2"><span data-bs-toggle="tooltip" title="Jeder gebannte User deines Wikis">Gebannte Nutzer</span></p>
+    <div class="border rounded p-2 rounded mb-3 tagContainerParent borderDarkMode">
+        <div class="tagContainer" id="bannedContainerId">
+            <input id="bannedInput"/>
+        </div>
+    </div>
+{% endblock %}
+
 
 {% block submitBtn %}
     <button type="submit" class="btn btn-primary btn-block">Wiki aktualisieren</button>
@@ -26,5 +60,87 @@
 {% block docReady %}
     {# Dieser Block befindet sich in $(document).ready(function() {...} #}
         tags.push({% for foundTags in wiki.WikiTags %}"{{ foundTags.tagID.tagName }}",{% endfor %});
+        {# admins = []; collabs = []; banned = []; #}
+        admins.push({% for admins in wiki.getWikiadmins %}"{{ admins.userID.username }}",{% endfor %});
+        collabs.push({% for collab in wiki.getCollaborators %}"{{ collab.userID.username }}",{% endfor %});
+        banned.push({% for bUser in wiki.getBanedUsersFromWikis %}"{{ bUser.userID.username }}",{% endfor %});
 {% endblock %}
 
+{# Das Ende des <script> Blocks #}
+{% block lastScript %}
+        let adminContainer = document.getElementById('adminContainerId');
+        let adminInput = document.querySelector('#adminInput');
+
+        function createAdmin(label, id){
+            // Create the entered tag
+            let div = document.createElement('div');
+            div.setAttribute('class', 'admin tagField');
+            div.setAttribute('id', 'admin_' + id);
+            let span = document.createElement('span');
+            span.innerHTML = label;
+            let closeBtn = document.createElement('button');
+            closeBtn.setAttribute('onclick', 'removeMeAdmin(\"'+ label + '\",' + id +')');
+            closeBtn.setAttribute('class', 'btn tagFieldBtn');
+            let closeBtnText = document.createElement('i');
+            closeBtnText.setAttribute('class', 'bi bi-x');
+            closeBtn.appendChild(closeBtnText);
+
+            let form_tag = document.createElement('input');
+            form_tag.setAttribute('class', 'form_admin');
+            form_tag.setAttribute('id', 'form_admin_' + id);
+            form_tag.setAttribute('type', 'text');
+            form_tag.setAttribute('name', 'admins[]');
+            form_tag.setAttribute('value', label);
+            form_tag.setAttribute('hidden', "");
+
+            div.appendChild(span);
+            div.appendChild(closeBtn);
+            div.appendChild(form_tag);
+            return div;
+        }
+
+        function clearAdmins() {
+            document.querySelectorAll('.admin').forEach(admin => {
+                admin.parentElement.removeChild(admin);
+            });
+        }
+
+
+        function addAdmins(){
+            clearAdmins();
+            let counter = 0;
+            admins.slice().reverse().forEach(admin => {
+                adminContainer.prepend(createAdmin(admin, counter));
+                counter += 1;
+            });
+        }
+
+        // DONE
+        adminInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === ',') {
+                e.target.value.split(' ').forEach(admin => {
+                    e.target.value.split(',').forEach(admin => {
+                        // Entfernt HTML Tags und fixed escaped " > &
+                        admin = DOMPurify.sanitize(admin, { USE_PROFILES: {html: false} });
+                        admin = admin.replace(/ /g, "");
+                        admin = admin.replace(/,/g, "");
+                        if (admin !== "" && admin!== " " && admin !==","){
+                            if(admins.indexOf(admin) === -1) {
+                                admins.push(admin);
+                            }
+                        }
+                    });
+                });
+                addAdmins();
+                adminInput.value = '';
+            }
+        });
+
+        function removeMeAdmin(label, id){
+            let index = admins.indexOf(label);
+            if (index > -1) {
+                admins.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            addAdmins();
+        }
+{% endblock %}

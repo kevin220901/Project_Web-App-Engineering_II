@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Tags;
 use App\Entity\User;
 use App\Entity\Wiki;
+use App\Entity\Wikiadmin;
 use App\Entity\WikiTags;
 use App\Form\CreateWikiFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -85,6 +86,34 @@ class WikiSettingsController extends AbstractController
                     }
                 }
             }
+
+            // Entferne alle Admins
+            $repository = $entityManager->getRepository(Wikiadmin::class);
+            $repository->createQueryBuilder('a')
+                // Filter by some parameter if you want
+                ->where('a.wikiID = '.$wikiId)
+                ->delete()
+                ->getQuery()
+                ->execute();
+            // Adde jeden Admin
+            $userRepository = $entityManager->getRepository(User::class);
+            if (array_key_exists("admins", $_POST)) {
+                foreach ($_POST["admins"] as $admin){
+                    $user = $userRepository->findOneBy(['username' => $admin]);
+                    if($user){
+                        if(!$user->isUserBanned()){
+                            $newWikiAdmin = new Wikiadmin();
+                            $newWikiAdmin->setUserID($user);
+                            $newWikiAdmin->setWikiID($wiki);
+                            $entityManager->persist($newWikiAdmin);
+                            $entityManager->flush();
+                        }
+                    }
+                }
+            }
+
+
+
             $this->addFlash('success', 'Das Wiki wurde erfolgreich aktualisiert!');
             return $this->redirectToRoute('wiki', array('id' => $wikiId));
         }

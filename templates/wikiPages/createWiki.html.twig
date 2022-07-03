@@ -122,9 +122,11 @@
             <div class="tagContainer" id="tagContainerId">
                 {% block wikiTags %}
                 {% endblock %}
-                <input id="hs"/>
+                <input id="tagInput"/>
             </div>
         </div>
+        {% block otherContent %}
+        {% endblock %}
     </div>
 
     <div class="container-fluid border rounded mt-3 borderDarkMode">
@@ -174,7 +176,10 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
 
-        let tags = [] // Tags array muss so früh geladen werden, damit der docReady Block ebenfalls auf das Array zu greifen kann
+        let tags = []; // Tags array muss so früh geladen werden, damit der docReady Block ebenfalls auf das Array zu greifen kann
+        let admins = [];
+        let collabs = [];
+        let banned = [];
 
         // Falls Enter gedrückt wird, wird so das Form nicht abgeschickt
         $(document).on("keydown", ":input:not(textarea)", function(event) {
@@ -269,19 +274,19 @@
 
 
         let tagContainer = document.getElementById('tagContainerId');
-        let tagInput = document.querySelector('#hs');
+        let tagInput = document.querySelector('#tagInput');
 
         // Tag input
         function createTag(label, id){
             // Create the entered tag
             let div = document.createElement('div');
-            div.setAttribute('class', 'tag');
+            div.setAttribute('class', 'tag tagField');
             div.setAttribute('id', 'tag_' + id);
             let span = document.createElement('span');
             span.innerHTML = label;
             let closeBtn = document.createElement('button');
             closeBtn.setAttribute('onclick', 'removeMe(\"'+ label + '\",' + id +')');
-            closeBtn.setAttribute('class', 'btn tagBtn');
+            closeBtn.setAttribute('class', 'btn tagFieldBtn');
             let closeBtnText = document.createElement('i');
             closeBtnText.setAttribute('class', 'bi bi-x');
             closeBtn.appendChild(closeBtnText);
@@ -361,6 +366,8 @@
             addTags();
         }
 
+        {% block lastScript %}
+        {% endblock %}
 
     </script>
 {% endblock %}
