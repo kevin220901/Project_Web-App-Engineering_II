@@ -79,6 +79,7 @@
                                         {{ form_errors(registrationForm.email) }}
                                         {{ form_errors(registrationForm.plainPassword.first) }}
                                         {{ form_errors(registrationForm.agreeTerms) }}
+                                        {{ form_errors(registrationForm.captcha) }}
                                     </div>
                                 {% endif %}
 
@@ -137,12 +138,19 @@
                                     {{ form_label(registrationForm.plainPassword.second, 'Passwort wiederholen', {label_attr: {'class': 'form-label'}}) }}
                                 </div>
 
-                                {# Nutzungsbedingungen, die nicht existieren #}
+
+                                <div class="form-outline mb-4 text-center">
+                                    {{ form_widget(registrationForm.captcha, {attr: {'class': 'form-control'}}) }}
+                                    {{ form_label(registrationForm.captcha, 'Ich bin kein Roboter', {label_attr: {'class': 'form-label', 'hidden': ''}})  }}
+                                </div>
+
+                                    {# Nutzungsbedingungen, die nicht existieren #}
                                 <div class="form-outline mb-4 text-center">
                                     <!--
                                     <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                                     <label class="form-check-label" for="flexCheckDefault">Ich stimme den Nutzungsbedingungen zu</label>
                                     -->
+
                                     {{ form_widget(registrationForm.agreeTerms, {
                                         attr: {'class': 'form-check-input'}
                                     }) }}
