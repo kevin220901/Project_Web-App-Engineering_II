@@ -79,7 +79,6 @@ class AdminSettingsController extends AbstractController
                         $entityManager->persist($unbanUser);
                         $entityManager->flush();
                     }
-
                 }
             }
 
